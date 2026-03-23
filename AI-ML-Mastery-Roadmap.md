@@ -2587,7 +2587,11 @@ Phase 6: Professional Development (Ongoing)
 #### 10.3.1 Transformer Fundamentals
 - [ ] Original Transformer paper
 - [ ] Architecture components: Multi-head self-attention, Position-wise feed-forward networks, Layer normalization, Residual connections
-- [ ] Positional encodings
+- [ ] Positional encodings (Sinusoidal vs. RoPE - Rotary Positional Embeddings)
+- [ ] Layer normalization (Post-LN vs Pre-LN vs RMSNorm)
+- [ ] FlashAttention-1/2/3 optimization logic
+- [ ] Mixture of Experts (MoE) architecture (Router, Experts)
+- [ ] Scaling Laws (Chinchilla, Kaplan)
 - [ ] Encoder stack
 - [ ] Decoder stack
 - [ ] Masked attention
@@ -3064,7 +3068,9 @@ Phase 6: Professional Development (Ongoing)
 - [ ] Ollama and GGML/GGUF models
 - [ ] Local LLMs (llama.cpp)
 - [ ] TensorRT-LLM
-- [ ] KV-Cache optimization
+- [ ] KV-Cache optimization (Continuous Batching, Copy-on-Write)
+- [ ] Speculative Decoding (Draft models, Medusa)
+- [ ] Multi-Query Attention (MQA) & Grouped-Query Attention (GQA) logic
 
 ---
 
@@ -3185,6 +3191,9 @@ Phase 6: Professional Development (Ongoing)
 - [ ] INT8, FP16, BF16
 - [ ] Dynamic quantization
 - [ ] Static quantization
+- [ ] Weight-Only Quantization (GPTQ, AWQ)
+- [ ] 1-bit LLMs (BitNet 1.58b, T-Bit)
+- [ ] Double Quantization (NF4) logic
 
 #### 12.6.2 Pruning
 - [ ] Magnitude pruning
