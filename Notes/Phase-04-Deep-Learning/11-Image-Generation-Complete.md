@@ -49,43 +49,53 @@ A U-Net is trained to predict the noise $\epsilon$ that was added at time $t$.
 
 ---
 
-## 💻 Professional Implementation
+## 💻 Professional Implementation: End-to-End Diffusion Pipeline
 
-### 1. The Reparameterization Trick (NumPy/PyTorch)
+This script demonstrates a memory-optimized Stable Diffusion pipeline with half-precision (FP16) and automatic safety filtering.
+
 ```python
 import torch
+from diffusers import StableDiffusionPipeline
+from PIL import Image
+from typing import Optional
 
-def reparameterize(mu, logvar):
-    """
-    Sample z = mu + std * epsilon
-    Allows gradients to flow through the stochastic sampling.
-    """
-    std = torch.exp(0.5 * logvar)
-    eps = torch.randn_like(std)
-    return mu + eps * std
-```
+class DiffusionGenerator:
+    def __init__(self, model_id: str = "runwayml/stable-diffusion-v1-5"):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.dtype = torch.float16 if self.device == "cuda" else torch.float32
+        
+        # 1. Load optimized pipeline
+        self.pipe = StableDiffusionPipeline.from_pretrained(
+            model_id, 
+            torch_dtype=self.dtype,
+            variant="fp16" if self.device == "cuda" else None
+        ).to(self.device)
+        
+        # 2. Memory optimization (Attention Slicing)
+        if self.device == "cuda":
+            self.pipe.enable_attention_slicing()
+            print(f"Diffusion loaded on {self.device} with FP16 precision.")
 
-### 2. WGAN-GP Gradient Penalty Logic
-```python
-def compute_gradient_penalty(critic, real_samples, fake_images):
-    # Random weight term for interpolation between real and fake
-    alpha = torch.rand((real_samples.size(0), 1, 1, 1))
-    interpolates = (alpha * real_samples + ((1 - alpha) * fake_images)).requires_grad_(True)
-    
-    d_interpolates = critic(interpolates)
-    
-    # Get gradient w.r.t. interpolates
-    gradients = torch.autograd.grad(
-        outputs=d_interpolates,
-        inputs=interpolates,
-        grad_outputs=torch.ones_like(d_interpolates),
-        create_graph=True,
-        retain_graph=True,
-    )[0]
-    
-    gradients = gradients.view(gradients.size(0), -1)
-    gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
-    return gradient_penalty
+    def generate(self, prompt: str, negative_prompt: Optional[str] = None, 
+                 steps: int = 50, guidance_scale: float = 7.5) -> Image.Image:
+        """Generate an image from a text prompt with CFG guidance."""
+        with torch.autocast(self.device):
+            image = self.pipe(
+                prompt=prompt,
+                negative_prompt=negative_prompt,
+                num_inference_steps=steps,
+                guidance_scale=guidance_scale
+            ).images[0]
+        return image
+
+# --- Usage Example ---
+# gen = DiffusionGenerator()
+# img = gen.generate(
+#     prompt="A high-tech lab with glowing neon servers, cinematic lighting",
+#     negative_prompt="blurry, distorted, low resolution",
+#     steps=30
+# )
+# img.save("result.png")
 ```
 
 ---

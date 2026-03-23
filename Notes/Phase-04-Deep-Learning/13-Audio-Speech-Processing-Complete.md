@@ -49,43 +49,53 @@ Whisper proved that **Massive Multitask Supervision** (680k hours) beats complex
 
 ---
 
-## 💻 Professional Implementation
+## 💻 Professional Implementation: End-to-End Speech Pipeline
 
-### 1. STFT and Spectrogram Generation (Librosa)
+This implementation provides a robust interface for transcribing audio using OpenAI Whisper, including automatic language detection and timestamp processing.
+
 ```python
-import librosa
-import numpy as np
+import whisper
+import torch
+from typing import Dict, Any
+import os
 
-# 1. Load audio
-y, sr = librosa.load(librosa.ex('trumpet'))
+class SpeechProcessor:
+    def __init__(self, model_size: str = "base"):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        # 1. Load optimized model
+        self.model = whisper.load_model(model_size).to(self.device)
+        print(f"Whisper {model_size} loaded on {self.device}")
 
-# 2. Compute STFT
-# n_fft: window size, hop_length: stride
-D = librosa.stft(y, n_fft=2048, hop_length=512)
-magnitude, phase = librosa.magphase(D)
+    def transcribe(self, audio_path: str, task: str = "transcribe") -> Dict[str, Any]:
+        """
+        Transcribe or Translate audio.
+        task: 'transcribe' or 'translate' (to English)
+        """
+        if not os.path.exists(audio_path):
+            raise FileNotFoundError(f"Audio file missing: {audio_path}")
 
-# 3. Apply Mel Filterbank
-mel_basis = librosa.filters.mel(sr=sr, n_fft=2048, n_mels=128)
-mel_spectrogram = np.dot(mel_basis, magnitude)
+        # 2. Run Inference with FP16 if on GPU
+        result = self.model.transcribe(
+            audio_path, 
+            task=task,
+            fp16=(self.device == "cuda")
+        )
+        
+        return {
+            "text": result["text"],
+            "language": result.get("language"),
+            "segments": result.get("segments") # Includes timestamps
+        }
 
-# 4. Log Scale
-log_mel_spectrogram = librosa.amplitude_to_db(mel_spectrogram)
-```
+# --- Usage Example ---
+# processor = SpeechProcessor("medium")
+# output = processor.transcribe("meeting_recording.mp3")
+# print(f"Detected Language: {output['language']}")
+# print(f"Full Transcript: {output['text']}")
 
-### 2. CTC Decoding Logic (Conceptual)
-```python
-def ctc_decode(sequence):
-    # 1. Remove adjacent duplicates
-    res = []
-    for i, char in enumerate(sequence):
-        if i == 0 or char != sequence[i-1]:
-            res.append(char)
-    
-    # 2. Remove blank tokens
-    return "".join([c for c in res if c != "<BLANK>"])
-
-# Input:  [H, H, <B>, E, E, L, L, <B>, L, L, O, O]
-# Result: [H, <B>, E, L, <B>, L, O] -> HELLO
+# # Output segmented timestamps
+# for segment in output['segments']:
+#     print(f"[{segment['start']:.2f}s -> {segment['end']:.2f}s]: {segment['text']}")
 ```
 
 ---

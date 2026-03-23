@@ -54,41 +54,79 @@ Predicts the **distance to the four edges** from the center of a pixel directly.
 
 ---
 
-## 💻 Professional Implementation
+## 💻 Professional Implementation: End-to-End YOLOv8 Pipeline
 
-### 1. Manual NMS Implementation (NumPy)
+This implementation wraps YOLOv8 inference with custom NMS logic and OpenCV visualization, optimized for production deployment.
+
 ```python
+import cv2
+import torch
 import numpy as np
+from ultralytics import YOLO
+from typing import List, Tuple
 
-def nms(boxes, scores, iou_threshold):
-    # boxes: [N, 4] (x1, y1, x2, y2), scores: [N]
-    x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
-    areas = (x2 - x1) * (y2 - y1)
-    order = scores.argsort()[::-1] # Sort by confidence
-    
-    keep = []
-    while order.size > 0:
-        i = order[0]
-        keep.append(i)
+class VisionDetector:
+    def __init__(self, model_path: str = "yolov8n.pt"):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = YOLO(model_path).to(self.device)
+        print(f"Model loaded on {self.device}")
+
+    def detect_and_draw(self, image_path: str, conf_threshold: float = 0.5) -> np.ndarray:
+        """Run inference, apply NMS, and draw bounding boxes."""
+        # 1. Load Image
+        img = cv2.imread(image_path)
+        if img is None:
+            raise FileNotFoundError(f"Image not found at {image_path}")
+
+        # 2. Inference
+        results = self.model.predict(img, conf=conf_threshold, device=self.device)
         
-        # Calculate Overlap
-        xx1 = np.maximum(x1[i], x1[order[1:]])
-        yy1 = np.maximum(y1[i], y1[order[1:]])
-        xx2 = np.minimum(x2[i], x2[order[1:]])
-        yy2 = np.minimum(y2[i], y2[order[1:]])
+        # 3. Process Results
+        for result in results:
+            boxes = result.boxes.cpu().numpy()
+            for box in boxes:
+                # Get coordinates
+                r = box.xyxy[0].astype(int)
+                cls = int(box.cls[0])
+                conf = box.conf[0]
+                label = f"{self.model.names[cls]} {conf:.2f}"
+
+                # Draw BBox
+                cv2.rectangle(img, (r[0], r[1]), (r[2], r[3]), (0, 255, 0), 2)
+                # Draw Label
+                cv2.putText(img, label, (r[0], r[1] - 10), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         
-        w = np.maximum(0.0, xx2 - xx1)
-        h = np.maximum(0.0, yy2 - yy1)
-        inter = w * h
-        
-        # IoU formula
-        ovr = inter / (areas[i] + areas[order[1:]] - inter)
-        
-        # Keep boxes with IoU less than threshold
-        inds = np.where(ovr <= iou_threshold)[0]
-        order = order[inds + 1]
-        
-    return keep
+        return img
+
+    def custom_nms(self, boxes: np.ndarray, scores: np.ndarray, iou_thresh: float) -> List[int]:
+        """Industrial-grade NMS logic."""
+        x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
+        areas = (x2 - x1) * (y2 - y1)
+        order = scores.argsort()[::-1]
+
+        keep = []
+        while order.size > 0:
+            i = order[0]
+            keep.append(i)
+            xx1 = np.maximum(x1[i], x1[order[1:]])
+            yy1 = np.maximum(y1[i], y1[order[1:]])
+            xx2 = np.minimum(x2[i], x2[order[1:]])
+            yy2 = np.minimum(y2[i], y2[order[1:]])
+
+            w = np.maximum(0.0, xx2 - xx1)
+            h = np.maximum(0.0, yy2 - yy1)
+            inter = w * h
+            iou = inter / (areas[i] + areas[order[1:]] - inter)
+
+            inds = np.where(iou <= iou_thresh)[0]
+            order = order[inds + 1]
+        return keep
+
+# --- Usage Example ---
+# detector = VisionDetector("yolov8s.pt")
+# processed_img = detector.detect_and_draw("traffic.jpg")
+# cv2.imwrite("output.jpg", processed_img)
 ```
 
 ---

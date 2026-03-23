@@ -59,33 +59,67 @@ Traditional RAG fails at "summarize the relationship between Person A and Compan
 
 ---
 
-## 💻 Professional Implementation
+## 💻 Professional Implementation: Production-Grade RAG
 
-### 1. Reciprocal Rank Fusion (RRF) Logic
+This implementation covers the full lifecycle: Ingestion, Hybrid Search (Vector + BM25), and Cross-Encoder Re-ranking.
+
 ```python
-def rrf_score(dense_rank, sparse_rank, k=60):
-    """Combine dense and sparse search rankings."""
-    return (1 / (k + dense_rank)) + (1 / (k + sparse_rank))
+import torch
+from typing import List, Dict
+from sentence_transformers import SentenceTransformer, CrossEncoder
+from rank_bm25 import BM25Okapi
+import numpy as np
 
-# Example usage:
-# A doc ranked 1st in dense and 10th in sparse
-score = rrf_score(1, 10)
-```
+class ProductionRAG:
+    def __init__(self, vector_model: str, rerank_model: str):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        # 1. Load Models
+        self.embed_model = SentenceTransformer(vector_model).to(self.device)
+        self.rerank_model = CrossEncoder(rerank_model)
+        
+        self.documents = []
+        self.vectors = None
+        self.bm25 = None
 
-### 2. Custom Re-ranking with Sentence-Transformers
-```python
-from sentence_transformers import CrossEncoder
+    def ingest(self, corpus: List[str]):
+        """Encode documents into vector and BM25 indices."""
+        print(f"Ingesting {len(corpus)} documents...")
+        self.documents = corpus
+        # Vector Encoding
+        self.vectors = self.embed_model.encode(corpus, convert_to_tensor=True)
+        # BM25 Tokenization
+        tokenized_corpus = [doc.lower().split() for doc in corpus]
+        self.bm25 = BM25Okapi(tokenized_corpus)
 
-# 1. Load a high-precision cross-encoder
-model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+    def retrieve(self, query: str, top_k: int = 10) -> List[str]:
+        """Hybrid Search + Cross-Encoder Re-ranking."""
+        # A. Vector Search (Dense)
+        query_vec = self.embed_model.encode(query, convert_to_tensor=True)
+        cos_scores = torch.cos_sim(query_vec, self.vectors)[0]
+        top_v_idx = torch.topk(cos_scores, k=min(top_k*2, len(self.documents))).indices.tolist()
 
-# 2. Score pairs
-query = "How do I optimize a KV-cache?"
-docs = ["Use PagedAttention.", "KV-cache grows linearly.", "Buy more GPUs."]
+        # B. BM25 Search (Sparse)
+        tokenized_query = query.lower().split()
+        bm25_scores = self.bm25.get_scores(tokenized_query)
+        top_b_idx = np.argsort(bm25_scores)[::-1][:top_k*2].tolist()
 
-scores = model.predict([(query, d) for d in docs])
-# Higher scores mean more relevance
-ranked_docs = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
+        # C. Fusion (RRF) and Candidate Selection
+        candidate_idx = list(set(top_v_idx + top_b_idx))
+        candidates = [self.documents[i] for i in candidate_idx]
+
+        # D. Re-ranking (Cross-Encoder)
+        pairs = [[query, doc] for doc in candidates]
+        rerank_scores = self.rerank_model.predict(pairs)
+        
+        # Sort by rerank scores
+        ranked_results = [candidates[i] for i in np.argsort(rerank_scores)[::-1]]
+        return ranked_results[:top_k]
+
+# --- Usage Example ---
+# rag = ProductionRAG("all-MiniLM-L6-v2", "cross-encoder/ms-marco-MiniLM-L-6-v2")
+# rag.ingest(["Python is a language.", "LLMs require GPUs.", "RAG improves accuracy."])
+# results = rag.retrieve("How to make AI more accurate?")
+# print(f"Top Result: {results[0]}")
 ```
 
 ---
