@@ -5,11 +5,12 @@
 **Duration:** Months 8-12  
 **Prerequisites:** Phase 1 (Mathematics), Phase 2 (Python DSA)
 
-Phase 3 covers classical machine learning algorithms and deep learning fundamentals - the core skills for becoming an ML engineer.
+Phase 3 covers classical machine learning algorithms and deep learning - the core skills for becoming an ML engineer.
+
+**Note:** ML Fundamentals (Section 6) is covered in Phase 2. Phase 3 starts from Section 7.
 
 ```
 Phase 3 Structure:
-├── 00-ML-Fundamentals (Section 6)
 ├── 01-Classical-ML-Algorithms (Section 7)
 ├── 02-Deep-Learning-Fundamentals (Section 8)
 └── 03-Deep-Learning-Frameworks (Section 9)
@@ -18,13 +19,6 @@ Phase 3 Structure:
 ---
 
 ## 📚 Section Breakdown
-
-### 00-ML-Fundamentals (Section 6) ✅
-- Introduction to Machine Learning
-- Supervised Learning
-- Unsupervised Learning
-- Model Evaluation and Validation
-- Feature Engineering
 
 ### 01-Classical-ML-Algorithms (Section 7)
 - Linear Models (Linear/Logistic Regression, GLM)
@@ -53,11 +47,10 @@ Phase 3 Structure:
 
 | Section | Topics | Files | Status |
 |---------|--------|-------|--------|
-| ML Fundamentals | 5 topics | 5 files | ✅ Complete |
 | Classical ML Algorithms | 6 topics | TBD | 🔄 In Progress |
 | Deep Learning Fundamentals | 6 topics | TBD | 🔄 In Progress |
 | Deep Learning Frameworks | 3 topics | TBD | 🔄 In Progress |
-| **TOTAL** | **20 topics** | **5+ files** | **🔄 In Progress** |
+| **TOTAL** | **15 topics** | **TBD** | **🔄 In Progress** |
 
 ---
 
