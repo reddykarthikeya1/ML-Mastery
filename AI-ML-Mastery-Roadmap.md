@@ -2684,9 +2684,11 @@ Phase 6: Professional Development (Ongoing)
 #### 10.6.4 Advanced RAG
 - [ ] Multi-hop retrieval
 - [ ] Iterative retrieval
-- [ ] Re-ranking
+- [ ] Re-ranking (Cohere, BGE-reranker)
 - [ ] Query expansion
-- [ ] Hypothetical document embeddings
+- [ ] Hypothetical document embeddings (HyDE)
+- [ ] GraphRAG (Knowledge Graphs for RAG)
+- [ ] Agentic RAG (Router-based and Tool-based retrieval)
 
 ---
 
@@ -2705,7 +2707,14 @@ Phase 6: Professional Development (Ongoing)
 - [ ] P-tuning
 - [ ] Adapter methods
 
-#### 10.7.3 Fine-tuning Best Practices
+#### 10.7.3 Alignment & Preference Optimization
+- [ ] RLHF (Reinforcement Learning from Human Feedback)
+- [ ] Reward Modeling
+- [ ] PPO for Language Models
+- [ ] DPO (Direct Preference Optimization)
+- [ ] KTO / ORPO
+
+#### 10.7.4 Fine-tuning Best Practices
 - [ ] Dataset preparation
 - [ ] Hyperparameter selection
 - [ ] Evaluation
@@ -2744,6 +2753,29 @@ Phase 6: Professional Development (Ongoing)
 #### 10.8.6 Text Summarization
 - [ ] Extractive summarization
 - [ ] Abstractive summarization
+
+---
+
+### 10.9 LLMOps & Evaluation (1.5 weeks)
+
+#### 10.9.1 Evaluation Metrics
+- [ ] Traditional vs LLM Metrics
+- [ ] Perplexity & Cross-entropy
+- [ ] BLEU & ROUGE limitations
+- [ ] Human Evaluation
+
+#### 10.9.2 RAG Evaluation
+- [ ] Ragas framework
+- [ ] TruLens
+- [ ] DeepEval
+- [ ] Context Precision & Recall
+- [ ] Faithfulness & Answer Relevance
+
+#### 10.9.3 LLM Tracing & Observability
+- [ ] LangSmith
+- [ ] Arize Phoenix
+- [ ] Weights & Biases Prompts
+- [ ] Prompt injection & defense
 
 ---
 
@@ -2950,6 +2982,43 @@ Phase 6: Professional Development (Ongoing)
 
 ---
 
+### 11.8 Multimodal AI & Vision-Language Models (1.5 weeks)
+
+#### 11.8.1 Contrastive Learning
+- [ ] CLIP (Contrastive Language-Image Pre-training)
+- [ ] ALIGN
+- [ ] Zero-shot image classification
+
+#### 11.8.2 Vision-Language Models (VLMs)
+- [ ] LLaVA architecture
+- [ ] Flamingo
+- [ ] GPT-4V / Gemini multimodal parsing
+- [ ] Cross-modal attention
+
+---
+
+### 11.9 Audio & Speech Processing (1.5 weeks)
+
+#### 11.9.1 Audio Preprocessing
+- [ ] Waveforms and spectrograms
+- [ ] Mel-Frequency Cepstral Coefficients (MFCCs)
+- [ ] Log-Mel spectrograms
+- [ ] Audio augmentation
+
+#### 11.9.2 Speech Recognition (ASR)
+- [ ] Wav2Vec 2.0
+- [ ] Whisper architecture
+- [ ] Connectionist Temporal Classification (CTC) loss
+- [ ] End-to-end ASR
+
+#### 11.9.3 Speech Generation (TTS)
+- [ ] Tacotron 2
+- [ ] VALL-E
+- [ ] FastSpeech
+- [ ] Voice cloning
+
+---
+
 # PHASE 5: PRODUCTION & ADVANCED (Months 19-24)
 
 ## 12. MLOps & Production (6-8 weeks)
@@ -2964,9 +3033,11 @@ Phase 6: Professional Development (Ongoing)
 - [ ] Streaming inference
 - [ ] Edge deployment
 
-#### 12.1.2 REST APIs
+#### 12.1.2 REST APIs & Background Tasks
 - [ ] Flask basics
 - [ ] FastAPI
+- [ ] Async Task Processing (Celery)
+- [ ] Redis (as message broker/result backend)
 - [ ] API design
 - [ ] Request/response handling
 - [ ] Error handling
@@ -2986,6 +3057,14 @@ Phase 6: Professional Development (Ongoing)
 - [ ] Google Cloud Functions
 - [ ] Azure Functions
 - [ ] Cold start considerations
+
+#### 12.1.5 LLM Inference & Serving
+- [ ] vLLM and PagedAttention
+- [ ] Text Generation Inference (TGI)
+- [ ] Ollama and GGML/GGUF models
+- [ ] Local LLMs (llama.cpp)
+- [ ] TensorRT-LLM
+- [ ] KV-Cache optimization
 
 ---
 
@@ -3130,6 +3209,30 @@ Phase 6: Professional Development (Ongoing)
 - [ ] OpenVINO
 - [ ] TVM
 - [ ] XLA
+
+### 12.7 Distributed Deep Learning & AI Infrastructure (1.5 weeks)
+
+#### 12.7.1 Model & Data Parallelism
+- [ ] DeepSpeed and ZeRO optimizer stages
+- [ ] FSDP (Fully Sharded Data Parallel in PyTorch)
+- [ ] HuggingFace Accelerate
+- [ ] Megatron-LM concepts
+
+#### 12.7.2 Cluster Orchestration & Workflow
+- [ ] Ray (Ray Core, Ray Serve, Ray Tune)
+- [ ] Feature Stores (Feast, Hopsworks)
+
+### 12.8 AI Security & Governance (1 week)
+
+#### 12.8.1 Vulnerabilities & Defense
+- [ ] OWASP Top 10 for LLMs
+- [ ] Adversarial attacks & Prompt Injection defenses
+- [ ] Data privacy & PII anonymization in pipelines
+
+#### 12.8.2 Guardrails
+- [ ] NeMo Guardrails
+- [ ] Llama-Guard / Outbound filtering
+- [ ] Jailbreak detection
 
 ---
 
@@ -3789,6 +3892,13 @@ Phase 6: Professional Development (Ongoing)
 - [ ] Bindings
 - [ ] Consumers
 - [ ] Message patterns
+
+#### 15.7.3 Redis & Celery (Task Queues)
+- [ ] Celery architecture (Brokers & Backends)
+- [ ] Asynchronous task processing
+- [ ] Scheduled tasks (Celery Beat)
+- [ ] Using Redis as a message broker
+- [ ] Using Redis for caching model results
 
 ---
 
