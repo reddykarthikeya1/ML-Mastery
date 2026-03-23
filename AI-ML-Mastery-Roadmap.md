@@ -3218,7 +3218,12 @@ Phase 6: Professional Development (Ongoing)
 - [ ] HuggingFace Accelerate
 - [ ] Megatron-LM concepts
 
-#### 12.7.2 Cluster Orchestration & Workflow
+#### 12.7.2 Custom GPU Kernels & Optimization
+- [ ] CUDA Basics (Memory hierarchy, threads, blocks)
+- [ ] OpenAI Triton (Writing custom GPU kernels in Python)
+- [ ] FlashAttention integration
+
+#### 12.7.3 Cluster Orchestration & Workflow
 - [ ] Ray (Ray Core, Ray Serve, Ray Tune)
 - [ ] Feature Stores (Feast, Hopsworks)
 
