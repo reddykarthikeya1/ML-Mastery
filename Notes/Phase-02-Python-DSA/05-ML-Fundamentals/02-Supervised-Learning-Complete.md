@@ -10,6 +10,23 @@
 
 ## 1. Classification
 
+### 🧠 Mathematical Intuition & Logic Behind Algorithms
+
+**1. Logistic Regression**
+*   **Logic:** Models the probability that an instance belongs to a specific class.
+*   **Math:** Uses the Sigmoid function `σ(z) = 1 / (1 + e^(-z))` to squash linear combinations `(z = wX + b)` into a probability between 0 and 1.
+*   **Cost Function:** Uses **Binary Cross-Entropy (Log Loss)** which heavily penalizes confident but wrong predictions: `Cost = -[y*log(p) + (1-y)*log(1-p)]`.
+*   **Optimization:** Uses Gradient Descent to iteratively adjust weights `w` to minimize the cost.
+
+**2. Decision Trees & Random Forests**
+*   **Logic:** Recursively splits the dataset into smaller subsets based on feature values that best separate the classes.
+*   **Math:** Uses criteria like **Gini Impurity** `1 - Σ(p_i)^2` or **Entropy** `-Σ(p_i * log_2(p_i))` to measure node purity.
+*   **Splitting:** The feature with the highest **Information Gain** (reduction in impurity) is chosen for the root. Random Forests build hundreds of these trees on random subsets to reduce variance.
+
+**3. Support Vector Machines (SVM)**
+*   **Logic:** Finds the "hyperplane" that best separates classes by maximizing the **margin** (distance between the plane and the closest data points, known as support vectors).
+*   **Math:** If data isn't linearly separable, it applies the **Kernel Trick** (e.g., RBF, Polynomial) to project data into higher dimensions where a linear hyperplane can separate them.
+
 ### Binary Classification
 
 ```python
@@ -103,6 +120,19 @@ for name, model in models.items():
 ---
 
 ## 2. Regression
+
+### 🧠 Mathematical Intuition & Logic Behind Algorithms
+
+**1. Linear Regression**
+*   **Logic:** Fits a straight line (or hyperplane) through the data points that best represents the relationship between independent and dependent variables.
+*   **Math:** `y = w_1*x_1 + w_2*x_2 + ... + b`
+*   **Cost Function:** Minimizes the **Mean Squared Error (MSE)**, which is the sum of squared distances between predicted values and actual values.
+*   **Optimization:** Uses Gradient Descent or the analytical Ordinary Least Squares (OLS) Normal Equation.
+
+**2. Regularized Regression (Ridge & Lasso)**
+*   **Logic:** Standard Linear Regression can overfit (weights become too large). Regularization adds a penalty to the loss function to keep weights small.
+*   **Lasso (L1):** Adds the absolute value of magnitude of coefficients as penalty. Can shrink weights to exactly zero, performing automatic **feature selection**.
+*   **Ridge (L2):** Adds squared magnitude of coefficients. Penalizes large weights but doesn't force them to zero. Good for handling multicollinearity (highly correlated features).
 
 ### Linear Regression
 

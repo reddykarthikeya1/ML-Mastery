@@ -10,6 +10,25 @@
 
 ## 1. Clustering
 
+### 🧠 Mathematical Intuition & Logic Behind Algorithms
+
+**1. K-Means Clustering**
+*   **Logic:** Groups data into `K` distinct clusters based on feature similarity.
+*   **Algorithm Steps:** 
+    1. Randomly initialize `K` centroids.
+    2. Assign each data point to the closest centroid (usually via **Euclidean distance**).
+    3. Recalculate the centroids as the mean of all points assigned to that cluster.
+    4. Repeat until centroids stop moving (convergence).
+*   **Cost Function:** Minimizes **Inertia** (Within-Cluster Sum of Squares, WCSS).
+
+**2. DBSCAN (Density-Based Spatial Clustering)**
+*   **Logic:** Groups points that are closely packed together, marking points that lie alone in low-density regions as outliers.
+*   **Math:** Relies on two parameters: `eps` (radius of neighborhood) and `min_samples` (minimum points to form a dense region). It doesn't require predefined `K` and perfectly isolates non-spherical clusters.
+
+**3. Hierarchical Clustering (Agglomerative)**
+*   **Logic:** Builds a hierarchy of clusters either bottom-up (Agglomerative) or top-down (Divisive).
+*   **Math:** At each step, joins the two most similar clusters based on a Linkage metric (e.g., Ward's method minimizes the variance of merged clusters). Visualized via a **Dendrogram**.
+
 ### K-Means
 
 ```python
@@ -136,6 +155,20 @@ plt.show()
 ---
 
 ## 2. Dimensionality Reduction
+
+### 🧠 Mathematical Intuition & Logic Behind Algorithms
+
+**1. PCA (Principal Component Analysis)**
+*   **Logic:** Projects high-dimensional data onto a lower-dimensional subspace while preserving as much variance as possible.
+*   **Math:** 
+    1. Standardize the data (mean=0, variance=1).
+    2. Compute the **Covariance Matrix** to understand feature relationships.
+    3. Calculate the **Eigenvectors and Eigenvalues** of the covariance matrix.
+    4. Sort Eigenvectors by highest Eigenvalue (these are your Principal Components -> directions of maximum variance).
+
+**2. t-SNE & UMAP**
+*   **Logic:** Non-linear dimensionality reduction primarily used for visualizing high-dimensional data in 2D/3D.
+*   **Math (t-SNE):** Calculates similarity probabilities between points in high-dimensional space and low-dimensional space, minimizing the **Kullback-Leibler (KL) Divergence** between the two distributions.
 
 ### PCA (Principal Component Analysis)
 

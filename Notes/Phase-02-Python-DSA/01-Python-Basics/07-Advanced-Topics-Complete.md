@@ -2,6 +2,7 @@
 
 ## 🎯 Quick Overview
 - **Decorators**: Modify function behavior
+- **Generators**: Memory-efficient iteration (yield)
 - **Context managers**: Resource management
 - **Type hints**: Type annotations
 - **Concurrency**: Threading, multiprocessing, asyncio
@@ -271,6 +272,60 @@ def test_with_mock(mock_func):
 
 ---
 
+## 6. Generators and Iterators
+
+### Iterators
+```python
+# Custom Iterator
+class CountDown:
+    def __init__(self, start):
+        self.count = start
+        
+    def __iter__(self):
+        return self
+        
+    def __next__(self):
+        if self.count <= 0:
+            raise StopIteration
+        self.count -= 1
+        return self.count + 1
+
+for num in CountDown(3):
+    print(num)  # 3, 2, 1
+```
+
+### Generators (yield)
+```python
+# Memory-efficient sequence generation
+def fibonacci(limit):
+    a, b = 0, 1
+    while a < limit:
+        yield a
+        a, b = b, a + b
+
+# Evaluated lazily (one at a time)
+for val in fibonacci(100):
+    print(val)
+```
+
+### Generator Expressions
+```python
+# List comprehension (Memory heavy)
+squares_list = [x*x for x in range(1000000)]
+
+# Generator expression (Memory efficient)
+squares_gen = (x*x for x in range(1000000))
+```
+
+### ML Use Case: Data Loaders
+```
+Generators are heavily used in PyTorch/TensorFlow DataLoaders.
+They allow loading massive datasets (e.g., 100GB of images) 
+by yielding one batch at a time instead of loading all to RAM.
+```
+
+---
+
 ## 💻 Python Code Examples
 
 ```python
@@ -395,6 +450,7 @@ def test_divide_by_zero(calc):
 | Advanced Topic | ML Application |
 |---------------|----------------|
 | Decorators | Timing, caching, logging |
+| Generators | Lazy loading data batches (DataLoaders) |
 | Type hints | Code quality, IDE support |
 | Concurrency | Parallel data loading |
 | Testing | Model testing, CI/CD |
