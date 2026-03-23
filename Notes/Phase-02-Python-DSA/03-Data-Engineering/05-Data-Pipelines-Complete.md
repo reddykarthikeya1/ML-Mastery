@@ -583,5 +583,29 @@ else:
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What are the key differences between Lambda and Kappa architectures?
+2. What does DAG stand for in the context of pipeline orchestration?
+3. What does it mean for a pipeline task to be "idempotent"?
+4. What is the difference between a Data Lake and a Data Warehouse?
+5. Why is data lineage important in modern data engineering?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Lambda Architecture** uses two separate paths (a batch layer for comprehensive, accurate historical data and a speed/streaming layer for real-time data). **Kappa Architecture** simplifies this by treating everything as a stream, processing both historical and real-time data through a single streaming engine.
+2. **DAG** stands for **Directed Acyclic Graph**. It is a conceptual representation of a series of activities (tasks) with directional dependencies, ensuring there are no infinite loops (cycles).
+3. An **idempotent** task produces the exact same final result no matter how many times it is run. This is crucial for safely retrying failed pipeline steps without corrupting or duplicating data.
+4. A **Data Lake** stores raw, unprocessed data in its native format (schema-on-read) and is highly flexible but harder to query. A **Data Warehouse** stores highly structured, processed, and cleaned data (schema-on-write) optimized for fast SQL analytics and reporting.
+5. **Data lineage** tracks the flow of data from its origin, through all transformations, to its final destination. It is critical for debugging errors, ensuring regulatory compliance, and understanding the downstream impact of schema changes.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** DSA Foundations

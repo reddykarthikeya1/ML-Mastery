@@ -382,5 +382,31 @@ print(account.get_statement())
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the purpose of the `self` parameter in instance methods?
+2. How does inheritance facilitate code reuse?
+3. What is "name mangling" in Python, and how is it triggered?
+4. What is the difference between `@classmethod` and `@staticmethod`?
+5. When would you use composition over inheritance?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. The **`self` parameter** is a reference to the specific instance of the class. It allows instance methods to access and modify the attributes and other methods of that particular object.
+2. **Inheritance** allows a child class to acquire all the attributes and methods of a parent class. This avoids duplicating code and allows the child class to extend or specialize the behavior of the parent.
+3. **Name mangling** is Python's way of making a class attribute private. It is triggered by prefixing an attribute name with two underscores (e.g., `__balance`). Python internally renames it to `_ClassName__attribute` to prevent accidental access or modification from outside the class.
+4. A **`@classmethod`** receives the class itself (`cls`) as its first argument and can access class-level attributes. A **`@staticmethod`** receives no special first argument and behaves like a regular function, but is grouped inside the class for logical organization.
+5. Use **composition** (has-a relationship) when you want to build complex objects by combining simpler ones, providing more flexibility. Use **inheritance** (is-a relationship) when there is a clear hierarchical relationship and you want to reuse and extend the core logic of a base class.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Functional Programming

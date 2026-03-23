@@ -507,5 +507,29 @@ def decode_string(s):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the fundamental difference between a Stack and a Queue?
+2. Which data structure is used to implement Breadth-First Search (BFS)? What about Depth-First Search (DFS)?
+3. Why is `collections.deque` preferred over a standard Python list for implementing queues?
+4. What is the time complexity of pushing and popping from a Priority Queue (Heap)?
+5. What is a "Monotonic Stack"?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. A **Stack** operates on a Last-In-First-Out (LIFO) principle, whereas a **Queue** operates on a First-In-First-Out (FIFO) principle.
+2. **BFS** is implemented using a Queue. **DFS** is implemented using a Stack (often implicitly via the call stack in recursion).
+3. A standard Python list `[]` is implemented as an array. `pop(0)` or `insert(0, val)` on a list requires shifting all other elements, taking $O(n)$ time. `collections.deque` is a doubly linked list, allowing $O(1)$ appends and pops from both ends.
+4. Both push (`heappush`) and pop (`heappop`) operations in a priority queue take **O(\log n)** time to maintain the heap property.
+5. A **Monotonic Stack** is a stack whose elements are always strictly increasing or strictly decreasing. It is used to solve problems like finding the "next greater element" efficiently in $O(n)$ time.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Hash Tables

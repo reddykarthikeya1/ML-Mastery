@@ -632,5 +632,25 @@ plt.show()
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the fundamental difference between the Normal Equation and Gradient Descent for solving Linear Regression?
+2. Which regularization technique (Lasso or Ridge) is better suited for automatic feature selection, and why?
+3. What is the "Sigmoid Function" used for in Logistic Regression?
+4. How do you interpret a VIF (Variance Inflation Factor) score of 10?
+5. What are the key assumptions of Linear Regression that should be checked using residual plots?
+
+---
+
+## 📝 Answers to Quick Check
+
+1. The **Normal Equation** provides an analytical, closed-form solution in one step ($O(n^3)$ complexity), making it efficient for small datasets. **Gradient Descent** is an iterative optimization algorithm that scales better for very large datasets ($O(kn^2)$ complexity) and works even when the matrix is not invertible.
+2. **Lasso (L1 Regularization)** is better for feature selection because its penalty term (absolute value of coefficients) can force some coefficients to become exactly zero, effectively removing those features from the model. Ridge only shrinks them toward zero.
+3. The **Sigmoid function** maps any real-valued number into a value between 0 and 1, which can be interpreted as the probability that a given data point belongs to a particular class.
+4. A **VIF of 10** indicates severe multicollinearity among the independent variables. Typically, a VIF > 5 or 10 suggests that the associated feature is highly redundant and may need to be removed or combined.
+5. The key assumptions are **Linearity** (linear relationship between X and y), **Homoscedasticity** (constant variance of errors), **Independence** of errors, and **Normality** of the error distribution.
+
+---
+
 **Status:** ✅ Complete
 **Next:** Tree-Based Models

@@ -183,5 +183,33 @@ print(f"Test Score: {test_score:.4f}")
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the difference between Feature Selection and Feature Extraction?
+2. How does One-Hot Encoding differ from Label Encoding?
+3. Why do we scale features for algorithms like KNN?
+4. What is the "Recursive Feature Elimination" (RFE) technique?
+5. When would you use a Pipeline in Scikit-Learn?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Feature Selection** involves choosing a subset of the original features. **Feature Extraction** involves transforming the original features into a new, lower-dimensional set of features (e.g., PCA).
+2. **One-Hot Encoding** creates new binary columns for each unique category (no order implied). **Label Encoding** assigns a unique integer to each category (implies an ordinal relationship).
+3. We scale features because **KNN** relies on distance calculations. If one feature has a much larger range than others, it will dominate the distance metric and bias the model.
+4. **RFE** is a wrapper-based feature selection method that fits a model and removes the weakest feature(s) until the specified number of features is reached.
+5. You use a **Pipeline** to bundle preprocessing steps (like scaling and encoding) together with an estimator, ensuring that the same transformations are applied to both training and test data, which helps prevent data leakage.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Classical ML Algorithms
+

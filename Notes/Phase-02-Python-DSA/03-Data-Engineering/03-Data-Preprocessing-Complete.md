@@ -660,5 +660,29 @@ print(missing_report)
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the difference between MCAR and MNAR missing data?
+2. When should you use RobustScaler over StandardScaler?
+3. Why might you choose not to scale features when using a Random Forest model?
+4. What is the "Curse of Dimensionality" in the context of One-Hot Encoding?
+5. How does Stratified Sampling differ from Random Sampling?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **MCAR (Missing Completely At Random)** means the missing data has no relationship to any other data (observed or unobserved). **MNAR (Missing Not At Random)** means the missingness is related to the unobserved value itself (e.g., people with very high debt are less likely to report it).
+2. Use **RobustScaler** when your dataset contains significant outliers. It uses the median and IQR instead of the mean and variance, making it insensitive to extreme values.
+3. **Tree-based models** (like Random Forest) partition the feature space using orthogonal splits (greater than/less than specific values). The absolute scale of the feature does not affect how the tree makes these splits.
+4. **Curse of Dimensionality** occurs when One-Hot Encoding a categorical feature with many unique categories creates too many new columns (dimensions), making the dataset sparse, computationally expensive to process, and prone to overfitting.
+5. **Random Sampling** selects items completely by chance. **Stratified Sampling** ensures that the sample maintains the same proportions of subgroups (classes) as the original dataset, which is crucial for imbalanced classification tasks.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** ETL Concepts

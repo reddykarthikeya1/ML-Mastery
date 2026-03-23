@@ -546,5 +546,32 @@ print(df.head())
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the difference between "Filter" and "Wrapper" methods for feature selection?
+2. Why is "Feature Scaling" important for distance-based algorithms like KNN or SVM?
+3. When should you use "One-Hot Encoding" versus "Label Encoding"?
+4. What is the difference between "Feature Selection" and "Feature Extraction" (like PCA)?
+5. Explain how a "Polynomial Features" transformation can help a linear model capture non-linear relationships.
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Filter methods** (e.g., Correlation, ANOVA) evaluate features based on their statistical properties independently of any model, making them very fast. **Wrapper methods** (e.g., RFE) use a specific ML model to evaluate combinations of features, making them more accurate but computationally expensive.
+2. Distance-based algorithms calculate the similarity between points using numerical distances. If features have different scales (e.g., age in years vs. income in thousands), the feature with the **larger numerical range** will dominate the distance calculation, potentially leading to a biased model.
+3. Use **One-Hot Encoding** for nominal categories with no inherent order (e.g., Color: Red, Blue, Green). Use **Label Encoding** (or Ordinal Encoding) only for ordinal categories where the order matters (e.g., Size: Small, Medium, Large) or for the target label itself.
+4. **Feature Selection** keeps a subset of the *original* features and discards the rest. **Feature Extraction** transforms the data into a *new*, lower-dimensional feature space (e.g., Principal Components) that preserves the most important information.
+5. Polynomial transformation creates new features by taking the power of existing features (e.g., $x^2$) or interactions between them (e.g., $x_1 \times x_2$). This allows a **linear model** to fit a non-linear curve in the original feature space.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Phase 3 - Core ML & Deep Learning

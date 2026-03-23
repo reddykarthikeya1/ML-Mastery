@@ -321,6 +321,9 @@ print(np.array_equal(u + v, v + u))  # True
 
 ## 📝 Answers to Practice Questions
 
+<details>
+<summary>Click to reveal answers</summary>
+
 ### Level 1: Conceptual
 1. **Is vector addition commutative? Show with an example.**
    - **Yes!** a + b = b + a
@@ -388,6 +391,7 @@ print(np.array_equal(u + v, v + u))  # True
    - = |c|√(v₁² + v₂² + ... + vₙ²)
    - = **|c|·|v|** ✓
 
+</details>
 ---
 
 ## 📌 Summary

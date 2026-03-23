@@ -571,5 +571,32 @@ plot_learning_curve(RandomForestClassifier(), X, y)
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. Why is Stratified K-Fold cross-validation preferred over standard K-Fold for classification tasks?
+2. What are the two primary components of Total Error in an ML model?
+3. How can you identify a "High Variance" (Overfitting) problem using a Learning Curve?
+4. What is the main computational disadvantage of Grid Search compared to Random Search?
+5. When should you use Time Series cross-validation instead of standard K-Fold?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Stratified K-Fold** ensures that each fold maintains the same percentage of samples for each class as the original dataset. This is crucial for imbalanced datasets where a standard random split might result in folds with zero samples of the minority class.
+2. Total Error = **Bias² + Variance + Irreducible Error**.
+3. **High Variance** is indicated by a large gap between the training accuracy and the validation accuracy. The training accuracy is usually very high, while the validation accuracy significantly lags behind.
+4. **Grid Search** is exhaustive and scales exponentially with the number of hyperparameters and their possible values (the "Curse of Dimensionality"). **Random Search** is much faster as it only evaluates a fixed number of random combinations, often finding a near-optimal solution in far less time.
+5. Use **Time Series cross-validation** when the data has a temporal dependency (e.g., stock prices, weather). Standard K-Fold would "leak" information from the future into the past, violating the chronological order of the data.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Feature Engineering

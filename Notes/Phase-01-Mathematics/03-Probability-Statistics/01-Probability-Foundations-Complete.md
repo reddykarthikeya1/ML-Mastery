@@ -752,6 +752,9 @@ check_independence(p_first_ace, 3/51, p_both_aces)
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Mutually exclusive vs Independent:**
    - Mutually exclusive: A ∩ B = ∅, cannot both occur
    - Independent: P(A|B) = P(A), occurrence doesn't affect probability
@@ -783,6 +786,7 @@ check_independence(p_first_ace, 3/51, p_both_aces)
    - Host's action provides information
    - Switching capitalizes on initial wrong choice
 
+</details>
 ---
 
 **Status:** ✅ Complete

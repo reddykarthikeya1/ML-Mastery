@@ -429,6 +429,9 @@ multiplication_table(7)
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **= vs ==:**
    - = is assignment
    - == is equality comparison
@@ -449,6 +452,7 @@ multiplication_table(7)
 6. **range(5):**
    - Produces: 0, 1, 2, 3, 4
 
+</details>
 ---
 
 **Status:** ✅ Complete

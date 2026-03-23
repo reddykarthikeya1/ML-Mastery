@@ -269,5 +269,31 @@ with timer("Processing"):
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. Why is it better to use a `with` statement when opening files?
+2. What is the difference between the `w` and `a` file modes?
+3. What does the `finally` block in a `try-except` statement guarantee?
+4. How do you manually trigger an exception in Python?
+5. What is the difference between `json.dump()` and `json.dumps()`?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. The **`with` statement** acts as a context manager that ensures the file is **automatically closed** as soon as the block is exited, even if an exception occurs, preventing resource leaks.
+2. The **`w` mode** (write) opens a file for writing and **overwrites** its entire content if it already exists. The **`a` mode** (append) opens a file and adds new data to the **end** of the existing content.
+3. The **`finally` block** is guaranteed to execute **no matter what**, regardless of whether an exception was raised or caught in the `try` and `except` blocks. It is typically used for cleanup tasks like closing database connections.
+4. You manually trigger an exception using the **`raise`** keyword (e.g., `raise ValueError("Invalid input")`).
+5. **`json.dump()`** writes a Python object to a **file-like object** (an actual file on disk). **`json.dumps()`** (dump string) converts a Python object into a **JSON-formatted string**.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Advanced Python Topics

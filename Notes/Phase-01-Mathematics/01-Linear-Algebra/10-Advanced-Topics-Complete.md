@@ -545,6 +545,9 @@ print(f"Match? {np.allclose(exp_A, exp_A_scipy)}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Test for positive definite:**
    - All eigenvalues > 0
    - All leading principal minors (determinants) > 0
@@ -582,6 +585,7 @@ print(f"Match? {np.allclose(exp_A, exp_A_scipy)}")
    - Example: If λ² - 5λ + 6 = 0, then A² - 5A + 6I = 0
    - Useful for computing matrix powers and functions
 
+</details>
 ---
 
 ## 🎉 Linear Algebra Complete!

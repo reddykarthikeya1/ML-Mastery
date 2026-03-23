@@ -414,6 +414,9 @@ print(f"Least squares: {x_ls}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **REF vs RREF:**
    - **REF (Row Echelon Form)**: Zeros below pivots, pivots to the right
    - **RREF (Reduced REF)**: REF + pivots = 1 + zeros above AND below pivots
@@ -444,6 +447,7 @@ print(f"Least squares: {x_ls}")
    - Number of pivots = dimension of column space
    - If every column has a pivot → columns are independent
 
+</details>
 ---
 
 **Status:** ✅ Complete  

@@ -1,347 +1,66 @@
 # Probability & Statistics - Practice Problems
 
-## Topic 1: Probability Foundations
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
-
+### Level 1: Basic Probability & Distributions
 **1.1** A fair die is rolled. Find:
 - a) P(rolling a 4)
 - b) P(rolling even)
 - c) P(rolling ≥ 3)
+**1.2** Two coins are flipped. What is the probability of getting at least one head?
+**1.3** If $X \sim \text{Bernoulli}(p = 0.7)$, find the expected value $E[X]$ and variance $Var(X)$.
+**1.4** For a normal distribution $N(\mu = 100, \sigma = 15)$, find $P(X > 115)$ using Z-scores.
 
-**1.2** Two coins are flipped. What is:
-- a) P(both heads)?
-- b) P(exactly one head)?
-- c) P(at least one head)?
+### Level 2: Intermediate Probability & Inference
+**2.1** **Bayes' Theorem:** Disease prevalence is 1%, test sensitivity is 99%, and specificity is 95%. If a person tests positive, what is the probability they actually have the disease?
+**2.2** **Joint Distributions:** Given a joint PMF table, how do you verify if two random variables $X$ and $Y$ are independent?
+**2.3** **Central Limit Theorem:** If you take a sample of size $n=100$ from an exponential distribution with $\lambda=1$, what is the approximate distribution of the sample mean?
+**2.4** **Confidence Intervals:** A sample of $n=100$ has a mean $\bar{X}=50$ and standard deviation $s=10$. Find the 95% confidence interval for the population mean.
 
-**1.3** In a deck of 52 cards:
-- a) P(drawing a King)?
-- b) P(drawing a Heart)?
-- c) P(drawing King of Hearts)?
+### Level 3: Advanced Theory & Analysis
+**3.1** **Chebyshev's Inequality:** For a distribution with $\mu=50$ and $\sigma=10$, find the lower bound for the probability $P(30 < X < 70)$.
+**3.2** **Information Theory:** Calculate the Entropy (in bits) of a fair 6-sided die.
+**3.3** **KL Divergence:** Given two distributions $p = [0.5, 0.5]$ and $q = [0.8, 0.2]$, calculate $D_{KL}(p || q)$. Is $D_{KL}(p || q) = D_{KL}(q || p)$?
+**3.4** **Estimation Theory:** Derive the Maximum Likelihood Estimator (MLE) for the parameter $\lambda$ of an Exponential distribution given data $x_1, \dots, x_n$.
 
----
+### Level 4: Python Implementation Practice
+**4.1** Write a Python function using `numpy` to simulate the **Monty Hall problem** over 10,000 trials and verify that switching doors wins ~2/3 of the time.
+**4.2** Use `scipy.stats` to plot the Probability Density Function (PDF) of a Normal distribution $N(0, 1)$ and shade the area representing $P(-1 < X < 1)$.
+**4.3** Implement a function to calculate the **Shannon Entropy** of a given probability vector.
 
-### Level 2: Intermediate
-
-**1.4** Bayes' Theorem - Medical Testing:
-```
-Disease prevalence: 1%
-Test sensitivity: 99%
-Test specificity: 95%
-
-If test is positive, what's P(disease)?
-```
-
-**1.5** Urn Problem:
-```
-Urn A: 3 red, 2 blue
-Urn B: 1 red, 4 blue
-
-Choose urn at random, then draw a ball.
-If ball is red, what's P(it came from Urn A)?
-```
-
-**1.6** Python Practice - Monty Hall Simulation:
-```python
-import numpy as np
-
-def monty_hall(n_trials=10000, switch=True):
-    """
-    Simulate Monty Hall problem.
-    Return win rate.
-    """
-    # Your code here
-    pass
-
-# Verify that switching wins 2/3 of the time
-```
+### Level 5: Real-world Statistical Design
+**5.1** **Scenario:** You are running an A/B test for a new website feature.
+- Version A (Current) has a 10% conversion rate.
+- Version B (New) has an 11% conversion rate based on 1,000 visitors.
+**Task:** Formulate the Null and Alternative hypotheses. Describe which statistical test (Z-test vs T-test) you would use, and calculate the p-value. Would you recommend the change at $\alpha = 0.05$?
 
 ---
 
-## Topic 2: Random Variables and Distributions
-
-### Level 1: Basic
-
-**2.1** X ~ Bernoulli(p = 0.7). Find:
-- a) E[X]
-- b) Var(X)
-- c) P(X = 1)
-
-**2.2** X ~ Binomial(n = 10, p = 0.5). Find:
-- a) E[X]
-- b) Var(X)
-- c) P(X = 5)
-
-**2.3** X ~ N(μ = 100, σ = 15). Find:
-- a) P(X > 115)
-- b) P(85 < X < 115)
-- c) 90th percentile
-
----
-
-### Level 2: Intermediate
-
-**2.4** Waiting Time:
-```
-Calls arrive at Poisson rate λ = 5 per hour.
-
-a) P(no calls in 1 hour)?
-b) P(at least 3 calls in 1 hour)?
-c) Expected time until first call?
-```
-
-**2.5** Normal Approximation:
-```
-Coin flipped 100 times.
-
-a) P(exactly 50 heads)?
-b) P(more than 60 heads)?
-Use normal approximation.
-```
-
-**2.6** Python Practice - Distribution Visualization:
-```python
-from scipy import stats
-import matplotlib.pyplot as plt
-
-# Plot PMF/PDF of:
-# 1. Binomial(n=20, p=0.3)
-# 2. Poisson(λ=5)
-# 3. Normal(μ=0, σ=1)
-# 4. Exponential(λ=1)
-```
-
----
-
-## Topic 3: Joint Distributions
-
-### Level 2: Intermediate
-
-**3.1** Joint PMF:
-```
-     Y=0   Y=1   Y=2
-X=0  0.1   0.2   0.1
-X=1  0.2   0.3   0.1
-
-Find:
-a) Marginal P(X=1)
-b) Conditional P(Y=1 | X=0)
-c) Cov(X, Y)
-d) Are X and Y independent?
-```
-
-**3.2** Bivariate Normal:
-```
-(X, Y) ~ BVN(μₓ=0, μᵧ=0, σₓ²=1, σᵧ²=1, ρ=0.5)
-
-Find:
-a) E[X | Y = 1]
-b) Var(X | Y = 1)
-```
-
----
-
-## Topic 4: Limit Theorems
-
-### Level 2: Intermediate
-
-**4.1** Chebyshev's Inequality:
-```
-Distribution with μ = 50, σ = 10.
-
-Find lower bound for P(30 < X < 70).
-```
-
-**4.2** Central Limit Theorem:
-```
-Population: Exponential(λ = 1)
-Sample size: n = 100
-
-a) Approximate distribution of sample mean?
-b) P(sample mean > 1.1)?
-```
-
-**4.3** Python Practice - CLT Demonstration:
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Demonstrate CLT with uniform distribution
-# Show sample means approach normal as n increases
-
-def clt_demo():
-    # Your code here
-    pass
-```
-
----
-
-## Topic 5: Estimation and Hypothesis Testing
-
-### Level 2: Intermediate
-
-**5.1** MLE:
-```
-Data: x₁, ..., xₙ from Exponential(λ)
-
-Find MLE of λ.
-```
-
-**5.2** Confidence Interval:
-```
-Sample: n = 100, X̄ = 50, s = 10
-
-Find 95% CI for population mean.
-```
-
-**5.3** Hypothesis Test:
-```
-H₀: μ = 100
-H₁: μ ≠ 100
-
-Sample: n = 25, X̄ = 105, s = 15
-
-a) Calculate t-statistic
-b) Find p-value
-c) Decision at α = 0.05
-```
-
----
-
-## Topic 6: Regression
-
-### Level 2: Intermediate
-
-**6.1** Simple Linear Regression:
-```
-Data:
-X: 1, 2, 3, 4, 5
-Y: 2, 4, 5, 4, 5
-
-Find:
-a) Least squares estimates β̂₀, β̂₁
-b) R²
-c) Prediction for X = 6
-```
-
-**6.2** Python Practice - Regression Analysis:
-```python
-from sklearn.linear_model import LinearRegression
-import numpy as np
-
-# Generate data: Y = 3 + 2X + ε
-np.random.seed(42)
-X = np.random.uniform(0, 10, 100).reshape(-1, 1)
-Y = 3 + 2 * X + np.random.normal(0, 1, 100).reshape(-1, 1)
-
-# Fit linear regression
-# Report coefficients and R²
-# Plot residuals
-```
-
----
-
-## Topic 7: Information Theory
-
-### Level 2: Intermediate
-
-**7.1** Entropy:
-```
-a) Entropy of fair coin?
-b) Entropy of biased coin (p = 0.9)?
-c) Entropy of fair die?
-```
-
-**7.2** KL Divergence:
-```
-p = [0.5, 0.5]
-q = [0.8, 0.2]
-
-Calculate D_KL(p || q) and D_KL(q || p).
-```
-
-**7.3** Python Practice - Information Measures:
-```python
-import numpy as np
-
-def entropy(p):
-    """Calculate entropy of distribution p"""
-    # Your code here
-    pass
-
-def kl_divergence(p, q):
-    """Calculate KL divergence"""
-    # Your code here
-    pass
-
-# Test with various distributions
-```
-
----
-
-## Solutions (Selected Problems)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
 ### 1.1
-```
-a) 1/6
-b) 3/6 = 1/2
-c) 4/6 = 2/3
-```
-
-### 1.4
-```
-P(D|+) = P(+|D)P(D) / [P(+|D)P(D) + P(+|¬D)P(¬D)]
-       = 0.99×0.01 / [0.99×0.01 + 0.05×0.99]
-       = 0.0099 / 0.0594
-       = 0.167 ≈ 16.7%
-```
+a) 1/6, b) 3/6 = 1/2, c) 4/6 = 2/3
 
 ### 2.1
-```
-a) E[X] = p = 0.7
-b) Var(X) = p(1-p) = 0.21
-c) P(X=1) = p = 0.7
-```
+$P(D|+) = \frac{P(+|D)P(D)}{P(+|D)P(D) + P(+|\neg D)P(\neg D)} = \frac{0.99 \times 0.01}{0.99 \times 0.01 + 0.05 \times 0.99} \approx 0.167$ (16.7%)
 
-### 2.3
-```
-a) P(X > 115) = P(Z > 1) = 0.1587
-b) P(85 < X < 115) = P(-1 < Z < 1) = 0.6827
-c) 90th percentile: μ + 1.28σ = 100 + 1.28×15 = 119.2
-```
+### 3.1
+$P(30 < X < 70) = P(|X - 50| < 2\sigma)$. By Chebyshev: $P \geq 1 - 1/2^2 = 0.75$.
+
+### 3.2
+$H(X) = \sum p_i \log_2(1/p_i) = \log_2(6) \approx 2.585$ bits.
 
 ### 4.1
-```
-P(30 < X < 70) = P(|X - 50| < 20)
-               = P(|X - μ| < 2σ)
-≥ 1 - 1/2² = 1 - 1/4 = 0.75
-
-At least 75% of values are between 30 and 70.
-```
-
-### 5.2
-```
-95% CI: X̄ ± 1.96 × s/√n
-      = 50 ± 1.96 × 10/10
-      = 50 ± 1.96
-      = [48.04, 51.96]
-```
-
-### 6.1
-```
-a) β̂₁ = 0.7, β̂₀ = 2.5
-b) R² = 0.7
-c) Ŷ = 2.5 + 0.7×6 = 6.7
-```
-
-### 7.1
-```
-a) H = 1 bit
-b) H = 0.469 bits
-c) H = log₂(6) = 2.585 bits
+```python
+def monty_hall(n=10000, switch=True):
+    car = np.random.randint(0, 3, n)
+    pick = np.random.randint(0, 3, n)
+    if switch:
+        return np.mean(pick != car)
+    return np.mean(pick == car)
 ```
 
 </details>
@@ -349,8 +68,6 @@ c) H = log₂(6) = 2.585 bits
 ---
 
 ## 📝 Notes Section
-
-Use this space for additional problems:
 
 ### My Practice Problems:
 

@@ -219,5 +219,32 @@ print(f"\nClassification Report:\n{classification_report(y_test, y_pred)}")
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is K-Fold Cross-Validation?
+2. What is the difference between Bias and Variance?
+3. How do you detect overfitting using a learning curve?
+4. What is the difference between Grid Search and Random Search?
+5. Why use Stratified K-Fold instead of regular K-Fold?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **K-Fold Cross-Validation** is a technique where the dataset is split into $K$ subsets (folds). The model is trained $K$ times, each time using a different fold as the test set and the remaining $K-1$ folds as the training set.
+2. **Bias** is error from overly simple assumptions (underfitting). **Variance** is error from high sensitivity to small fluctuations in the training set (overfitting).
+3. **Overfitting** is detected when there is a large gap between the training performance (very high) and the validation performance (significantly lower).
+4. **Grid Search** tries every possible combination of hyperparameters in a specified range. **Random Search** samples a fixed number of random combinations from the range, which is often faster and just as effective.
+5. **Stratified K-Fold** ensures that each fold has the same proportion of class labels as the entire dataset, which is critical for maintaining consistency in classification tasks with imbalanced classes.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Feature Engineering

@@ -442,6 +442,9 @@ approximate_limit(lambda x: np.sin(x)/x if x != 0 else 1, 0)
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Limit vs Function Value:**
    - lim(x→a) f(x) is the value f(x) approaches
    - f(a) is the actual value at x = a
@@ -470,6 +473,7 @@ approximate_limit(lambda x: np.sin(x)/x if x != 0 else 1, 0)
    - Fundamental in signal processing (sinc function)
    - Appears in Fourier analysis
 
+</details>
 ---
 
 **Status:** ✅ Complete

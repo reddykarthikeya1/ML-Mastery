@@ -565,6 +565,9 @@ print(f"  Error: {abs(result - 1):.2e}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Double integral geometric meaning:**
    - Volume under surface z = f(x, y)
 
@@ -589,6 +592,7 @@ print(f"  Error: {abs(result - 1):.2e}")
    - Simplifies integrand
    - Makes integration possible
 
+</details>
 ---
 
 **Status:** ✅ Complete

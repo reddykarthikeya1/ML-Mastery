@@ -617,6 +617,9 @@ This is computing partial derivatives!
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **∂f/∂x geometric meaning:**
    - Slope of surface in x-direction
    - Rate of change of f as x varies (y fixed)
@@ -642,6 +645,7 @@ This is computing partial derivatives!
    - Continuous ↛ Differentiable
    - Partials exist ↛ Differentiable
 
+</details>
 ---
 
 **Status:** ✅ Complete

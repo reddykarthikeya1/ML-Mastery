@@ -1,220 +1,81 @@
 # Classical ML Algorithms - Practice Problems
 
-## Topic 1: Linear Models
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Concept Recall
+**1.1** In Linear Regression, what is the geometric interpretation of the "Residuals"?
+**1.2** Explain why a single Decision Tree is highly prone to overfitting and name one ensemble method that solves this.
+**1.3** Define "Support Vectors" in the context of SVM.
+**1.4** What is the fundamental "Naive" assumption in Naive Bayes?
+**1.5** What is the difference between "Inertia" and "Silhouette Score" in Clustering?
 
-**1.1** Implement Ridge Regression:
-```python
-from sklearn.linear_model import Ridge
+### Level 2: Intermediate Operations & Tuning
+**2.1** Given a model with high variance (overfitting), should you increase or decrease the $\alpha$ (alpha) parameter in Ridge/Lasso regression? Why?
+**2.2** In Random Forest, how does the `max_features` hyperparameter help in reducing the correlation between individual trees?
+**2.3** Compare the "Kernel Trick" in SVM to explicit feature transformation. What is the computational advantage?
+**2.4** When using K-Means, why is the choice of initial centroid placement (e.g., K-Means++) so critical?
+**2.5** How does DBSCAN handle "Noise" (outliers) differently compared to K-Means?
 
-# 1. Create Ridge model with alpha=1.0
-# 2. Fit on training data
-# 3. Evaluate with cross-validation
-```
+### Level 3: Advanced Algorithm Analysis
+**3.1** Derive the gradient update rule for a simple Linear Regression model with L2 regularization (Ridge).
+**3.2** Explain the concept of "Information Gain" and how it relates to Shannon Entropy in Decision Trees.
+**3.3** Prove why Naive Bayes becomes a linear classifier when the features are binary (Bernoulli Naive Bayes).
+**3.4** Compare Gaussian Mixture Models (GMM) and K-Means. In what scenario would GMM perform significantly better?
 
-**1.2** Lasso Feature Selection:
-```python
-from sklearn.linear_model import Lasso
+### Level 4: Python Implementation Practice
+**4.1** Write a Scikit-Learn pipeline that:
+1. Scales data using `StandardScaler`.
+2. Selects the top 5 features using `SelectKBest`.
+3. Fits a `RandomForestClassifier`.
+4. Performs a 5-fold cross-validation.
 
-# 1. Fit Lasso with alpha=0.1
-# 2. Count non-zero coefficients
-# 3. Print selected features
-```
+**4.2** Implement a simple version of the K-Means "Assignment" step from scratch using only NumPy (given data points $X$ and centroids $C$).
 
----
-
-## Topic 2: Tree-Based Models
-
-### Level 1: Basic
-
-**2.1** Decision Tree:
-```python
-from sklearn.tree import DecisionTreeClassifier
-
-# 1. Create tree with max_depth=3
-# 2. Fit on data
-# 3. Get feature importances
-# 4. Visualize tree
-```
-
-**2.2** Random Forest:
-```python
-from sklearn.ensemble import RandomForestClassifier
-
-# 1. Create RF with 100 trees
-# 2. Fit on data
-# 3. Evaluate accuracy
-# 4. Get feature importances
-```
-
-### Level 2: Intermediate
-
-**2.3** Compare Ensemble Methods:
-```python
-from sklearn.ensemble import (
-    RandomForestClassifier, 
-    GradientBoostingClassifier,
-    AdaBoostClassifier
-)
-
-# 1. Train all three models
-# 2. Compare accuracy
-# 3. Compare training time
-# 4. Cross-validate best model
-```
-
-**2.4** XGBoost Tuning:
-```python
-import xgboost as xgb
-from sklearn.model_selection import GridSearchCV
-
-# 1. Define parameter grid for XGBoost
-# 2. Perform GridSearchCV
-# 3. Get best parameters
-# 4. Evaluate on test set
-```
+### Level 5: Real-world System Design
+**5.1** **Scenario:** You are building a Credit Card Fraud Detection system.
+- The dataset is highly imbalanced (0.1% fraud cases).
+- False Negatives (missing a fraud) are extremely costly.
+- You need a model that is both accurate and somewhat interpretable for auditing.
+**Task:** Propose an algorithm choice (e.g., Random Forest vs. SVM vs. Logistic Regression). Explain your choice, how you would handle the class imbalance, and which evaluation metric (Precision, Recall, F1, or AUC-ROC) you would prioritize.
 
 ---
 
-## Topic 3: Instance-Based, SVM, Naive Bayes
-
-### Level 1: Basic
-
-**3.1** KNN Optimal k:
-```python
-from sklearn.neighbors import KNeighborsClassifier
-
-# 1. Test k from 1 to 30
-# 2. Plot CV accuracy vs k
-# 3. Find optimal k
-```
-
-**3.2** SVM Kernel Comparison:
-```python
-from sklearn.svm import SVC
-
-# 1. Test linear, poly, rbf, sigmoid kernels
-# 2. Compare accuracy
-# 3. Choose best kernel
-```
-
-### Level 2: Intermediate
-
-**3.3** Naive Bayes Variants:
-```python
-from sklearn.naive_bayes import (
-    GaussianNB, MultinomialNB, BernoulliNB
-)
-
-# 1. Train all three variants
-# 2. Compare performance
-# 3. Identify best use case for each
-```
-
----
-
-## Topic 4: Clustering
-
-### Level 1: Basic
-
-**4.1** K-Means Elbow Method:
-```python
-from sklearn.cluster import KMeans
-
-# 1. Test k from 1 to 10
-# 2. Plot inertias
-# 3. Find optimal k using elbow
-```
-
-**4.2** DBSCAN:
-```python
-from sklearn.cluster import DBSCAN
-
-# 1. Fit DBSCAN with eps=0.5, min_samples=5
-# 2. Count clusters and noise points
-# 3. Visualize clusters
-```
-
-### Level 2: Intermediate
-
-**4.3** Compare Clustering Algorithms:
-```python
-from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
-from sklearn.metrics import silhouette_score
-
-# 1. Train all three algorithms
-# 2. Compare silhouette scores
-# 3. Visualize results
-# 4. Discuss pros/cons of each
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
-### 1.1 Ridge Regression
+### 1.1
+Residuals represent the vertical distance between the actual data point and the fitted regression line ($y - \hat{y}$). Geometrically, the goal of OLS is to minimize the sum of the squares of these distances.
+
+### 2.1
+You should **increase $\alpha$**. Increasing the regularization strength increases the penalty on large coefficients, which simplifies the model, reduces variance (overfitting), but slightly increases bias.
+
+### 3.4
+**GMM** provides "soft clustering" (probabilities of membership) and can model elliptical clusters because it accounts for both the mean and the covariance of the data. **K-Means** is "hard clustering" and assumes clusters are spherical and have similar variance. GMM is better when clusters have overlapping boundaries or non-spherical shapes.
+
+### 4.1
 ```python
-ridge = Ridge(alpha=1.0)
-ridge.fit(X_train, y_train)
-scores = cross_val_score(ridge, X_train, y_train, cv=5)
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),
+    ('selector', SelectKBest(k=5)),
+    ('clf', RandomForestClassifier())
+])
+
+scores = cross_val_score(pipeline, X, y, cv=5)
 ```
 
-### 2.1 Decision Tree
-```python
-tree = DecisionTreeClassifier(max_depth=3, random_state=42)
-tree.fit(X_train, y_train)
-importances = tree.feature_importances_
-plot_tree(tree, feature_names=feature_names)
-```
-
-### 2.4 XGBoost Tuning
-```python
-param_grid = {
-    'n_estimators': [100, 200],
-    'max_depth': [3, 5, 7],
-    'learning_rate': [0.01, 0.1, 0.3]
-}
-
-grid_search = GridSearchCV(
-    xgb.XGBClassifier(),
-    param_grid,
-    cv=5,
-    scoring='accuracy'
-)
-grid_search.fit(X_train, y_train)
-```
-
-### 3.1 KNN Optimal k
-```python
-k_range = range(1, 31)
-cv_scores = []
-
-for k in k_range:
-    knn = KNeighborsClassifier(n_neighbors=k)
-    scores = cross_val_score(knn, X_train, y_train, cv=5)
-    cv_scores.append(scores.mean())
-
-optimal_k = k_range[np.argmax(cv_scores)]
-```
-
-### 4.3 Compare Clustering
-```python
-models = {
-    'K-Means': KMeans(n_clusters=3),
-    'DBSCAN': DBSCAN(eps=0.5),
-    'Hierarchical': AgglomerativeClustering(n_clusters=3)
-}
-
-for name, model in models.items():
-    labels = model.fit_predict(X)
-    if len(set(labels)) > 1:
-        score = silhouette_score(X, labels)
-        print(f"{name} Silhouette: {score:.4f}")
-```
+### 5.1
+**Choice:** Random Forest or Gradient Boosting (XGBoost).
+**Reasoning:** They handle non-linearities well, provide "Feature Importance" for interpretability, and are generally robust.
+**Imbalance:** Use **SMOTE** (Oversampling) or set `class_weight='balanced'`.
+**Metric:** Prioritize **Recall** (to catch as many frauds as possible) while maintaining a reasonable **Precision-Recall AUC**.
 
 </details>
 
@@ -233,4 +94,4 @@ for name, model in models.items():
 
 ---
 **Last Updated:** 2026-03-23
-**Status:** ✅ Classical ML Algorithms Complete!
+**Status:** ✅ Classical ML Complete!

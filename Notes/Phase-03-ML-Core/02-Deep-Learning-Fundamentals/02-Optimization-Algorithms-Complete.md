@@ -527,5 +527,25 @@ plt.show()
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the fundamental trade-off between Batch Gradient Descent and Stochastic Gradient Descent (SGD)?
+2. How does the "Momentum" term help in optimizing a neural network?
+3. What is the primary problem with AdaGrad that RMSprop and Adam attempt to solve?
+4. Explain the concept of "Bias Correction" in the Adam optimizer.
+5. Why is "Learning Rate Scheduling" (like Cosine Annealing) often used in modern deep learning training?
+
+---
+
+## 📝 Answers to Quick Check
+
+1. **Batch GD** uses the entire dataset to compute gradients, making updates stable and accurate but very slow and memory-intensive for large data. **SGD** updates weights using only one sample at a time, making it very fast and capable of escaping local minima due to its noisy updates, but it never truly "settles" at the minimum.
+2. **Momentum** accumulates a "velocity" vector of past gradients. This helps accelerate the optimizer in directions where the gradient is consistent and dampens oscillations in directions where the gradient changes frequently (like in ravines), leading to faster convergence.
+3. **AdaGrad** accumulates all past squared gradients in the denominator, which causes the effective learning rate to decrease monotonically and eventually become so small that the model stops learning. **RMSprop** and **Adam** use an exponentially decaying average of squared gradients to ensure the learning rate stays effective.
+4. In **Adam**, the first and second moment estimates ($m_t$ and $v_t$) are initialized to zero. This biases them towards zero, especially during the early steps of training. **Bias correction** divides these estimates by $(1 - \beta^t)$ to compensate for this initialization bias.
+5. **Learning Rate Scheduling** allows the model to start with a high learning rate to quickly explore the loss landscape and escape local minima, then gradually decrease it to "fine-tune" the weights and settle accurately into a deep minimum as training progresses.
+
+---
+
 **Status:** ✅ Complete
 **Next:** Regularization Techniques

@@ -681,6 +681,9 @@ plt.show()
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Finding critical points:**
    - Solve ∇f = 0 (all partials = 0)
    - Check where partials don't exist
@@ -709,6 +712,7 @@ plt.show()
    - D < 0 (Hessian indefinite)
    - Some directions increase, some decrease
 
+</details>
 ---
 
 **Status:** ✅ Complete

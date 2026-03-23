@@ -1,209 +1,93 @@
 # Data Engineering - Practice Problems
 
-## Topic 1: SQL Fundamentals
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Concept Recall
+**1.1** What is the difference between a `WHERE` clause and a `HAVING` clause in SQL?
+**1.2** List the four main types of NoSQL databases and provide one common use case for each.
+**1.3** Define the three main types of missing data mechanisms (MCAR, MAR, MNAR).
+**1.4** What are the three phases of an ETL pipeline?
 
-**1.1** Write SQL queries for:
-```sql
--- 1. Select all employees with salary > 50000
--- 2. Count employees per department
--- 3. Find average salary by department
--- 4. List employees hired in 2024
-```
+### Level 2: Intermediate Operations
+**2.1** Write a SQL query to find the second highest salary from an `employees` table without using Window Functions (e.g., using `MAX` or `LIMIT`/`OFFSET`).
+**2.2** In MongoDB, write an aggregation pipeline to group users by `city`, calculate the average age per city, and sort the results by the average age in descending order.
+**2.3** Given a dataset with severe outliers in a `salary` column, why might `RobustScaler` be a better choice than `StandardScaler`?
+**2.4** Explain the difference between Full Extraction and Incremental Extraction. Why is CDC (Change Data Capture) important?
 
-**1.2** JOIN practice:
-```sql
--- Given tables: employees(id, name, dept_id), departments(id, name)
--- 1. INNER JOIN to get employee with department
--- 2. LEFT JOIN to get all employees with their departments
--- 3. Find employees without departments
-```
+### Level 3: Advanced Queries and Design
+**3.1** Write a SQL query using Window Functions to assign a dense rank to employees based on their sales performance, partitioned by their department.
+**3.2** Compare the Lambda and Kappa data pipeline architectures. In what scenario would you explicitly choose Kappa over Lambda?
+**3.3** You have a categorical feature with 1,000 unique string values (high cardinality). Why is One-Hot Encoding a poor choice here, and what encoding technique would you use instead?
 
-### Level 2: Intermediate
+### Level 4: Python Implementation Practice
+**4.1** Using `pandas`, write a concise script to:
+1. Load a CSV file named `data.csv`.
+2. Fill missing numeric values with the column median.
+3. Drop any rows where the `email` column is missing.
+4. Apply a One-Hot Encoding to the `department` column.
 
-**2.1** Window functions:
-```sql
--- 1. Rank employees by salary within each department
--- 2. Calculate running total of sales
--- 3. Find top 3 salaries per department
-```
+**4.2** Write a simple Python function to simulate a Redis cache check: It should take a `user_id`, check if `user:{user_id}` exists in a dictionary (acting as Redis). If it does, return the data. If not, simulate a DB call, store the result in the dictionary, and return it.
 
-**2.2** Subqueries and CTEs:
-```sql
--- 1. Find employees earning more than department average
--- 2. Using CTE, calculate monthly sales totals
--- 3. Find departments with above-average sales
-```
-
----
-
-## Topic 2: NoSQL
-
-### Level 2: Intermediate
-
-**2.1** MongoDB queries:
-```javascript
-// 1. Find all users over 25
-// 2. Update user's email
-// 3. Aggregate: group by city, count users
-```
+### Level 5: Real-world System Design
+**5.1** **Scenario:** You are building a real-time recommendation engine for an e-commerce platform. 
+- User clicks stream in at 10,000 events per second.
+- You need to update user profiles in real-time.
+- You also need to run a nightly batch job to retrain your Machine Learning models using all historical data.
+**Task:** Outline the data architecture for this system. Specify which databases (SQL vs NoSQL types) you would use for the real-time cache vs. the historical data, and whether you would use an ETL, ELT, Lambda, or Kappa pipeline approach.
 
 ---
 
-## Topic 3: Data Preprocessing
-
-### Level 2: Intermediate
-
-**3.1** Handle missing data:
-```python
-import pandas as pd
-import numpy as np
-
-df = pd.DataFrame({
-    'A': [1, 2, np.nan, 4, np.nan],
-    'B': [5, np.nan, np.nan, 8, 10],
-    'C': ['a', 'b', 'c', np.nan, 'e']
-})
-
-# 1. Count missing values
-# 2. Fill numeric with mean
-# 3. Drop rows with any missing
-# 4. Forward fill
-```
-
-**3.2** Encoding practice:
-```python
-df = pd.DataFrame({
-    'color': ['red', 'blue', 'green', 'blue'],
-    'size': ['S', 'M', 'L', 'XL'],
-    'price': [10, 15, 20, 25]
-})
-
-# 1. One-hot encode 'color'
-# 2. Label encode 'size' (ordinal)
-# 3. Create pipeline with encoding
-```
-
----
-
-## Topic 4: ETL
-
-### Level 3: Advanced
-
-**4.1** Build ETL pipeline:
-```python
-def etl_pipeline(source_file, target_table):
-    """
-    Complete ETL pipeline:
-    1. Extract from CSV
-    2. Clean data (handle missing, remove duplicates)
-    3. Transform (create features)
-    4. Load to SQLite
-    """
-    # Your code here
-    pass
-```
-
----
-
-## Topic 5: Data Pipelines
-
-### Level 3: Advanced
-
-**5.1** Airflow DAG:
-```python
-from airflow import DAG
-from airflow.operators.python import PythonOperator
-
-# Create DAG with:
-# 1. Extract task
-# 2. Transform task
-# 3. Load task
-# 4. Proper dependencies
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
 ### 1.1
-```sql
--- 1
-SELECT * FROM employees WHERE salary > 50000;
-
--- 2
-SELECT department, COUNT(*) as emp_count 
-FROM employees 
-GROUP BY department;
-
--- 3
-SELECT department, AVG(salary) as avg_salary 
-FROM employees 
-GROUP BY department;
-
--- 4
-SELECT * FROM employees 
-WHERE EXTRACT(YEAR FROM hire_date) = 2024;
-```
+`WHERE` filters individual rows before any grouping or aggregations are applied. `HAVING` filters the resulting groups after the `GROUP BY` clause and aggregations have been processed.
 
 ### 2.1
 ```sql
--- 1. Rank by salary
-SELECT name, department, salary,
-       RANK() OVER (PARTITION BY department ORDER BY salary DESC) as rank
-FROM employees;
+SELECT MAX(salary) 
+FROM employees 
+WHERE salary < (SELECT MAX(salary) FROM employees);
+```
+*(Alternatively, using ORDER BY and LIMIT/OFFSET depending on the SQL dialect).*
 
--- 2. Running total
-SELECT date, sales,
-       SUM(sales) OVER (ORDER BY date) as running_total
-FROM daily_sales;
-
--- 3. Top 3 per department
-SELECT * FROM (
-    SELECT name, department, salary,
-           DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) as rank
-    FROM employees
-) ranked
-WHERE rank <= 3;
+### 2.2
+```javascript
+db.users.aggregate([
+    { $group: { _id: "$city", avg_age: { $avg: "$age" } } },
+    { $sort: { avg_age: -1 } }
+])
 ```
 
 ### 3.1
-```python
-# 1. Count missing
-df.isnull().sum()
-
-# 2. Fill numeric with mean
-df['A'] = df['A'].fillna(df['A'].mean())
-df['B'] = df['B'].fillna(df['B'].mean())
-
-# 3. Drop rows with any missing
-df_clean = df.dropna()
-
-# 4. Forward fill
-df_ffill = df.fillna(method='ffill')
+```sql
+SELECT 
+    employee_id, 
+    department_id, 
+    sales,
+    DENSE_RANK() OVER (PARTITION BY department_id ORDER BY sales DESC) as sales_rank
+FROM employees;
 ```
 
-### 3.2
+### 3.3
+One-Hot Encoding 1,000 unique values would create 1,000 new sparse columns, leading to the Curse of Dimensionality (massive memory footprint, overfitting risk). Instead, you should use **Target Encoding** (Mean Encoding), **Frequency Encoding**, or the **Hashing Trick** to keep the dimensional footprint small.
+
+### 4.1
 ```python
-# 1. One-hot encode
-df_encoded = pd.get_dummies(df, columns=['color'], prefix='color')
+import pandas as pd
 
-# 2. Label encode
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-df['size_encoded'] = le.fit_transform(df['size'])
+df = pd.read_csv('data.csv')
+# Fill numeric missing with median
+numeric_cols = df.select_dtypes(include='number').columns
+df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median())
 
-# 3. Pipeline
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
+# Drop missing emails
+df = df.dropna(subset=['email'])
 
-pipeline = Pipeline([
-    ('encoder', OneHotEncoder(columns=['color']))
-])
+# One-hot encode department
+df = pd.get_dummies(df, columns=['department'], drop_first=True)
 ```
 
 </details>

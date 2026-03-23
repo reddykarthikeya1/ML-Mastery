@@ -495,5 +495,29 @@ if __name__ == "__main__":
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the fundamental difference between ETL and ELT?
+2. Why is Incremental Extraction often preferred over Full Extraction in large data systems?
+3. What is Change Data Capture (CDC)?
+4. What happens during an "Upsert" load strategy?
+5. Name two popular open-source tools for ETL orchestration and data transformation.
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **ETL (Extract, Transform, Load)** transforms data on a separate processing server before loading it into the data warehouse. **ELT (Extract, Load, Transform)** loads raw data directly into the target system (like a modern cloud data warehouse) and uses the target system's compute power to do the transformation.
+2. **Incremental extraction** only pulls data that has changed or been added since the last run. For large datasets, this is vastly faster and less resource-intensive than pulling the entire dataset every time (Full Extraction).
+3. **Change Data Capture (CDC)** is a set of software design patterns used to determine and track the data that has changed so that action can be taken using the changed data (often using database logs or version numbers).
+4. An **Upsert** (Update or Insert) checks if a record already exists based on a key. If it exists, it updates the record; if it does not exist, it inserts a new record.
+5. **Apache Airflow** is a popular tool for ETL orchestration, and **dbt (Data Build Tool)** is popular for data transformation.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Data Pipelines

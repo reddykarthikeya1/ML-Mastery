@@ -845,6 +845,9 @@ mgf_examples()
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **E[g(X)] ≠ g(E[X]):**
    - Expectation is linear, not nonlinear
    - Jensen's inequality: E[g(X)] ≥ g(E[X]) for convex g
@@ -869,6 +872,7 @@ mgf_examples()
    - M⁽ᵏ⁾(0) = E[Xᵏ]
    - Differentiate k times, evaluate at t=0
 
+</details>
 ---
 
 **Status:** ✅ Complete

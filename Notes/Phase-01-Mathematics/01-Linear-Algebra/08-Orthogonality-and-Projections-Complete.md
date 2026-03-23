@@ -521,6 +521,9 @@ print(f"Rank(P) = Trace(P)? {np.isclose(np.linalg.matrix_rank(P), np.trace(P))}"
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Orthogonal vs Orthonormal:**
    - **Orthogonal**: Vectors are perpendicular (dot product = 0)
    - **Orthonormal**: Orthogonal + each vector has unit length (magnitude = 1)
@@ -553,6 +556,7 @@ print(f"Rank(P) = Trace(P)? {np.isclose(np.linalg.matrix_rank(P), np.trace(P))}"
    - dim(plane) = 2, dim(orthogonal complement) = 1
    - 2 + 1 = 3 (dimension formula holds)
 
+</details>
 ---
 
 **Status:** ✅ Complete  

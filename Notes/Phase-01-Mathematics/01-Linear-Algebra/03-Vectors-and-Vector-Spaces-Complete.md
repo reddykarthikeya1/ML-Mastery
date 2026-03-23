@@ -385,6 +385,9 @@ print(f"Null space basis: {null_space}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Geometric vs Algebraic:**
    - **Geometric**: Arrow with direction and magnitude (visual)
    - **Algebraic**: Ordered list of numbers (computational)
@@ -412,6 +415,7 @@ print(f"Null space basis: {null_space}")
    - **rank(A) + dim(Null(A)) = n** (number of columns)
    - Dimension of column space + dimension of null space = total dimensions
 
+</details>
 ---
 
 **Status:** ✅ Complete  

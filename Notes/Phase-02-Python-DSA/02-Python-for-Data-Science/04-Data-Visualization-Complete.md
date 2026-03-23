@@ -566,5 +566,31 @@ def create_comparison_plot():
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the hierarchy of objects in Matplotlib (from the largest container down)?
+2. What is the difference between `plt.plot()` and `plt.scatter()`?
+3. Which Seaborn plot is best for visualizing the distribution of a single numeric variable along with its density?
+4. What information does a Box Plot provide about a dataset?
+5. When would you use a `FacetGrid` or `pairplot` in Seaborn?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. The Matplotlib hierarchy is: **Figure** (the entire window/page) → **Axes** (an individual plot/subplot) → **Axis** (the x and y lines) → **Tick/Label**.
+2. **`plt.plot()`** is primarily for line plots (connecting points), while **`plt.scatter()`** is for individual data points (useful for showing correlations or clusters).
+3. **`sns.histplot(kde=True)`** or **`sns.displot(kde=True)`** is best for showing both the frequency (histogram) and the estimated probability density (KDE).
+4. A **Box Plot** shows the five-number summary: the **minimum**, **first quartile (Q1)**, **median (Q2)**, **third quartile (Q3)**, and **maximum**, while also explicitly identifying **outliers**.
+5. Use a **`FacetGrid`** to create a grid of plots based on the values of categorical variables (e.g., separate plots for "Smoker" vs. "Non-smoker"). Use a **`pairplot`** to automatically plot pairwise relationships across an entire dataset (scatter plots for every combination of numeric features).
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Practice Problems

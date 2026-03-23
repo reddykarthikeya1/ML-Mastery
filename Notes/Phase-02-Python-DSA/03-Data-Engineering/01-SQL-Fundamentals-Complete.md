@@ -846,5 +846,33 @@ complex_query_example()
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the difference between `WHERE` and `HAVING`?
+2. Which JOIN type returns all rows from both tables, regardless of matches?
+3. What is a Correlated Subquery?
+4. What is the difference between `UNION` and `UNION ALL`?
+5. How does a Window Function differ from a regular aggregate function?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **`WHERE` vs `HAVING`:**
+   - `WHERE` filters individual rows *before* aggregation/grouping.
+   - `HAVING` filters aggregated groups *after* grouping.
+2. **`FULL OUTER JOIN`** returns all rows from both left and right tables, filling in `NULL` for missing matches.
+3. **Correlated Subquery:** A subquery that references columns from the outer query, meaning it must be evaluated once for each row processed by the outer query.
+4. **`UNION` vs `UNION ALL`:**
+   - `UNION` combines result sets and removes duplicates.
+   - `UNION ALL` combines result sets and keeps duplicates (faster).
+5. **Window Function vs Aggregate:** A Window Function performs a calculation across a set of table rows related to the current row, but unlike regular aggregate functions, it does *not* cause rows to become grouped into a single output row (each row retains its separate identity).
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** NoSQL Basics

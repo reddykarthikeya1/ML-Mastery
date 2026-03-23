@@ -535,5 +535,29 @@ def min_meeting_rooms(intervals):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What does it mean for a sorting algorithm to be "stable"?
+2. Why does Quick Sort have a worst-case time complexity of $O(n^2)$, and how can it be avoided?
+3. What is the fundamental requirement for using Binary Search on an array?
+4. Explain how Counting Sort achieves linear $O(n+k)$ time complexity without comparing elements.
+5. In a rotated sorted array, how can you find a target element in $O(\log n)$ time?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. A **stable** sorting algorithm preserves the relative order of records with equal keys (i.e., values). If two items have the same value, the one that appeared first in the original array will appear first in the sorted array.
+2. Quick Sort hits its worst case $O(n^2)$ when the pivot chosen is always the smallest or largest element (e.g., if the array is already sorted and you pick the last element as the pivot). This is usually avoided by picking a **random pivot** or using the **median-of-three** method.
+3. The array must be **sorted** prior to applying Binary Search.
+4. **Counting Sort** operates by counting the number of objects that have distinct key values (using an auxiliary array), and then using arithmetic to calculate the position of each object in the output sequence. It avoids the $O(n \log n)$ lower bound of comparison sorts because it doesn't compare elements against each other.
+5. You can use a modified Binary Search. At each step, you determine which half of the array (left or right of the mid-point) is properly sorted. Then, you check if the target falls within the bounds of that sorted half to decide which side to search next.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Dynamic Programming

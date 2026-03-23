@@ -233,5 +233,29 @@ Example: Dynamic array append
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the difference between Big O and Omega (Ω) notation?
+2. Why is an O(n log n) algorithm generally preferred over an O(n²) algorithm for large datasets?
+3. What is the space complexity of a recursive algorithm that calls itself $n$ times?
+4. How do you calculate the total time complexity of two sequential loops where the first runs $n$ times and the second runs $m$ times?
+5. What does "Amortized O(1) time" mean?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Big O** represents the upper bound (worst-case scenario) of an algorithm's growth rate, while **Omega (Ω)** represents the lower bound (best-case scenario).
+2. As $n$ (input size) grows very large, $n^2$ grows much faster than $n \log n$. Therefore, an $O(n \log n)$ algorithm (like Merge Sort) will execute significantly faster than an $O(n^2)$ algorithm (like Bubble Sort) on large datasets.
+3. The space complexity is **O(n)** because each recursive call adds a new frame to the call stack in memory.
+4. The total time complexity is **O(n + m)**. Because the loops are sequential, their complexities are added.
+5. **Amortized O(1) time** means that while a single operation might occasionally be expensive (e.g., O(n) to resize a dynamic array), when averaged out over a sequence of many operations, the cost per operation is constant O(1).
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Arrays and Strings

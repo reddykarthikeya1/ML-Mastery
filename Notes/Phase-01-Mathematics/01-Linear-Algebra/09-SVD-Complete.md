@@ -444,6 +444,9 @@ print(f"AA⁺A = A? {np.allclose(A @ A_pinv @ A, A)}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **SVD for non-square matrices:**
    - SVD uses AᵀA (n×n) and AAᵀ (m×m) which are always square
    - Eigenvectors of these give V and U
@@ -476,6 +479,7 @@ print(f"AA⁺A = A? {np.allclose(A @ A_pinv @ A, A)}")
    - Square root of non-negative is non-negative
    - Represents "stretching factors" which can't be negative
 
+</details>
 ---
 
 **Status:** ✅ Complete  

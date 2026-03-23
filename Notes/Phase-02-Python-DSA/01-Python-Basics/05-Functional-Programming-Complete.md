@@ -253,5 +253,31 @@ for line in read_large_file('large_file.txt'):
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is a "pure function"?
+2. What is the difference between an iterable and an iterator?
+3. What is the purpose of the `yield` keyword?
+4. How does `lru_cache` improve function performance?
+5. When should you use a generator expression over a list comprehension?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. A **pure function** is a function that always produces the same output for the same input and has no side effects (it doesn't modify any external state or global variables).
+2. An **iterable** is any object you can loop over (like a list or string). An **iterator** is the object that actually performs the iteration, keeping track of its current position and producing the next value via the `next()` function.
+3. The **`yield` keyword** is used in generator functions to return a value to the caller while "pausing" the function's execution. When the generator is called again, it resumes from exactly where it left off.
+4. **`lru_cache`** (Least Recently Used) implements **memoization**. it stores the results of expensive function calls and returns the cached result when the same inputs occur again, significantly speeding up recursive or repetitive computations.
+5. Use a **generator expression** when you only need to iterate over the data once and want to save memory (lazy evaluation). Use a **list comprehension** when you need to keep the entire result in memory or need to access indices multiple times.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** File Handling and Error Handling

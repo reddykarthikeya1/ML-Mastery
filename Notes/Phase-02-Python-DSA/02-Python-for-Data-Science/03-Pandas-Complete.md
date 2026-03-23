@@ -522,5 +522,31 @@ df['sales_pct_of_city'] = df.groupby('city')['sales'].transform(
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the difference between a Pandas Series and a DataFrame?
+2. How do `loc` and `iloc` differ in how they select data?
+3. What is the difference between `df.dropna()` and `df.fillna()`?
+4. Explain the "Split-Apply-Combine" pattern in the context of `groupby()`.
+5. Which Pandas function is used to perform a SQL-style join between two DataFrames?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. A **Series** is a 1D labeled array capable of holding any data type. A **DataFrame** is a 2D labeled data structure (like a table) with columns of potentially different types. You can think of a DataFrame as a dictionary of Series objects.
+2. **`loc`** is **label-based**, meaning you use the names of the rows and columns to select data. **`iloc`** is **integer-position based**, meaning you use the numerical index (starting from 0) to select data.
+3. **`df.dropna()`** removes any rows (or columns) that contain missing values. **`df.fillna()`** replaces missing values with a specific value (like 0, the mean, or a string).
+4. The **Split-Apply-Combine** pattern involves: **Splitting** the data into groups based on some criteria (e.g., city), **Applying** a function to each group independently (e.g., calculating the mean), and **Combining** the results back into a single data structure.
+5. **`pd.merge()`** is the primary function used for database-style joins (inner, left, right, and outer) between two DataFrames based on a common key.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Data Visualization

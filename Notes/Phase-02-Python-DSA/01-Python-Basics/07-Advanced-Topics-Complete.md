@@ -151,65 +151,45 @@ pip install mypy
 mypy script.py
 ```
 
+## 4. Concurrency and Internals
+
+### The GIL (Global Interpreter Lock)
+The **GIL** is a mutex that protects access to Python objects, preventing multiple threads from executing Python bytecodes at once. This is necessary because CPython's memory management is not thread-safe.
+
+**Impact on ML:**
+- **CPU-Bound (Training):** Standard threading will not speed up pure Python code (like a manual matrix multiplication loop) because of the GIL. Use **Multiprocessing** to bypass the GIL by using separate memory spaces.
+- **I/O-Bound (Data Loading):** Threading or `asyncio` is highly effective when waiting for network requests (APIs) or disk I/O (reading image batches).
+
+### Memory Management
+- **Reference Counting:** Python primarily uses reference counting. When an object's reference count drops to zero, it is immediately deallocated.
+- **Garbage Collection (GC):** To handle **circular references** (Object A points to B, and B points to A), Python uses a cyclic garbage collector that runs periodically.
+- **Optimization:** Use `__slots__` in classes to reduce memory footprint by preventing the creation of `__dict__` for each instance.
+
 ---
 
-## 4. Concurrency Basics
+## 5. Advanced Collections
+The `collections` module provides high-performance alternatives to built-in containers.
 
-### Threading
-
-```python
-import threading
-
-def worker():
-    print("Working...")
-
-thread = threading.Thread(target=worker)
-thread.start()
-thread.join()
-```
-
-### Multiprocessing
+- **NamedTuple:** Tuples with field names (self-documenting, memory-efficient).
+- **defaultdict:** Dict that returns a default value for missing keys (avoids KeyErrors).
+- **Counter:** Hashable object counter (excellent for NLP/Vocab building).
+- **deque:** Double-ended queue (O(1) appends/pops from both ends).
 
 ```python
-from multiprocessing import Process
+from collections import Counter, defaultdict, deque
 
-def worker():
-    print("Working in separate process")
+# Counter for NLP
+words = ["apple", "banana", "apple", "cherry"]
+counts = Counter(words) # {'apple': 2, 'banana': 1, 'cherry': 1}
 
-p = Process(target=worker)
-p.start()
-p.join()
-```
-
-### asyncio (Async/Await)
-
-```python
-import asyncio
-
-async def fetch_data():
-    await asyncio.sleep(1)
-    return "Data"
-
-async def main():
-    result = await fetch_data()
-    print(result)
-
-asyncio.run(main())
-```
-
-### GIL (Global Interpreter Lock)
-
-```
-GIL prevents multiple threads from executing Python bytecode simultaneously
-
-Impact:
-- CPU-bound tasks: Use multiprocessing
-- I/O-bound tasks: Use threading or asyncio
+# defaultdict for grouping
+groups = defaultdict(list)
+groups['fruits'].append('apple') # No KeyError
 ```
 
 ---
 
-## 5. Testing
+## 6. Testing
 
 ### unittest
 
@@ -471,6 +451,9 @@ def test_divide_by_zero(calc):
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **@wraps:**
    - Preserves original function metadata
    - Used in decorator definitions
@@ -497,6 +480,7 @@ def test_divide_by_zero(calc):
    - Automatic resource cleanup
    - File handling, locks, connections
 
+</details>
 ---
 
 **Status:** ✅ Complete

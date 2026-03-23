@@ -649,5 +649,29 @@ def find_words(board, words):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. In a Binary Search Tree, what does an Inorder traversal produce?
+2. What makes a Binary Tree "balanced"?
+3. What is the fundamental difference between a Min Heap and a Binary Search Tree regarding element ordering?
+4. What is a Trie (Prefix Tree) primarily used for?
+5. When is a Segment Tree more useful than simply recalculating the sum of an array range?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. An Inorder traversal (Left, Root, Right) of a Binary Search Tree produces the elements in **sorted (ascending) order**.
+2. A Binary Tree is balanced if, for every node in the tree, the difference in height between its left subtree and right subtree is **at most 1**.
+3. In a **Min Heap**, the only ordering guarantee is that a parent is always smaller than its children (vertical ordering). In a **BST**, a parent is greater than its entire left subtree and smaller than its entire right subtree (horizontal ordering).
+4. A **Trie** is optimized for extremely fast prefix matching and string retrieval, making it the standard data structure for applications like autocomplete, spell checkers, and IP routing.
+5. A **Segment Tree** allows you to both update elements and query range sums in **$O(\log n)$** time. If you only queried without updates, a prefix sum array would be better ($O(1)$ query). If you only updated without querying, a standard array is fine ($O(1)$ update). A Segment Tree balances both operations.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Graphs

@@ -502,5 +502,29 @@ def merge_intervals(intervals):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. When should you use the Two-Pointer technique starting from opposite ends?
+2. What is the main advantage of the Sliding Window technique?
+3. How do you reverse a string in-place in Python using slicing?
+4. What is Kadane's algorithm primarily used for?
+5. How does a fixed-size sliding window differ from a variable-size window?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. The opposite-ends Two-Pointer technique is typically used when dealing with **sorted arrays** (e.g., finding two numbers that sum to a target) or when checking for symmetry (e.g., palindromes).
+2. The Sliding Window technique converts nested loops (which would have an $O(n^2)$ time complexity) into a single loop, reducing the time complexity to **$O(n)$** by keeping track of a subset of elements.
+3. You can reverse a string using the slice notation: `s[::-1]`.
+4. Kadane's algorithm is an $O(n)$ dynamic programming approach used to find the **maximum sum contiguous subarray** within a one-dimensional array of numbers.
+5. A **fixed-size window** always maintains a constant width (e.g., exactly $k$ elements) as it moves through the array. A **variable-size window** expands or shrinks its left and right boundaries dynamically based on certain conditions (e.g., finding the longest substring without repeating characters).
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Linked Lists

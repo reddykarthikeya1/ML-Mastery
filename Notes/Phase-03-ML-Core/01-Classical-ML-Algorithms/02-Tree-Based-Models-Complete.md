@@ -358,5 +358,25 @@ print(f"XGB CV: {xgb_cv.mean():.4f} (+/- {xgb_cv.std():.4f})")
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the difference between "Bagging" (used in Random Forest) and "Boosting" (used in XGBoost)?
+2. What are the two main splitting criteria for Decision Trees, and how do they differ?
+3. What is the "Out-of-Bag" (OOB) error in Random Forest?
+4. How does a Gradient Boosting machine improve its predictions at each step?
+5. Why is "pruning" important for a single Decision Tree?
+
+---
+
+## 📝 Answers to Quick Check
+
+1. **Bagging** builds multiple independent trees in parallel using different bootstrap samples and averages their results to reduce variance. **Boosting** builds trees sequentially, where each new tree tries to correct the errors made by the previous trees, focusing on bias reduction.
+2. The two main criteria are **Gini Impurity** and **Entropy (Information Gain)**. Gini is computationally faster as it doesn't involve logarithms, while Entropy is slightly more theoretically sound and often produces similar results.
+3. **OOB error** is the mean prediction error on each training sample $x_i$, using only the trees that did not have $x_i$ in their bootstrap sample. It provides an unbiased estimate of the test error without needing a separate validation set.
+4. **Gradient Boosting** improves by fitting a new weak learner (usually a small decision tree) to the **negative gradient** (residuals) of the loss function of the current ensemble.
+5. **Pruning** (setting `max_depth` or `min_samples_leaf`) is crucial to prevent the tree from becoming overly complex and "memorizing" the training data, which leads to **overfitting** and poor generalization to new data.
+
+---
+
 **Status:** ✅ Complete
 **Next:** Instance-Based Learning

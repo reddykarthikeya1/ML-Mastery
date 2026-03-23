@@ -639,6 +639,9 @@ demonstrate_jensens()
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Taylor series importance:**
    - Approximates complex functions
    - Foundation for optimization algorithms
@@ -669,6 +672,7 @@ demonstrate_jensens()
    - GD: x - α∇f (uses only gradient)
    - Newton converges faster but is more expensive
 
+</details>
 ---
 
 **Status:** ✅ Complete

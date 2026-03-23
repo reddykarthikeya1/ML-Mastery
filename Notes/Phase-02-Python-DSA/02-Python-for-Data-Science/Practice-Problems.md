@@ -1,276 +1,79 @@
 # Python for Data Science - Practice Problems
 
-## Topic 1: Jupyter Notebooks
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Tooling and NumPy
+**1.1** In a Jupyter Notebook, what is the difference between a "Code" cell and a "Markdown" cell? Name one "Magic Command" and its purpose.
+**1.2** Create a $5 \times 5$ NumPy array of all zeros, then change all the elements on the main diagonal to 1 (Identity matrix) without using `np.eye`.
+**1.3** Given an array `arr = np.array([10, 20, 30, 40, 50])`, calculate the Z-score normalization for every element: $z = (x - \mu) / \sigma$.
+**1.4** What is "Broadcasting" in NumPy? Give a simple example where a scalar is added to a matrix.
 
-**1.1** Create a notebook with:
-- Markdown cell with headings, lists, and a table
-- Code cell that prints "Hello, Jupyter!"
-- Use %timeit to time a simple operation
+### Level 2: Intermediate Pandas Operations
+**2.1** Load a CSV file into a DataFrame. Filter the rows where 'Age' is greater than 25 and 'City' is 'London'.
+**2.2** Given a DataFrame with missing values in the 'Salary' column, fill the missing values with the median salary of the entire dataset.
+**2.3** Use `groupby()` to find the average 'Sales' and total 'Quantity' for each 'Category' in a retail dataset.
+**2.4** Explain the difference between `pd.merge()` and `pd.concat()`. When would you use one over the other?
 
-**1.2** Practice magic commands:
-- Use %%writefile to write content to a file
-- Use %load to load the file back
-- Use %run to execute a Python script
+### Level 3: Advanced Data Manipulation and Viz
+**3.1** **Time Series:** Given a DataFrame with a 'Timestamp' column, convert it to datetime objects, set it as the index, and resample the data to find the weekly average of a 'Price' column.
+**3.2** **Multi-Indexing:** Create a DataFrame with a hierarchical index (e.g., 'State' and 'City') and select all data for a specific 'State'.
+**3.3** **Matplotlib:** Create a figure with two subplots side-by-side. The first should be a line plot of $\sin(x)$ and the second a scatter plot of random noise.
+**3.4** **Seaborn:** Using the 'Titanic' dataset (or similar), create a box plot showing the distribution of 'Age' for each 'Class', colored by whether the passenger 'Survived'.
 
----
+### Level 4: Python Implementation Practice
+**4.1** Write a NumPy function that takes a matrix and returns a new matrix where every element is replaced by its rank within its row.
+**4.2** Write a Pandas function to clean a "dirty" dataset:
+1. Remove duplicates.
+2. Convert 'Date' string column to datetime.
+3. One-hot encode all categorical columns with fewer than 10 unique values.
+4. Scale all numeric columns to the range [0, 1] (Min-Max scaling).
 
-## Topic 2: NumPy
-
-### Level 1: Basic
-
-**2.1** Array creation:
-```python
-# Create:
-# 1. Array of zeros (5x5)
-# 2. Array of ones (3x4)
-# 3. Identity matrix (4x4)
-# 4. Array with values 0-20
-# 5. Array with 10 evenly spaced values from 0 to 100
-```
-
-**2.2** Array operations:
-```python
-arr = np.array([1, 2, 3, 4, 5])
-
-# 1. Square all elements
-# 2. Find sum
-# 3. Find mean
-# 4. Find standard deviation
-# 5. Normalize (subtract mean, divide by std)
-```
-
-### Level 2: Intermediate
-
-**2.3** Matrix operations:
-```python
-A = np.array([[1, 2], [3, 4]])
-B = np.array([[5, 6], [7, 8]])
-
-# 1. Matrix multiplication
-# 2. Element-wise multiplication
-# 3. Find inverse of A
-# 4. Find determinant of A
-# 5. Solve Ax = b where b = [5, 11]
-```
-
-**2.4** Broadcasting practice:
-```python
-# Create a 5x5 matrix where each row is [0, 1, 2, 3, 4]
-# Hint: Use broadcasting with np.arange(5)
-```
-
-### Level 3: Advanced
-
-**2.5** NumPy Practice:
-```python
-def normalize_matrix(matrix):
-    """Normalize each row of a matrix"""
-    # Your code here
-    pass
-
-def find_outliers(data, threshold=3):
-    """Find outliers using z-score"""
-    # Your code here
-    pass
-```
+### Level 5: Real-world Data Analysis Scenario
+**5.1** **Scenario:** You are analyzing website traffic data.
+- Input: A CSV with `timestamp`, `user_id`, `page_visited`, and `time_spent`.
+- Goal: Identify "Power Users" (top 5% by total time spent) and visualize their daily activity patterns compared to average users.
+**Task:** Describe the steps (load, clean, aggregate, visualize) and the specific Python functions/plots you would use to deliver this insight.
 
 ---
 
-## Topic 3: Pandas
-
-### Level 1: Basic
-
-**3.1** Create a DataFrame:
-```python
-# Create DataFrame with columns: name, age, city
-# Add 5 rows of data
-# Display first 3 rows
-# Display summary statistics
-```
-
-**3.2** Data selection:
-```python
-# Given df:
-# 1. Select 'name' column
-# 2. Select rows where age > 25
-# 3. Select name and city for people over 30
-# 4. Set index to 'name'
-```
-
-### Level 2: Intermediate
-
-**3.3** Data cleaning:
-```python
-# Given a DataFrame with missing values:
-# 1. Count missing values per column
-# 2. Fill numeric missing with mean
-# 3. Drop rows with any missing
-# 4. Remove duplicates
-```
-
-**3.4** GroupBy operations:
-```python
-# Given sales data with columns: date, product, region, sales
-# 1. Group by region, find total sales
-# 2. Group by product, find mean sales
-# 3. Group by region and product, find sum and mean
-# 4. Add a column with sales as percentage of region total
-```
-
-### Level 3: Advanced
-
-**3.5** Time series analysis:
-```python
-def analyze_time_series(df, date_col, value_col):
-    """
-    Perform time series analysis:
-    1. Convert date column to datetime
-    2. Set as index
-    3. Resample to monthly
-    4. Calculate rolling 7-day average
-    5. Find month with highest average
-    """
-    # Your code here
-    pass
-```
-
-**3.6** Data pipeline:
-```python
-def process_sales_data(input_file, output_file):
-    """
-    Complete data processing pipeline:
-    1. Load CSV
-    2. Handle missing values
-    3. Create new features (month, year, day_of_week)
-    4. Aggregate by month
-    5. Save to CSV
-    """
-    # Your code here
-    pass
-```
-
----
-
-## Topic 4: Data Visualization
-
-### Level 1: Basic
-
-**4.1** Create basic plots:
-```python
-# Given data:
-x = np.linspace(0, 10, 100)
-y = np.sin(x)
-
-# 1. Line plot
-# 2. Scatter plot
-# 3. Bar chart
-# 4. Histogram
-```
-
-### Level 2: Intermediate
-
-**4.2** Create a dashboard:
-```python
-# Create a 2x2 subplot with:
-# 1. Line plot (top-left)
-# 2. Scatter plot (top-right)
-# 3. Bar chart (bottom-left)
-# 4. Histogram (bottom-right)
-```
-
-**4.3** Seaborn visualizations:
-```python
-# Using tips dataset:
-# 1. Distribution of total_bill (histogram + KDE)
-# 2. Box plot of total_bill by day
-# 3. Scatter plot of total_bill vs tip
-# 4. Correlation heatmap
-```
-
-### Level 3: Advanced
-
-**4.4** Complete EDA visualization:
-```python
-def create_eda_report(df):
-    """
-    Create comprehensive EDA visualizations:
-    1. Distribution plots for all numeric columns
-    2. Correlation heatmap
-    3. Pair plot for key variables
-    4. Save all plots to files
-    """
-    # Your code here
-    pass
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
-### 2.2
+### 1.2
 ```python
-arr = np.array([1, 2, 3, 4, 5])
-
-# 1. Square
-arr_squared = arr ** 2
-
-# 2. Sum
-total = np.sum(arr)
-
-# 3. Mean
-mean = np.mean(arr)
-
-# 4. Std
-std = np.std(arr)
-
-# 5. Normalize
-normalized = (arr - mean) / std
+arr = np.zeros((5, 5))
+np.fill_diagonal(arr, 1)
 ```
 
 ### 2.3
 ```python
-A = np.array([[1, 2], [3, 4]])
-B = np.array([[5, 6], [7, 8]])
-
-# 1. Matrix multiplication
-A @ B
-
-# 2. Element-wise
-A * B
-
-# 3. Inverse
-np.linalg.inv(A)
-
-# 4. Determinant
-np.linalg.det(A)
-
-# 5. Solve
-b = np.array([5, 11])
-x = np.linalg.solve(A, b)
+df.groupby('Category').agg({
+    'Sales': 'mean',
+    'Quantity': 'sum'
+})
 ```
 
-### 3.4
+### 3.1
 ```python
-# Group by region
-df.groupby('region')['sales'].sum()
+df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+df.set_index('Timestamp', inplace=True)
+weekly_avg = df['Price'].resample('W').mean()
+```
 
-# Group by product
-df.groupby('product')['sales'].mean()
-
-# Multiple aggregations
-df.groupby(['region', 'product']).agg({
-    'sales': ['sum', 'mean']
-})
-
-# Percentage of region total
-df['sales_pct'] = df.groupby('region')['sales'].transform(
-    lambda x: x / x.sum() * 100
-)
+### 4.2
+```python
+def clean_data(df):
+    df = df.drop_duplicates()
+    df['Date'] = pd.to_datetime(df['Date'])
+    # One-hot
+    cat_cols = [c for c in df.select_dtypes('object') if df[c].nunique() < 10]
+    df = pd.get_dummies(df, columns=cat_cols)
+    # Min-Max
+    num_cols = df.select_dtypes('number').columns
+    df[num_cols] = (df[num_cols] - df[num_cols].min()) / (df[num_cols].max() - df[num_cols].min())
+    return df
 ```
 
 </details>

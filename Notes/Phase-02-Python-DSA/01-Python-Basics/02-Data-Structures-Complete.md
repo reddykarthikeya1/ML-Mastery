@@ -525,6 +525,9 @@ nested_structures()
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **list vs tuple:**
    - list is mutable, tuple is immutable
    - list uses [], tuple uses ()
@@ -545,6 +548,7 @@ nested_structures()
 6. **Swap variables:**
    - a, b = b, a
 
+</details>
 ---
 
 **Status:** ✅ Complete

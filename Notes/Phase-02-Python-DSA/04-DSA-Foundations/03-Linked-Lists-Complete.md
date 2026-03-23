@@ -528,5 +528,29 @@ def flatten(head):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the time complexity of accessing the $n$-th element in a Linked List compared to an Array?
+2. How does the "Fast and Slow Pointer" (Tortoise and Hare) algorithm detect a cycle in a linked list?
+3. Why might you choose a Doubly Linked List over a Singly Linked List?
+4. What is a "Dummy Node" and why is it useful in linked list operations?
+5. How is an LRU Cache typically implemented using linked lists?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. Accessing the $n$-th element in a Linked List is **O(n)** because you must traverse from the head. In an Array, it is **O(1)** because of contiguous memory allocation.
+2. The **Fast and Slow Pointer** algorithm uses two pointers: one moves one step at a time (slow), and the other moves two steps (fast). If there is a cycle, the fast pointer will eventually "lap" and meet the slow pointer.
+3. A **Doubly Linked List** allows traversal in both directions (forward and backward) and allows $O(1)$ deletion of a node if you already have a pointer to it (since you can easily access its predecessor).
+4. A **Dummy Node** is a fake node placed before the actual head of the list. It helps simplify edge cases, such as inserting or deleting the very first node, by ensuring there is always a "previous" node to reference.
+5. An **LRU (Least Recently Used) Cache** is implemented using a combination of a Hash Map (for $O(1)$ lookups) and a Doubly Linked List (for $O(1)$ removal and insertion). When an item is accessed, it is moved to the head of the list; when the cache is full, the item at the tail (least recently used) is evicted.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Stacks and Queues

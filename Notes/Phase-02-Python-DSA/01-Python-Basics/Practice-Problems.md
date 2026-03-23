@@ -1,261 +1,98 @@
 # Python Basics - Practice Problems
 
-## Topic 1: Python Fundamentals
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Syntax and Data Types
+**1.1** Write a Python script that calculates the area of a circle given its radius. Use the `math` module for the value of $\pi$.
+**1.2** Given the string `s = "Machine Learning"`, write the code to:
+- Print only the word "Machine".
+- Print the string in reverse.
+- Count the number of occurrences of the letter 'e'.
+**1.3** Explain the difference between a `list` and a `tuple` in terms of mutability and syntax.
+**1.4** Create a dictionary representing a student with keys `name`, `age`, and `courses` (a list). Add a new course to the list.
 
-**1.1** Write a program that:
-- Takes user input for name and age
-- Prints a greeting with the year they'll turn 100
+### Level 2: Control Flow and Functions
+**2.1** Write a function `is_prime(n)` that returns `True` if a number is prime and `False` otherwise.
+**2.2** Use a list comprehension to create a list of squares for all even numbers between 1 and 20.
+**2.3** Write a function `describe_person(name, **kwargs)` that prints the name and then iterates through the keyword arguments to print "Key: Value" pairs.
+**2.4** Explain the difference between `global` and `nonlocal` keywords with a small code example.
 
-**1.2** Calculate:
-- Area of circle given radius
-- Fahrenheit to Celsius conversion
-- Simple interest given principal, rate, time
+### Level 3: Intermediate OOP and Functional Programming
+**3.1** Create a class `BankAccount` with a private attribute `__balance`. Implement a `@property` for balance and methods for `deposit` and `withdraw` with basic validation (e.g., can't withdraw more than balance).
+**3.2** Create a class hierarchy: `Shape` (base) -> `Rectangle` and `Circle` (derived). Implement an `area()` method in both using polymorphism.
+**3.3** Use `map()` and `filter()` to take a list of integers, keep only the odd ones, and double them.
+**3.4** Write a generator function `fibonacci_gen(n)` that yields the first $n$ Fibonacci numbers.
 
-**1.3** String manipulation:
-- Reverse a string
-- Count vowels in a string
-- Check if string is palindrome
+### Level 4: Advanced Python & File Handling
+**4.1** Write a decorator `timer` that prints the execution time of any function it decorates.
+**4.2** Write a script that reads a CSV file `data.csv`, calculates the average of a numeric column, and writes the result to a new file `output.txt` using a `with` statement.
+**4.3** Use the `itertools` module to find all possible permutations of the list `[1, 2, 3]`.
+**4.4** Implement a custom context manager using either a class (with `__enter__` and `__exit__`) or the `@contextmanager` decorator.
 
----
-
-### Level 2: Intermediate
-
-**2.1** List operations:
-```python
-# Given list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-# 1. Extract even numbers
-# 2. Square all numbers
-# 3. Get sum of all numbers
-# 4. Find maximum without using max()
-```
-
-**2.2** Dictionary operations:
-```python
-# Create a program that:
-# 1. Stores student names and grades
-# 2. Calculates average grade
-# 3. Finds student with highest grade
-# 4. Updates a student's grade
-```
-
-**2.3** Python Practice - Functions:
-```python
-def fibonacci(n):
-    """Return first n Fibonacci numbers"""
-    # Your code here
-    pass
-
-def is_prime(n):
-    """Check if number is prime"""
-    # Your code here
-    pass
-
-# Test your functions
-```
+### Level 5: High-Concurrency & System Internals
+**5.1** **Scenario:** You are building a high-performance Data Ingestion Engine for a real-time ML platform.
+- **Goal:** Download 1,000 large JSON files from a remote API concurrently.
+- **Constraints:** 
+    1. You must use **`asyncio`** and `aiohttp` to maximize I/O efficiency.
+    2. To prevent overwhelming the server, implement a **semaphore** to limit concurrency to 10 simultaneous downloads.
+    3. To save memory, do not load all files into a single list; use a **generator** to yield processed records one-by-one to a downstream consumer.
+    4. Implement a **custom decorator** `@retry` that automatically retries a download up to 3 times if a `TimeoutError` occurs.
+**Task:** Implementation logic outline. Describe how you would combine these advanced Python features to build a robust, memory-efficient ingestion system. Explain how the **GIL** affects this specific I/O-bound task.
 
 ---
 
-### Level 3: Advanced
-
-**3.1** Class implementation:
-```python
-class BankAccount:
-    """
-    Implement a bank account class with:
-    - deposit(amount)
-    - withdraw(amount)
-    - get_balance()
-    - transaction_history()
-    - Interest calculation (1% monthly)
-    """
-    pass
-```
-
-**3.2** File processing:
-```python
-"""
-Read a CSV file with columns: name, age, salary
-1. Calculate average salary
-2. Find oldest and youngest person
-3. Write results to output.txt
-4. Handle file not found errors
-"""
-```
-
-**3.3** Decorator challenge:
-```python
-def log_calls(func):
-    """
-    Create a decorator that logs:
-    - Function name
-    - Arguments passed
-    - Return value
-    - Execution time
-    """
-    pass
-
-@log_calls
-def slow_function():
-    import time
-    time.sleep(1)
-    return "Done"
-```
-
----
-
-## Topic 2: Data Structures
-
-### Level 1: Basic
-
-**2.1** List comprehension:
-```python
-# Create using list comprehension:
-# 1. Squares of 1-20
-# 2. Even numbers from 1-100
-# 3. All vowels in a given string
-# 4. Matrix multiplication result
-```
-
-**2.2** Dictionary practice:
-```python
-# Word frequency counter
-text = "hello world hello python world"
-# Output: {'hello': 2, 'world': 2, 'python': 1}
-```
-
----
-
-### Level 2: Intermediate
-
-**2.3** Implement stack using list:
-```python
-class Stack:
-    def __init__(self):
-        self.items = []
-    
-    def push(self, item):
-        pass
-    
-    def pop(self):
-        pass
-    
-    def peek(self):
-        pass
-    
-    def is_empty(self):
-        pass
-```
-
-**2.4** Implement queue using collections.deque:
-```python
-from collections import deque
-
-class Queue:
-    def __init__(self):
-        self.items = deque()
-    
-    def enqueue(self, item):
-        pass
-    
-    def dequeue(self):
-        pass
-    
-    def front(self):
-        pass
-```
-
----
-
-## Topic 3: OOP
-
-### Level 2: Intermediate
-
-**3.1** Inheritance hierarchy:
-```python
-# Create class hierarchy:
-# Animal (base)
-#   ├── Mammal
-#   │     ├── Dog
-#   │     └── Cat
-#   └── Bird
-#       └── Eagle
-
-# Each class should have:
-# - __init__ method
-# - speak() method (override)
-# - Additional unique methods
-```
-
-**3.2** Polymorphism:
-```python
-# Create shapes: Circle, Rectangle, Triangle
-# Each with:
-# - area()
-# - perimeter()
-# Store in list and calculate total area
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
-### 1.1
+### 2.2
 ```python
-name = input("Enter name: ")
-age = int(input("Enter age: "))
-year_100 = 2024 + (100 - age)
-print(f"{name}, you'll turn 100 in {year_100}")
+squares = [x**2 for x in range(1, 21) if x % 2 == 0]
 ```
 
-### 1.3
+### 3.1
 ```python
-# Reverse string
-s = "hello"
-reversed_s = s[::-1]
-
-# Count vowels
-vowels = sum(1 for c in s.lower() if c in 'aeiou')
-
-# Palindrome check
-is_palindrome = s == s[::-1]
+class BankAccount:
+    def __init__(self, balance=0):
+        self.__balance = balance
+    
+    @property
+    def balance(self):
+        return self.__balance
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
 ```
 
-### 2.1
+### 4.1
 ```python
-nums = list(range(1, 11))
-evens = [x for x in nums if x % 2 == 0]
-squares = [x**2 for x in nums]
-total = sum(nums)
-maximum = nums[0]
-for n in nums[1:]:
-    if n > maximum:
-        maximum = n
+import time
+from functools import wraps
+
+def timer(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        print(f"Time: {time.time() - start}")
+        return result
+    return wrapper
 ```
 
-### 3.1 (Stack)
+### 4.2
 ```python
-class Stack:
-    def __init__(self):
-        self.items = []
-    
-    def push(self, item):
-        self.items.append(item)
-    
-    def pop(self):
-        if not self.is_empty():
-            return self.items.pop()
-    
-    def peek(self):
-        if not self.is_empty():
-            return self.items[-1]
-    
-    def is_empty(self):
-        return len(self.items) == 0
+import csv
+try:
+    with open('data.csv', 'r') as f:
+        reader = csv.DictReader(f)
+        vals = [float(row['score']) for row in reader]
+        avg = sum(vals)/len(vals)
+    with open('output.txt', 'w') as f:
+        f.write(f"Average: {avg}")
+except FileNotFoundError:
+    print("File missing")
 ```
 
 </details>

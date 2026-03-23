@@ -515,6 +515,9 @@ This is gradient descent!
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Gradient represents:**
    - Vector of all partial derivatives
    - Direction of steepest increase
@@ -542,6 +545,7 @@ This is gradient descent!
    - ∇f = 0 (critical point)
    - No direction of increase/decrease
 
+</details>
 ---
 
 **Status:** ✅ Complete

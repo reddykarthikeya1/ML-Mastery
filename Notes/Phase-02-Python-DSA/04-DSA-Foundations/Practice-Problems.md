@@ -1,216 +1,96 @@
 # DSA Foundations - Practice Problems
 
-## Topic 1: Arrays and Strings
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Concept Recall
+**1.1** What is the difference between $O(n)$ time complexity and $O(n)$ space complexity?
+**1.2** Explain the difference between a Stack (LIFO) and a Queue (FIFO). Name one standard algorithm that relies on each.
+**1.3** What is a Hash Collision, and what are two common ways to resolve it?
+**1.4** What does it mean for a sorting algorithm to be "stable"?
 
-**1.1** Two Sum:
-```python
-def two_sum(nums, target):
-    """Find two numbers that add up to target"""
-    # Your code here
-    pass
-```
+### Level 2: Intermediate Operations
+**2.1** **Two-Pointers:** Given a sorted array of integers, write the logic to find if any two numbers add up to a specific `target` in $O(n)$ time.
+**2.2** **Linked Lists:** Describe the "Fast and Slow Pointer" (Tortoise and Hare) approach to finding the middle node of a singly linked list.
+**2.3** **Trees:** Write the order of nodes visited in a Pre-order, In-order, and Post-order traversal of a simple Binary Tree with Root A, Left Child B, and Right Child C.
+**2.4** **Sorting:** Why is Quick Sort preferred over Merge Sort for arrays in practice, even though its worst-case time complexity is $O(n^2)$ while Merge Sort is always $O(n \log n)$?
 
-**1.2** Reverse String:
-```python
-def reverse_string(s):
-    """Reverse string in-place"""
-    # Your code here
-    pass
-```
+### Level 3: Advanced Data Structures & Algorithms
+**3.1** **Dynamic Programming:** Identify the overlapping subproblems and optimal substructure in the classic "Coin Change" problem.
+**3.2** **Graphs:** Explain how to detect a cycle in a Directed Graph using DFS and a "recursion stack" set.
+**3.3** **Trie:** How does a Trie optimize the process of finding all words that start with a specific prefix compared to searching through a standard list of strings?
 
-### Level 2: Intermediate
+### Level 4: Python Implementation Practice
+**4.1** Implement a basic `Stack` class using Python's `collections.deque`. Include `push`, `pop`, and `peek` methods.
+**4.2** Implement the iterative version of Binary Search to find a `target` in a sorted list `nums`. Return the index, or `-1` if not found.
+**4.3** Implement the classic DP solution for the Fibonacci sequence using Tabulation with $O(1)$ space optimization.
 
-**2.1** Maximum Subarray (Kadane's):
-```python
-def max_subarray(nums):
-    """Find maximum sum subarray"""
-    # Your code here
-    pass
-```
-
-**2.2** Longest Substring Without Repeating:
-```python
-def length_of_longest_substring(s):
-    """Find longest substring without repeating characters"""
-    # Your code here
-    pass
-```
+### Level 5: Advanced Algorithmic Design & Integration
+**5.1** **Scenario:** You are designing the core engine for a "Real-time Network Monitoring" tool.
+- **The Data:** A massive stream of IP addresses and connection latencies.
+- **Requirements:**
+    1. **Frequency:** Find the Top 100 most frequent IP addresses at any moment.
+    2. **Shortest Path:** Find the fastest route between two servers in a dynamic weighted graph of 10,000+ nodes.
+    3. **Efficiency:** These operations must run in near real-time.
+**Task:** Describe the specific data structures and algorithms you would combine to solve this. 
+- Which structure would you use for $O(1)$ frequency tracking vs. $O(\log k)$ Top-K retrieval?
+- Which algorithm would you use for the shortest path, and how would you optimize it if the graph is sparse?
+- How would you handle the "memory limit" if the number of unique IPs exceeds available RAM? (Hint: Think Bloom Filters or Count-Min Sketch).
 
 ---
 
-## Topic 2: Linked Lists
-
-### Level 2: Intermediate
-
-**2.1** Reverse Linked List:
-```python
-def reverse_list(head):
-    """Reverse a linked list"""
-    # Your code here
-    pass
-```
-
-**2.2** Detect Cycle:
-```python
-def has_cycle(head):
-    """Detect if linked list has cycle"""
-    # Your code here
-    pass
-```
-
----
-
-## Topic 3: Trees
-
-### Level 2: Intermediate
-
-**3.1** Binary Tree Traversals:
-```python
-def inorder(root):
-    """Inorder traversal"""
-    # Your code here
-    pass
-
-def level_order(root):
-    """Level order traversal"""
-    # Your code here
-    pass
-```
-
-**3.2** Validate BST:
-```python
-def is_valid_bst(root):
-    """Check if binary tree is valid BST"""
-    # Your code here
-    pass
-```
-
----
-
-## Topic 4: Dynamic Programming
-
-### Level 2: Intermediate
-
-**4.1** Climbing Stairs:
-```python
-def climb_stairs(n):
-    """Number of ways to climb n stairs (1 or 2 at a time)"""
-    # Your code here
-    pass
-```
-
-**4.2** Coin Change:
-```python
-def coin_change(coins, amount):
-    """Minimum coins needed for amount"""
-    # Your code here
-    pass
-```
-
-### Level 3: Advanced
-
-**4.3** Longest Common Subsequence:
-```python
-def longest_common_subsequence(text1, text2):
-    """Find length of LCS"""
-    # Your code here
-    pass
-```
-
----
-
-## Topic 5: Graphs
-
-### Level 2: Intermediate
-
-**5.1** BFS Traversal:
-```python
-def bfs(graph, start):
-    """Breadth-first search traversal"""
-    # Your code here
-    pass
-```
-
-**5.2** Number of Islands:
-```python
-def num_islands(grid):
-    """Count number of islands in grid"""
-    # Your code here
-    pass
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
-### 1.1 Two Sum
+### 1.2
+A Stack returns the most recently added item first (Last-In-First-Out), heavily used in Depth-First Search (DFS). A Queue returns the oldest item first (First-In-First-Out), heavily used in Breadth-First Search (BFS).
+
+### 2.1
 ```python
-def two_sum(nums, target):
-    seen = {}
-    for i, num in enumerate(nums):
-        complement = target - num
-        if complement in seen:
-            return [seen[complement], i]
-        seen[num] = i
+def two_sum_sorted(arr, target):
+    left, right = 0, len(arr) - 1
+    while left < right:
+        current = arr[left] + arr[right]
+        if current == target: return [left, right]
+        elif current < target: left += 1
+        else: right -= 1
     return [-1, -1]
 ```
 
-### 1.2 Reverse String
+### 2.3
+- **Pre-order (Root, Left, Right):** A, B, C
+- **In-order (Left, Root, Right):** B, A, C
+- **Post-order (Left, Right, Root):** B, C, A
+
+### 3.2
+In a Directed Graph, a cycle exists if you encounter a node during DFS that is currently in your active recursion stack (meaning you are still exploring its descendants and have looped back to it). You maintain a `visited` set to avoid redundant work, and a separate `rec_stack` set to track the current path.
+
+### 4.2
 ```python
-def reverse_string(s):
-    chars = list(s)
-    left, right = 0, len(chars) - 1
-    while left < right:
-        chars[left], chars[right] = chars[right], chars[left]
-        left += 1
-        right -= 1
-    return ''.join(chars)
+def binary_search(nums, target):
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
 ```
 
-### 2.1 Maximum Subarray
+### 4.3
 ```python
-def max_subarray(nums):
-    max_sum = current_sum = nums[0]
-    for num in nums[1:]:
-        current_sum = max(num, current_sum + num)
-        max_sum = max(max_sum, current_sum)
-    return max_sum
-```
-
-### 4.1 Climbing Stairs
-```python
-def climb_stairs(n):
-    if n <= 2:
-        return n
-    dp = [0] * (n + 1)
-    dp[1], dp[2] = 1, 2
-    for i in range(3, n + 1):
-        dp[i] = dp[i-1] + dp[i-2]
-    return dp[n]
-```
-
-### 5.1 BFS
-```python
-def bfs(graph, start):
-    visited = set()
-    queue = deque([start])
-    visited.add(start)
-    result = []
-    
-    while queue:
-        vertex = queue.popleft()
-        result.append(vertex)
-        for neighbor in graph[vertex]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-    
-    return result
+def fib_optimized(n):
+    if n <= 1: return n
+    prev2, prev1 = 0, 1
+    for _ in range(2, n + 1):
+        current = prev1 + prev2
+        prev2 = prev1
+        prev1 = current
+    return prev1
 ```
 
 </details>

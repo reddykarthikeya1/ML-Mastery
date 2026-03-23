@@ -483,5 +483,36 @@ plt.show()
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. Describe the iterative steps of the K-Means algorithm.
+2. What are the two key parameters in DBSCAN, and what do they control?
+3. What is a "Dendrogram" in the context of Hierarchical Clustering?
+4. What is the primary mathematical objective of Principal Component Analysis (PCA)?
+5. Why is t-SNE generally preferred over PCA for visualizing high-dimensional clusters in 2D?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **K-Means Steps:** 
+   - Initialize $K$ centroids randomly.
+   - **Assignment:** Assign each data point to the nearest centroid.
+   - **Update:** Recalculate centroids as the mean of all points in that cluster.
+   - Repeat until centroids stabilize (convergence).
+2. **`eps`** (epsilon) specifies the maximum distance between two points for them to be considered as neighbors. **`min_samples`** specifies the number of points required to form a "dense region" (core point).
+3. A **Dendrogram** is a tree-like diagram that records the sequences of merges or splits in hierarchical clustering. The vertical height of the joins represents the distance (dissimilarity) between clusters.
+4. **PCA** aims to project high-dimensional data onto a lower-dimensional space while **maximizing the preserved variance** (or minimizing the information loss).
+5. **t-SNE** is a non-linear technique that focuses on preserving **local structure** (keeping similar points close together), which makes it much better for revealing distinct clusters that PCA (a linear technique) might overlap.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Model Evaluation

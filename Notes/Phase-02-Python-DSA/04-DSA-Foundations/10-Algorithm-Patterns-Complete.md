@@ -681,5 +681,29 @@ def partition_palindromes(s):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the main difference between a Greedy algorithm and Dynamic Programming?
+2. What are the three standard steps of a Divide and Conquer algorithm?
+3. How does Backtracking differ from a brute-force approach?
+4. In which scenario would Kadane's algorithm be chosen over a Divide and Conquer approach for finding the maximum subarray?
+5. Why are Decision Trees in Machine Learning considered a Greedy algorithm?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. A **Greedy algorithm** makes the optimal choice at a local level, hoping it leads to a global optimum, and never reconsiders its choices. **Dynamic Programming** explores all possible paths (by solving subproblems) to guarantee a globally optimal solution.
+2. The three steps are: **Divide** the problem into smaller subproblems, **Conquer** the subproblems by solving them recursively, and **Combine** the solutions of the subproblems to solve the original problem.
+3. **Backtracking** is an optimization over brute-force. While brute-force blindly explores all possible paths to the very end, backtracking uses a bounding function to stop evaluating a path as soon as it determines the path cannot lead to a valid solution, effectively pruning the search tree.
+4. **Kadane's algorithm** is chosen because it runs in $O(n)$ time with $O(1)$ space, making it significantly more efficient and easier to implement than the Divide and Conquer approach, which takes $O(n \log n)$ time and involves complex recursive logic.
+5. **Decision Trees** are considered greedy because at each node, they pick the single feature split that provides the highest information gain *at that exact moment*, without looking ahead to see if a different split might lead to a better overall tree later on.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Practice Problems

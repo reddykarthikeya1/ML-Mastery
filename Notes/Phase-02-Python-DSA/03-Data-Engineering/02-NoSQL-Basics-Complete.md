@@ -541,5 +541,29 @@ conn.close()
 
 ---
 
+## ❓ Quick Check Questions
+
+1. Which parts of the CAP Theorem do most NoSQL databases prioritize?
+2. What is the difference between a Document Database and a Key-Value Store?
+3. Which NoSQL database type is typically best suited for representing complex relationships (like social networks)?
+4. What does the "E" in the BASE model stand for, and what does it mean?
+5. How does horizontal scaling differ from vertical scaling?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. Most NoSQL databases are **AP** (Availability + Partition Tolerance) or occasionally CP, unlike relational databases which are traditionally strongly CP.
+2. **Document Database** (e.g., MongoDB) stores data in flexible, JSON-like structures called documents, allowing complex nested data. **Key-Value Store** (e.g., Redis) stores data as simple key-value pairs, heavily optimized for high-speed retrieval and caching.
+3. **Graph Databases** (e.g., Neo4j) are explicitly designed to model and traverse relationships between entities efficiently.
+4. **E stands for Eventual consistency.** It means that while the system might not be strictly consistent at all times (like ACID guarantees), given enough time without new updates, all nodes will eventually reflect the same data state.
+5. **Horizontal scaling** means adding more servers (nodes) to a distributed system to handle increased load, typical of NoSQL. **Vertical scaling** means upgrading the hardware (CPU/RAM) of an existing single server, typical of traditional SQL databases.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Data Preprocessing and Cleaning

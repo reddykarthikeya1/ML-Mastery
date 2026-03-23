@@ -356,5 +356,32 @@ plt.show()
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the difference between "Traditional Programming" and "Machine Learning"?
+2. What are the three main types of ML?
+3. What is the difference between classification and regression?
+4. Why do we need a validation set in addition to train and test sets?
+5. What is data leakage?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Traditional Programming:** You write the rules (code) and provide data to get an output. **Machine Learning:** You provide the data and the expected output, and the algorithm learns the rules (patterns) itself.
+2. **Supervised** (labeled data), **Unsupervised** (unlabeled data), and **Reinforcement Learning** (reward-based).
+3. **Classification** predicts a category/label (discrete). **Regression** predicts a numerical value (continuous).
+4. The **Validation set** is used to tune hyperparameters and select the best model, while the **Test set** is kept completely separate to provide a final, unbiased evaluation of the chosen model.
+5. **Data leakage** occurs when information from outside the training dataset (typically from the test or validation set) is used to train the model, leading to overly optimistic but false performance results.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Supervised Learning

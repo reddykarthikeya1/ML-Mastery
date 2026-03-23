@@ -216,6 +216,9 @@ print(np.linalg.norm(v1 + v2) <= np.linalg.norm(v1) + np.linalg.norm(v2))  # Tru
 
 ## 📝 Answers to Practice Questions
 
+<details>
+<summary>Click to reveal answers</summary>
+
 ### Level 1: Basic (Conceptual)
 1. **What's the difference between a point and a vector?**
    - A **point** represents a location in space (e.g., (3, 4))
@@ -281,6 +284,7 @@ print(np.linalg.norm(v1 + v2) <= np.linalg.norm(v1) + np.linalg.norm(v2))  # Tru
    - unit(u) = (1/√3, 1/√3, 1/√3)
    - |unit(u)| = √(1/3 + 1/3 + 1/3) = √1 = **1** ✓
 
+</details>
 ---
 
 ## 📌 Summary

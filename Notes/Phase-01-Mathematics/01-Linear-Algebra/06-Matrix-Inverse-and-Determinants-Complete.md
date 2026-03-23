@@ -507,6 +507,9 @@ print(f"det(A)(1 + vᵀA⁻¹u) = {rhs:.4f}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Matrix NOT invertible when:**
    - det(A) = 0 (singular)
    - Rows/columns are linearly dependent
@@ -541,6 +544,7 @@ print(f"det(A)(1 + vᵀA⁻¹u) = {rhs:.4f}")
    - Magnitude stays the same
    - Two swaps → back to original
 
+</details>
 ---
 
 **Status:** ✅ Complete  

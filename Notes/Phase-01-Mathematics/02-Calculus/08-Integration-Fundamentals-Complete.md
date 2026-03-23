@@ -732,6 +732,9 @@ print(f"\nArc length of y = x² from 0 to 1: {length:.6f}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Definite vs Indefinite:**
    - Indefinite: Family of functions (+ C)
    - Definite: Number (net area)
@@ -756,6 +759,7 @@ print(f"\nArc length of y = x² from 0 to 1: {length:.6f}")
    - ∫ |f(x) - g(x)| dx
    - Or ∫ (top - bottom) dx
 
+</details>
 ---
 
 **Status:** ✅ Complete

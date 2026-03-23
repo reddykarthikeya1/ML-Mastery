@@ -512,5 +512,32 @@ for name, model in models.items():
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. How does Logistic Regression convert a linear combination of features into a probability?
+2. What is the fundamental difference between Gini Impurity and Entropy in Decision Trees?
+3. What are "Support Vectors" in an SVM model?
+4. How does Lasso (L1) regularization perform automatic feature selection?
+5. Why is the R² score (Coefficient of Determination) a preferred metric for regression over simple MSE?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. Logistic Regression uses the **Sigmoid function** ($\sigma(z) = 1 / (1 + e^{-z})$) to map the output of a linear equation (which can be any real number) into a range between 0 and 1, representing a probability.
+2. Both measure node "purity," but **Gini Impurity** ($1 - \sum p_i^2$) is computationally faster because it doesn't involve logarithms, whereas **Entropy** ($-\sum p_i \log_2 p_i$) is derived from information theory and is slightly more sensitive to changes in class probabilities.
+3. **Support Vectors** are the data points from the training set that lie closest to the decision boundary (hyperplane). They are the only points that actually determine the position and orientation of the boundary.
+4. **Lasso (L1)** adds the absolute magnitude of coefficients as a penalty to the loss function. Because the L1 penalty is "diamond-shaped," the optimization often hits the axes, forcing some coefficients to become exactly zero, effectively removing those features.
+5. **R²** is unitless and provides a standardized measure (0 to 1) of how well the independent variables explain the variance in the target. MSE is scale-dependent, making it harder to interpret without knowing the range of the target variable.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Unsupervised Learning

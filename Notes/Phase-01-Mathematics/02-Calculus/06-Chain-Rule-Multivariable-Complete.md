@@ -645,6 +645,9 @@ This IS the chain rule!
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Chain rule (one variable):**
    - dz/dt = (∂f/∂x)(dx/dt) + (∂f/∂y)(dy/dt)
 
@@ -669,6 +672,7 @@ This IS the chain rule!
    - ∂L/∂W = ∂L/∂output · ∂output/∂W
    - This is chain rule through the network
 
+</details>
 ---
 
 **Status:** ✅ Complete

@@ -500,41 +500,32 @@ plt.show()
 
 ---
 
+---
+
 ## ❓ Quick Check Questions
 
-1. What's the difference between supervised and unsupervised learning?
-2. When should you use reinforcement learning?
-3. What are the steps in ML workflow?
-4. Why split data into train/test sets?
-5. What's the difference between classification and regression?
-6. When is semi-supervised learning useful?
+1. What is the fundamental difference between Supervised and Unsupervised learning?
+2. When should you use Reinforcement Learning?
+3. List the high-level steps in a standard ML workflow.
+4. Why is it critical to split your data into training and test sets?
+5. What is the difference between classification and regression tasks?
+6. When is semi-supervised learning particularly useful?
 
 ---
 
 ## 📝 Answers to Quick Check
 
-1. **Supervised vs Unsupervised:**
-   - Supervised: Labeled data, predict output
-   - Unsupervised: Unlabeled data, find patterns
+<details>
+<summary>Click to reveal answers</summary>
 
-2. **Reinforcement Learning:**
-   - When agent learns through rewards/penalties
-   - Sequential decision making problems
+1. **Supervised Learning** uses labeled data where the model learns to map inputs to a known target output. **Unsupervised Learning** uses unlabeled data to find hidden patterns or structures within the data itself.
+2. **Reinforcement Learning** is used when an agent must learn to make a sequence of decisions by interacting with an environment to maximize a cumulative reward (e.g., games, robotics).
+3. **ML Workflow:** Problem Definition → Data Collection → Data Preprocessing → Feature Engineering → Model Selection → Training → Evaluation → Deployment.
+4. Splitting data ensures you can evaluate your model on **unseen data**, which provides an unbiased estimate of how the model will perform in the real world and helps detect overfitting.
+5. **Classification** predicts a discrete category or class label (e.g., Spam vs. Not Spam). **Regression** predicts a continuous numerical value (e.g., predicting house prices).
+6. **Semi-Supervised Learning** is useful when you have a small amount of labeled data and a large amount of unlabeled data, as it can use the unlabeled data to improve the learning process when manual labeling is expensive.
 
-3. **ML Workflow:**
-   - Problem → Data → Preprocess → Features → Model → Train → Evaluate → Deploy
-
-4. **Train/Test Split:**
-   - Evaluate model on unseen data
-   - Prevent overfitting
-
-5. **Classification vs Regression:**
-   - Classification: Predict category
-   - Regression: Predict continuous value
-
-6. **Semi-Supervised:**
-   - When labeling is expensive
-   - Abundant unlabeled data available
+</details>
 
 ---
 

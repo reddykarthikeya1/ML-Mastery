@@ -334,5 +334,32 @@ print(f"\nCV Accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the main difference between Linear Regression and Logistic Regression?
+2. What does the R² score represent?
+3. What is the purpose of the Sigmoid function in Logistic Regression?
+4. Define Precision and Recall.
+5. What does a Confusion Matrix show?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **Linear Regression** is used for regression tasks (predicting continuous numerical values). **Logistic Regression** is used for classification tasks (predicting discrete categories/probabilities).
+2. **R² (Coefficient of Determination)** represents the proportion of variance in the dependent variable that is predictable from the independent variables. It ranges from 0 to 1.
+3. The **Sigmoid function** maps any real-valued number into a value between 0 and 1, which can be interpreted as the probability of a class.
+4. **Precision:** The ratio of correctly predicted positive observations to the total predicted positives. **Recall:** The ratio of correctly predicted positive observations to all actual positives.
+5. A **Confusion Matrix** is a table used to evaluate the performance of a classification model, showing the counts of True Positives, True Negatives, False Positives, and False Negatives.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Unsupervised Learning

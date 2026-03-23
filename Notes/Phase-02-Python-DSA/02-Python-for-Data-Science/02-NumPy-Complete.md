@@ -436,6 +436,9 @@ clipped = np.clip(arr, 5, 15)  # Values between 5 and 15
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **np.array vs np.asarray:**
    - np.array always copies
    - np.asarray only copies if needed
@@ -458,6 +461,7 @@ clipped = np.clip(arr, 5, 15)  # Values between 5 and 15
 6. **Matrix inverse:**
    - np.linalg.inv(A)
 
+</details>
 ---
 
 **Status:** ✅ Complete

@@ -562,6 +562,9 @@ result3 = arr * 2
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Notebook vs Lab:**
    - Notebook: Classic interface
    - Lab: Modern, tabbed interface
@@ -583,6 +586,7 @@ result3 = arr * 2
 6. **Suppress output:**
    - Add semicolon at end of line
 
+</details>
 ---
 
 **Status:** ✅ Complete

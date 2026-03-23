@@ -543,5 +543,29 @@ def min_window(s, t):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What is the average and worst-case time complexity for searching in a Hash Table?
+2. What causes the worst-case scenario in a Hash Table?
+3. What is the difference between "Chaining" and "Open Addressing" for collision resolution?
+4. How can a Hash Table be used to optimize the "Two Sum" problem?
+5. What is the main disadvantage of Linear Probing?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. The average time complexity is **$O(1)$**, but the worst-case time complexity is **$O(n)$**.
+2. The worst-case scenario occurs when there are many **hash collisions**—meaning many keys hash to the exact same index—forcing the table to search through a long chain or probe sequence.
+3. **Chaining** handles collisions by storing a linked list (or array) of items at each index. **Open Addressing** (like linear probing) handles collisions by searching for the next available empty slot within the array itself.
+4. By storing each number's value and index in a hash table as you iterate through the array, you can check if the required complement (`target - current_num`) already exists in the table in $O(1)$ time, reducing the overall time complexity from $O(n^2)$ to $O(n)$.
+5. The main disadvantage is **clustering** (specifically primary clustering). As collisions are resolved by placing items in the next available slot, blocks of occupied slots form, increasing the probe time for subsequent insertions and lookups.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Trees and BSTs

@@ -490,6 +490,9 @@ This is the chain rule!
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Geometric meaning:**
    - Slope of the tangent line at a point
    - Instantaneous rate of change
@@ -517,6 +520,7 @@ This is the chain rule!
    - y cannot be easily solved for x
    - Equation defines y implicitly (e.g., circle)
 
+</details>
 ---
 
 **Status:** ✅ Complete

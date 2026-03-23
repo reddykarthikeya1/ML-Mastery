@@ -627,5 +627,29 @@ def pacific_atlantic(heights):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. When should you use an Adjacency List instead of an Adjacency Matrix?
+2. Which algorithm is best suited for finding the shortest path in an unweighted graph?
+3. Can Dijkstra's algorithm handle graphs with negative weight edges?
+4. What is the primary purpose of Topological Sorting?
+5. How does Union-Find (Disjoint Set Union) detect a cycle in an undirected graph?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. An **Adjacency List** is preferred for sparse graphs (few edges compared to vertices) because it saves significant space $O(V+E)$ compared to an Adjacency Matrix $O(V^2)$ and allows faster iteration over a node's neighbors.
+2. **Breadth-First Search (BFS)** is the best and most efficient algorithm for finding the shortest path in an unweighted graph.
+3. No, **Dijkstra's algorithm** cannot handle negative weight edges. It assumes that once a node's shortest path is finalized, it cannot be improved. (Bellman-Ford is used for graphs with negative weights).
+4. **Topological Sorting** provides a linear ordering of vertices in a Directed Acyclic Graph (DAG) such that for every directed edge $U \to V$, vertex $U$ comes before $V$. It is primarily used for scheduling tasks with dependencies.
+5. In **Union-Find**, before adding an edge between two nodes, you check their roots using the `find` operation. If both nodes share the same root, adding the edge would connect two already-connected components, thereby creating a cycle.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Sorting and Searching

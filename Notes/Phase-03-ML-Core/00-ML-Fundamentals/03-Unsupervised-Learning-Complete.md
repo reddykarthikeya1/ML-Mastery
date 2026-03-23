@@ -228,5 +228,32 @@ plt.show()
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the goal of K-Means clustering?
+2. How does DBSCAN differ from K-Means regarding the number of clusters?
+3. What is a Dendrogram?
+4. What is the purpose of Principal Component Analysis (PCA)?
+5. When should you use t-SNE instead of PCA?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. **K-Means clustering** aims to partition $n$ observations into $K$ clusters in which each observation belongs to the cluster with the nearest mean (centroid).
+2. **K-Means** requires you to specify the number of clusters ($K$) in advance. **DBSCAN** automatically determines the number of clusters based on the density of the data points and can identify outliers as noise.
+3. A **Dendrogram** is a tree-like diagram that records the sequences of merges or splits in hierarchical clustering.
+4. **PCA** is a dimensionality reduction technique that transforms a large set of variables into a smaller one that still contains most of the information (variance) from the original set.
+5. Use **t-SNE** when your primary goal is the **visualization** of high-dimensional data in 2D or 3D, as it is much better at preserving local structures and revealing clusters than PCA.
+
+</details>
+
+---
+
 **Status:** ✅ Complete
 **Next:** Model Evaluation

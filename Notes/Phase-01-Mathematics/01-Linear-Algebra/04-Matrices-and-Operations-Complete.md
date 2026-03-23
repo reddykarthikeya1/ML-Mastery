@@ -422,6 +422,9 @@ print(f"PA (permuted rows):\n{P @ A}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Aᵀ vs A⁻¹:**
    - **Aᵀ (transpose)**: Flips rows and columns, always exists
    - **A⁻¹ (inverse)**: Matrix such that AA⁻¹ = I, only exists for invertible matrices
@@ -450,6 +453,7 @@ print(f"PA (permuted rows):\n{P @ A}")
    - If u = [u₁, u₂, u₃]ᵀ and v = [v₁, v₂, v₃]ᵀ
    - uvᵀ = [[u₁v₁, u₁v₂, u₁v₃], [u₂v₁, u₂v₂, u₂v₃], [u₃v₁, u₃v₂, u₃v₃]]
 
+</details>
 ---
 
 **Status:** ✅ Complete  

@@ -311,5 +311,31 @@ print(mymath.PI)  # 3.14159
 
 ---
 
+---
+
+## ❓ Quick Check Questions
+
+1. What is the difference between a "parameter" and an "argument"?
+2. What do `*args` and `**kwargs` allow you to do in a function definition?
+3. Explain the LEGB rule for variable scope.
+4. What is a lambda function, and when should you use one?
+5. What is the purpose of the `if __name__ == "__main__":` block?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. A **parameter** is the variable listed inside the parentheses in the function definition (the placeholder). An **argument** is the actual value sent to the function when it is called.
+2. `*args` allows a function to accept any number of **positional arguments**, which are received as a tuple. `**kwargs` allows a function to accept any number of **keyword arguments**, which are received as a dictionary.
+3. The **LEGB rule** defines the order in which Python looks up names: **Local** (inside function), **Enclosing** (nested functions), **Global** (module level), and **Built-in** (Python's internal names).
+4. A **lambda function** is a small, anonymous function defined with the `lambda` keyword. It is typically used for simple, one-line logic, often as an argument to higher-order functions like `map()`, `filter()`, or `sorted()`.
+5. The `if __name__ == "__main__":` block ensures that the code inside it only runs when the script is **executed directly**, not when it is imported as a module into another script.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Object-Oriented Programming

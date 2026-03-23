@@ -1,343 +1,73 @@
 # Deep Learning Frameworks - Practice Problems
 
-## Topic 1: TensorFlow/Keras
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Concept Recall
+**1.1** What is the difference between a `Tensor` and a standard `NumPy` array?
+**1.2** In TensorFlow, what is the difference between `model.fit()` and a custom training loop using `GradientTape`?
+**1.3** In PyTorch, what does `loss.backward()` actually do under the hood?
+**1.4** What is the purpose of a "DataLoader" in any framework?
+**1.5** In JAX, why are arrays immutable?
 
-**1.1** Build Sequential model:
-```python
-from tensorflow import keras
+### Level 2: Intermediate Framework Operations
+**2.1** In Keras, when would you use `layers.GlobalAveragePooling2D()` instead of `layers.Flatten()`?
+**2.2** In PyTorch, why must you call `optimizer.zero_grad()` before `loss.backward()`?
+**2.3** In JAX, explain the purpose of the `PRNGKey` and why we must "split" it for every random operation.
+**2.4** How do you move a model to a GPU in PyTorch vs. TensorFlow?
+**2.5** What is the difference between the "Sequential API" and the "Functional API" in Keras?
 
-# Build a model for MNIST:
-# - Input layer (784 features)
-# - Hidden layer with 128 units, ReLU, Dropout
-# - Output layer with 10 units, softmax
+### Level 3: Advanced Framework Features
+**3.1** **Custom Layers:** Outline the methods you need to override to create a custom layer in PyTorch (`__init__`, `forward`) vs. Keras (`__init__`, `build`, `call`).
+**3.2** **Performance:** Explain how `tf.data.AUTOTUNE` and `prefetch` optimize the data pipeline in TensorFlow.
+**3.3** **JIT Compilation:** What is the `@tf.function` (TF) or `@jit` (JAX) decorator doing, and what are "side effects" that can break it?
+**3.4** **Distributed Training:** Compare "Data Parallelism" vs. "Model Parallelism" at a high level.
 
-model = keras.Sequential([
-    # Your code here
-])
+### Level 4: Python Implementation Practice
+**4.1** **PyTorch:** Write a simple `nn.Module` class for a 2-layer MLP with ReLU activation.
+**4.2** **Keras:** Write the code to implement a "Residual Connection" (Add layer) between two Conv2D layers using the Functional API.
+**4.3** **JAX:** Use `vmap` to turn a function `predict(params, x)` that works on one sample into a function that works on a batch of samples.
 
-model.compile(
-    # Your code here
-)
-```
-
-**1.2** Training with callbacks:
-```python
-# Add callbacks:
-# - EarlyStopping
-# - ReduceLROnPlateau
-# - ModelCheckpoint
-
-callbacks = [
-    # Your code here
-]
-
-model.fit(X_train, y_train, epochs=50, callbacks=callbacks)
-```
-
-### Level 2: Intermediate
-
-**2.1** Functional API:
-```python
-from tensorflow.keras import Model, Input
-from tensorflow.keras.layers import *
-
-# Build multi-input model:
-# Input 1: Image (28x28x1)
-# Input 2: Metadata (10 features)
-# Output: Classification (10 classes)
-
-# Your code here
-```
-
-**2.2** Custom layer:
-```python
-from tensorflow.keras.layers import Layer
-
-class CustomDense(Layer):
-    def __init__(self, units, activation='relu'):
-        super().__init__()
-        # Your code here
-    
-    def build(self, input_shape):
-        # Your code here
-    
-    def call(self, inputs):
-        # Your code here
-```
-
-### Level 3: Advanced
-
-**2.3** Custom training loop:
-```python
-class CustomModel(keras.Model):
-    def train_step(self, data):
-        # Implement custom training step
-        pass
-    
-    def test_step(self, data):
-        # Implement custom test step
-        pass
-```
+### Level 5: Real-world Deployment & Selection
+**5.1** **Scenario:** You are a Lead ML Engineer. Your team needs to build a State-of-the-Art (SOTA) Transformer model for a new research paper, but it also needs to be deployed to a mobile app eventually.
+**Task:** Choose between TensorFlow/Keras, PyTorch, or JAX. Justify your framework choice based on:
+1. Ease of experimentation (Research).
+2. Ecosystem for mobile deployment (Lite/Mobile/CoreML).
+3. Availability of pre-trained models (HuggingFace/Hub).
 
 ---
 
-## Topic 2: PyTorch
-
-### Level 1: Basic
-
-**1.1** Build neural network:
-```python
-import torch.nn as nn
-
-class NeuralNetwork(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super().__init__()
-        # Your code here
-    
-    def forward(self, x):
-        # Your code here
-
-model = NeuralNetwork(784, 128, 10)
-```
-
-**1.2** Training loop:
-```python
-# Implement complete training loop:
-# - Forward pass
-# - Loss computation
-# - Backward pass
-# - Optimizer step
-
-for epoch in range(num_epochs):
-    # Your code here
-```
-
-### Level 2: Intermediate
-
-**2.1** Custom Dataset:
-```python
-from torch.utils.data import Dataset
-
-class CustomDataset(Dataset):
-    def __init__(self, data, labels, transform=None):
-        # Your code here
-    
-    def __len__(self):
-        # Your code here
-    
-    def __getitem__(self, idx):
-        # Your code here
-```
-
-**2.2** Transfer Learning:
-```python
-from torchvision import models
-
-# Load pre-trained ResNet
-# Freeze all layers except final layer
-# Replace final layer for custom classification
-
-resnet = models.resnet50(pretrained=True)
-# Your code here
-```
-
-### Level 3: Advanced
-
-**2.3** Distributed training:
-```python
-import torch.distributed as dist
-from torch.nn.parallel import DistributedDataParallel
-
-# Setup distributed training
-# Wrap model with DDP
-# Train across multiple GPUs
-```
-
----
-
-## Topic 3: JAX
-
-### Level 2: Intermediate
-
-**3.1** JAX basics:
-```python
-import jax
-import jax.numpy as jnp
-from jax import grad, jit, vmap
-
-# 1. JIT compile a function
-# 2. Compute gradient
-# 3. Vectorize with vmap
-
-@jit
-def compute(x, y):
-    # Your code here
-
-grad_fn = grad(compute)
-vectorized_fn = vmap(compute)
-```
-
-**3.2** Neural network with Flax:
-```python
-from flax import linen as nn
-
-class MLP(nn.Module):
-    features: list
-    
-    @nn.compact
-    def __call__(self, x):
-        # Your code here
-
-model = MLP(features=[128, 64, 10])
-```
-
-### Level 3: Advanced
-
-**3.3** Custom training loop with JAX:
-```python
-from flax.training import train_state
-import optax
-
-class TrainState(train_state.TrainState):
-    pass
-
-@jax.jit
-def train_step(state, batch):
-    def loss_fn(params):
-        # Your code here
-    
-    # Compute gradients
-    # Update state
-    # Return new state
-```
-
----
-
-## Topic 4: Framework Comparison
-
-### Level 2: Intermediate
-
-**4.1** Same model in different frameworks:
-```python
-# Implement same architecture in:
-# 1. TensorFlow/Keras
-# 2. PyTorch
-# 3. JAX/Flax
-
-# Compare:
-# - Code complexity
-# - Training speed
-# - Final accuracy
-```
-
-**4.2** Model export and deployment:
-```python
-# TensorFlow: Save and load model
-# PyTorch: Save and load state_dict
-# Compare deployment options
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
-### 1.1 Sequential Model
-```python
-model = keras.Sequential([
-    keras.layers.Dense(128, activation='relu', input_shape=(784,)),
-    keras.layers.Dropout(0.3),
-    keras.layers.Dense(64, activation='relu'),
-    keras.layers.Dropout(0.3),
-    keras.layers.Dense(10, activation='softmax')
-])
+### 1.3
+`loss.backward()` computes the gradient of the loss with respect to every leaf node in the computation graph that has `requires_grad=True`, and stores these gradients in the `.grad` attribute of each tensor.
 
-model.compile(
-    optimizer='adam',
-    loss='sparse_categorical_crossentropy',
-    metrics=['accuracy']
-)
+### 2.2
+PyTorch accumulates gradients by default (adds them to existing values). `zero_grad()` clears old gradients from the previous training step so they don't interfere with the current update.
+
+### 4.1
+```python
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, in_dim, hidden_dim, out_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, out_dim)
+        )
+    def forward(self, x):
+        return self.net(x)
 ```
 
-### 1.2 Callbacks
+### 4.3
 ```python
-callbacks = [
-    keras.callbacks.EarlyStopping(
-        monitor='val_loss',
-        patience=5,
-        restore_best_weights=True
-    ),
-    keras.callbacks.ReduceLROnPlateau(
-        monitor='val_loss',
-        factor=0.5,
-        patience=3,
-        min_lr=1e-6
-    ),
-    keras.callbacks.ModelCheckpoint(
-        'best_model.h5',
-        monitor='val_accuracy',
-        save_best_only=True
-    )
-]
-```
-
-### 2.1 Custom Dataset
-```python
-class CustomDataset(Dataset):
-    def __init__(self, data, labels, transform=None):
-        self.data = data
-        self.labels = labels
-        self.transform = transform
-    
-    def __len__(self):
-        return len(self.data)
-    
-    def __getitem__(self, idx):
-        x = self.data[idx]
-        y = self.labels[idx]
-        
-        if self.transform:
-            x = self.transform(x)
-        
-        return x, y
-```
-
-### 2.2 Transfer Learning
-```python
-resnet = models.resnet50(pretrained=True)
-
-# Freeze all layers
-for param in resnet.parameters():
-    param.requires_grad = False
-
-# Replace final layer
-num_features = resnet.fc.in_features
-resnet.fc = nn.Linear(num_features, num_classes)
-
-# Only train final layer
-optimizer = optim.Adam(resnet.fc.parameters(), lr=0.001)
-```
-
-### 3.1 JAX Basics
-```python
-@jit
-def compute(x, y):
-    return jnp.sum(x * y)
-
-def loss_fn(params, x, y):
-    predictions = jnp.dot(x, params)
-    return jnp.mean((predictions - y) ** 2)
-
-grad_fn = grad(loss_fn)
-gradients = grad_fn(params, x, y)
-
-@vmap
-def batch_compute(x_batch, y_batch):
-    return jnp.sum(x_batch * y_batch, axis=1)
+from jax import vmap
+# Map over the 0-th axis of input x, but broadcast params (None)
+batched_predict = vmap(predict, in_axes=(None, 0))
 ```
 
 </details>

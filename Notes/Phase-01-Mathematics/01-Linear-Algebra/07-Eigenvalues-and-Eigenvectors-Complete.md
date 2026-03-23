@@ -437,6 +437,9 @@ print(f"Eigenvalues: {eig_system}")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **λ = 0 means:**
    - Matrix is **singular** (not invertible)
    - det(A) = 0
@@ -471,6 +474,7 @@ print(f"Eigenvalues: {eig_system}")
    - Also: det(A) = λ₁ · λ₂ · ... · λₙ (product of eigenvalues)
    - Useful for checking eigenvalue computations
 
+</details>
 ---
 
 **Status:** ✅ Complete  

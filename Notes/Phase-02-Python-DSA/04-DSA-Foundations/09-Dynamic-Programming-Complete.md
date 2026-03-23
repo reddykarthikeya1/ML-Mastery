@@ -552,5 +552,29 @@ def max_product(nums):
 
 ---
 
+## ❓ Quick Check Questions
+
+1. What are the two essential properties a problem must have to be solvable using Dynamic Programming?
+2. What is the difference between Memoization and Tabulation?
+3. In the 0/1 Knapsack problem, what does "0/1" mean?
+4. How can you optimize the space complexity of the tabulation approach for the Fibonacci sequence?
+5. Which DP pattern is typically used to find the Longest Common Subsequence of two strings?
+
+---
+
+## 📝 Answers to Quick Check
+
+<details>
+<summary>Click to reveal answers</summary>
+
+1. The problem must have **Overlapping Subproblems** (the same subproblems are solved repeatedly) and **Optimal Substructure** (the optimal solution to the main problem can be constructed from optimal solutions of its subproblems).
+2. **Memoization** is a Top-Down approach that uses recursion and caches the results of function calls. **Tabulation** is a Bottom-Up approach that uses iteration to fill a table starting from the base cases up to the final solution.
+3. "0/1" means that for every item, you must either entirely include it in the knapsack (1) or entirely exclude it (0). You cannot take fractions of an item.
+4. Instead of storing the entire array of size $n$, you only need to store the last two calculated values (`prev1` and `prev2`) to calculate the current value, reducing the space complexity from $O(n)$ to **$O(1)$**.
+5. The **2D DP** pattern is typically used. You create a 2D matrix where the rows represent characters of the first string and columns represent characters of the second string.
+
+</details>
+---
+
 **Status:** ✅ Complete
 **Next:** Algorithm Design Patterns

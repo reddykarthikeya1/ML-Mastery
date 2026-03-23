@@ -682,6 +682,9 @@ plot_gradient_field(f, (-3, 3), (-3, 3))
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Gradient:**
    - Direction of steepest increase
    - Magnitude = maximum rate of change
@@ -707,6 +710,7 @@ plot_gradient_field(f, (-3, 3), (-3, 3))
    - Green's: 2D special case of Stokes'
    - All generalize FTC to higher dimensions
 
+</details>
 ---
 
 **Status:** ✅ Complete

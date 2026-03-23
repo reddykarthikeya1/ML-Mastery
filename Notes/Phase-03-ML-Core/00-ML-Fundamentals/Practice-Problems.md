@@ -1,185 +1,65 @@
-# ML Fundamentals - Practice Problems
+# ML Fundamentals Summary - Practice Problems
 
-## Topic 1: Introduction to ML
+## 📊 Graded Practice Levels
 
-### Level 1: Basic
+### Level 1: Basic Concept Recall
+**1.1** What is the "universal" goal of any Machine Learning algorithm?
+**1.2** Explain the difference between "Supervised" and "Unsupervised" learning in one sentence each.
+**1.3** Define "Feature Scaling" and name two common methods.
+**1.4** What is the "Train-Test Split" and why is it used?
 
-**1.1** Identify the type of learning:
-```
-1. Predicting house prices
-2. Grouping customers by behavior
-3. Learning to play chess through rewards
-4. Classifying emails as spam
-```
+### Level 2: Intermediate Algorithm Logic
+**2.1** **Metrics:** In a classification task, if your classes are highly imbalanced (e.g., 99% vs 1%), why is "Accuracy" a poor metric? Which metrics would you use instead?
+**2.2** **Clustering:** How does the "Elbow Method" help determine the number of clusters in K-Means?
+**2.3** **Dimensionality Reduction:** Why would you use PCA before training a model on a dataset with 500 features?
+**2.4** **Validation:** Explain the concept of a "Validation Set" vs. a "Test Set."
 
-**1.2** Match the problem type:
-```
-1. Regression
-2. Classification
-3. Clustering
-4. Dimensionality Reduction
+### Level 3: Advanced Pipeline Analysis
+**3.1** **Data Leakage:** Describe a scenario where data leakage could occur during the feature scaling process. How does a Scikit-Learn `Pipeline` prevent this?
+**3.2** **Bias-Variance:** If a model has high training error and high validation error, is it suffering from High Bias or High Variance? What are two ways to fix it?
+**3.3** **Feature Selection:** Compare "Filter" and "Wrapper" methods for feature selection. Which one is generally more computationally expensive?
 
-a) Customer segmentation
-b) House price prediction
-c) PCA
-d) Spam detection
-```
+### Level 4: Python Implementation Practice
+**4.1** Write a Python snippet using Scikit-Learn to:
+1. Load a dataset.
+2. Create a `Pipeline` containing `StandardScaler` and `LogisticRegression`.
+3. Use `cross_val_score` to evaluate the pipeline with 5-fold CV.
 
----
+**4.2** Implement a manual "Train-Test Split" using only NumPy (assume you have an array `X` and labels `y`).
 
-## Topic 2: Supervised Learning
-
-### Level 1: Basic
-
-**2.1** Implement Linear Regression:
-```python
-from sklearn.linear_model import LinearRegression
-
-# 1. Create model
-# 2. Fit on training data
-# 3. Predict on test data
-# 4. Calculate R² score
-```
-
-**2.2** Classification Metrics:
-```python
-# Given y_true and y_pred:
-# 1. Calculate accuracy, precision, recall, F1
-# 2. Print classification report
-```
-
-### Level 2: Intermediate
-
-**2.3** Compare Regression vs Classification:
-```python
-# Create both regression and classification datasets
-# Train appropriate models
-# Evaluate with correct metrics
-```
+### Level 5: Real-world Design Scenario
+**5.1** **Scenario:** You are building a system to predict whether a loan application should be approved.
+- The data includes `income`, `credit_score`, `employment_history` (categorical), and `loan_amount`.
+**Task:** Describe your preprocessing pipeline. Which encoding would you use for `employment_history`? Which scaling would you use for `income`? How would you handle potential outliers in `loan_amount`?
 
 ---
 
-## Topic 3: Unsupervised Learning
-
-### Level 2: Intermediate
-
-**3.1** K-Means Clustering:
-```python
-from sklearn.cluster import KMeans
-
-# 1. Fit K-Means with k=3
-# 2. Get cluster labels
-# 3. Calculate silhouette score
-# 4. Find optimal k using elbow method
-```
-
-**3.2** PCA:
-```python
-from sklearn.decomposition import PCA
-
-# 1. Fit PCA to retain 95% variance
-# 2. Transform data
-# 3. Get explained variance ratio
-```
-
----
-
-## Topic 4: Model Evaluation
-
-### Level 2: Intermediate
-
-**4.1** Cross-Validation:
-```python
-from sklearn.model_selection import cross_val_score, KFold
-
-# 1. Perform 5-fold CV
-# 2. Calculate mean and std of scores
-# 3. Compare with single train-test split
-```
-
-**4.2** Hyperparameter Tuning:
-```python
-from sklearn.model_selection import GridSearchCV
-
-# 1. Define parameter grid
-# 2. Create GridSearchCV
-# 3. Fit on training data
-# 4. Get best parameters and score
-```
-
----
-
-## Topic 5: Feature Engineering
-
-### Level 2: Intermediate
-
-**5.1** Feature Selection:
-```python
-from sklearn.feature_selection import SelectKBest, f_classif
-
-# 1. Select top 10 features using F-test
-# 2. Get feature scores
-# 3. Compare model with selected vs all features
-```
-
-**5.2** Feature Scaling:
-```python
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-
-# 1. Standardize features
-# 2. Normalize to [0, 1]
-# 3. Compare model performance with different scalers
-```
-
----
-
-## Solutions (Selected)
+## 📝 Solutions (Selected)
 
 <details>
 <summary>Click to reveal solutions</summary>
 
-### 1.1 Learning Types
-```
-1. Supervised (Regression)
-2. Unsupervised (Clustering)
-3. Reinforcement Learning
-4. Supervised (Classification)
-```
+### 1.2
+Supervised learning uses labeled data to learn a mapping from inputs to outputs. Unsupervised learning uses unlabeled data to find hidden patterns or structures.
 
-### 2.1 Linear Regression
+### 2.1
+Accuracy would be 99% even if the model predicts the majority class every time. Use **Precision**, **Recall**, **F1-Score**, or **AUC-ROC** instead to better capture the model's performance on the minority class.
+
+### 3.1
+Leakage occurs if you `fit` the scaler on the *entire* dataset before splitting. This allows the training set to "know" the mean and variance of the test set. A `Pipeline` ensures the scaler is only `fit` on the training folds during cross-validation.
+
+### 4.1
 ```python
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-r2 = r2_score(y_test, y_pred)
-```
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
 
-### 3.1 K-Means
-```python
-kmeans = KMeans(n_clusters=3, random_state=42)
-labels = kmeans.fit_predict(X)
-silhouette = silhouette_score(X, labels)
-
-# Elbow method
-inertias = []
-for k in range(1, 11):
-    kmeans = KMeans(n_clusters=k)
-    kmeans.fit(X)
-    inertias.append(kmeans.inertia_)
-```
-
-### 4.1 Cross-Validation
-```python
-kfold = KFold(n_splits=5, shuffle=True, random_state=42)
-scores = cross_val_score(model, X, y, cv=kfold)
-print(f"CV Score: {scores.mean():.4f} (+/- {scores.std():.4f})")
-```
-
-### 5.1 Feature Selection
-```python
-selector = SelectKBest(score_func=f_classif, k=10)
-X_selected = selector.fit_transform(X, y)
-selected_features = X.columns[selector.get_support()]
+pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('clf', LogisticRegression())
+])
+scores = cross_val_score(pipe, X, y, cv=5)
 ```
 
 </details>

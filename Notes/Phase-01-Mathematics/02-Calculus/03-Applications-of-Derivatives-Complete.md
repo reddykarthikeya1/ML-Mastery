@@ -686,6 +686,9 @@ curve_sketching_helper(x**3 - 3*x)
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Critical vs Stationary:**
    - Critical: f'(c) = 0 OR f'(c) undefined
    - Stationary: Only f'(c) = 0
@@ -717,6 +720,7 @@ curve_sketching_helper(x**3 - 3*x)
    - Verify max/min
    - Answer original question
 
+</details>
 ---
 
 **Status:** ✅ Complete

@@ -731,6 +731,9 @@ analyze_discrete_distribution(x_binom, p_binom, f"Binomial(n={n}, p={p})")
 
 ## 📝 Answers to Quick Check
 
+<details>
+<summary>Click to reveal answers</summary>
+
 1. **Discrete vs Continuous:**
    - Discrete: Countable values, PMF
    - Continuous: Interval of values, PDF
@@ -756,6 +759,7 @@ analyze_discrete_distribution(x_binom, p_binom, f"Binomial(n={n}, p={p})")
    - CDF is integral of PDF
    - PDF is derivative of CDF
 
+</details>
 ---
 
 **Status:** ✅ Complete
