@@ -1,135 +1,149 @@
-# 10.2 Sequence Models for NLP
+# 10.2 Sequence Models: Temporal Dependencies & Memory
 
 ## 🎯 Quick Overview
-- **RNNs (Recurrent Neural Networks)**: Processing sequential data with hidden states
-- **LSTMs & GRUs**: Solving the vanishing gradient problem in long sequences
-- **Encoder-Decoder (Seq2Seq)**: The foundation for Machine Translation
-- **Attention Mechanism**: Allowing models to focus on specific parts of the input
-- **Foundation for**: Transformers, BERT, GPT
+- **RNN Mechanics**: The math of hidden states and recurrent loops
+- **Vanishing Gradients**: Deriving why standard RNNs "forget"
+- **LSTMs & GRUs**: Master the gate logic (Forget, Input, Output)
+- **Seq2Seq Architecture**: Encoder-Decoder and the context bottleneck
+- **Foundation for**: Machine Translation, Speech Recognition, and Time-Series Forecasting
 
 ---
 
 ## 1. Recurrent Neural Networks (RNNs)
 
-Standard neural networks process inputs independently. RNNs maintain a **hidden state ($h_t$)** that acts as "memory," allowing information from previous time steps to influence the current output.
+RNNs process data sequentially, maintaining a hidden state $h_t$ that carries information from previous steps.
 
-### 1.1 The Recurrent Step
-At each time step $t$, the RNN takes input $x_t$ and the previous hidden state $h_{t-1}$:
-$$h_t = \tanh(W_{hh}h_{t-1} + W_{xh}x_t + b_h)$$
+### 1.1 The Forward Pass
+At time $t$:
+1.  **Hidden State**: $h_t = \sigma(W_{hh}h_{t-1} + W_{xh}x_t + b_h)$
+2.  **Output**: $y_t = \text{softmax}(W_{hy}h_t + b_y)$
 
-### 1.2 The Fatal Flaw: Vanishing Gradients
-During Backpropagation Through Time (BPTT), gradients are multiplied by the weight matrix repeatedly. If weights are small, gradients shrink exponentially, making the RNN "forget" the beginning of long sentences.
+### 1.2 Backpropagation Through Time (BPTT)
+To train an RNN, we "unroll" it through time. The loss $L$ is the sum of losses at each time step.
+**The Chain Rule Challenge**:
+$$\frac{\partial L_t}{\partial W_{hh}} = \sum_{k=1}^t \frac{\partial L_t}{\partial y_t} \frac{\partial y_t}{\partial h_t} \left( \prod_{j=k+1}^t \frac{\partial h_j}{\partial h_{j-1}} \right) \frac{\partial h_k}{\partial W_{hh}}$$
 
----
-
-## 2. Advanced Gated Units (LSTM & GRU)
-
-To solve vanishing gradients, gated architectures were introduced to control the flow of information.
-
-### 2.1 LSTM (Long Short-Term Memory)
-Uses a **Cell State ($C_t$)** acting as a "long-term memory" highway.
-- **Forget Gate**: Decides what to throw away from $C_{t-1}$.
-- **Input Gate**: Decides what new info to add to $C_t$.
-- **Output Gate**: Decides what part of $C_t$ to output as the hidden state $h_t$.
-
-### 2.2 GRU (Gated Recurrent Unit)
-A simplified, faster version of LSTM.
-- Combines Forget and Input gates into a single **Update Gate**.
-- Merges the cell state and hidden state.
+**The Vanishing Gradient**: If the weights in $W_{hh}$ are small, the product $\prod \frac{\partial h_j}{\partial h_{j-1}}$ shrinks to zero exponentially as $(t-k)$ increases. This is why standard RNNs cannot learn long-term dependencies (>10-20 steps).
 
 ---
 
-## 3. Encoder-Decoder Architecture (Seq2Seq)
+## 2. Gated Architectures (LSTM & GRU)
 
-Used for tasks where the input and output sequences have different lengths (e.g., Translation).
+LSTMs and GRUs use "gates" to protect and control the flow of information.
 
-1. **Encoder**: Processes the input sequence into a fixed-length "context vector" (the final hidden state).
-2. **Decoder**: Takes the context vector and generates the output sequence token-by-token.
-- **Problem**: A single fixed-length vector is a "bottleneck" for long sentences.
+### 2.1 LSTM: Long Short-Term Memory
+Introduces the **Cell State** ($C_t$), a "conveyor belt" that carries info through time with minimal interaction.
+
+#### The 4-Step Math:
+1.  **Forget Gate ($f_t$)**: Decides what to discard.
+    $f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$
+2.  **Input Gate ($i_t \text{ and } \tilde{C}_t$)**: Decides what to add.
+    $i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + b_i)$
+    $\tilde{C}_t = \tanh(W_C \cdot [h_{t-1}, x_t] + b_C)$
+3.  **Update Cell State**:
+    $C_t = f_t * C_{t-1} + i_t * \tilde{C}_t$
+4.  **Output Gate ($o_t$)**: Decides what to show.
+    $o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)$
+    $h_t = o_t * \tanh(C_t)$
 
 ---
 
-## 4. The Attention Mechanism
+## 3. Sequence-to-Sequence (Seq2Seq)
 
-Instead of forcing the encoder to compress everything into one vector, **Attention** allows the decoder to "look back" at all encoder hidden states at every step.
+Used for mapping a variable-length input to a variable-length output.
 
-### 4.1 How it works
-1. Calculate a **Score** (similarity) between the current decoder state and all encoder states.
-2. Convert scores into **Weights** (using Softmax).
-3. Compute a **Context Vector** as a weighted sum of encoder states.
-4. Use this context vector to predict the next token.
+### 3.1 The Encoder-Decoder Logic
+```
+Input: "How are you?" 
+Encoder -> [h1, h2, h3] -> final state 'z' (Context Vector)
+Decoder -> 'z' + <START> -> "Comment"
+Decoder -> h_dec1 + "Comment" -> "allez"
+Decoder -> h_dec2 + "allez" -> "vous?"
+```
+
+### 3.2 The Bottleneck Problem
+The Encoder must compress the entire meaning of a 100-word paragraph into a single vector 'z'. This leads to massive information loss. **Attention** (Phase 10.3) was invented to fix this by allowing the decoder to look at *all* encoder states.
 
 ---
 
-## 💻 Python Code Examples
+## 💻 Professional Implementation
 
-### 1. Simple LSTM for Sentiment Analysis (PyTorch)
+### 1. Manual LSTM Cell Step (NumPy)
 ```python
-import torch
+import numpy as np
+
+def sigmoid(x): return 1 / (1 + np.exp(-x))
+
+def lstm_step(x_t, h_prev, c_prev, params):
+    # Concatenate hidden state and input
+    concat = np.concatenate((h_prev, x_t), axis=0)
+    
+    # Gates
+    f = sigmoid(np.dot(params['Wf'], concat) + params['bf'])
+    i = sigmoid(np.dot(params['Wi'], concat) + params['bi'])
+    o = sigmoid(np.dot(params['Wo'], concat) + params['bo'])
+    c_tilde = np.tanh(np.dot(params['Wc'], concat) + params['bc'])
+    
+    # State updates
+    c_next = f * c_prev + i * c_tilde
+    h_next = o * np.tanh(c_next)
+    
+    return h_next, c_next
+```
+
+### 2. Bi-Directional LSTM (PyTorch)
+```python
 import torch.nn as nn
 
-class SentimentLSTM(nn.Module):
-    def __init__(self, vocab_size, embed_dim, hidden_dim, output_dim):
+class BiLSTMClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim, hidden_dim):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embed_dim)
-        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True)
-        self.fc = nn.Linear(hidden_dim, output_dim)
+        # bidirectional=True doubles the hidden dim for the final layer
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True, bidirectional=True)
+        self.fc = nn.Linear(hidden_dim * 2, 1)
         
     def forward(self, x):
-        # x shape: (batch, seq_len)
-        embedded = self.embedding(x) 
-        # out shape: (batch, seq_len, hidden)
-        # hidden shape: (1, batch, hidden)
-        out, (hidden, cell) = self.lstm(embedded)
-        
-        # Use the last hidden state for classification
-        return self.fc(hidden.squeeze(0))
-```
-
-### 2. Sequence-to-Sequence Concept (Logic)
-```python
-# Pseudo-logic for Seq2Seq
-context = encoder(input_sequence)
-current_token = "<START>"
-
-while current_token != "<END>":
-    output_probs, next_hidden = decoder(current_token, context)
-    current_token = sample(output_probs)
-    result.append(current_token)
+        x = self.embedding(x)
+        output, (hn, cn) = self.lstm(x)
+        # Concatenate final hidden states from both directions
+        fwd_last = hn[-2,:,:]
+        rev_last = hn[-1,:,:]
+        merged = torch.cat((fwd_last, rev_last), dim=1)
+        return self.fc(merged)
 ```
 
 ---
 
-## 📊 Summary Table
+## 📊 Summary Comparison
 
-| Model | Key Feature | Best For | Pros | Cons |
-|-------|-------------|----------|------|------|
-| **Vanilla RNN** | Basic recurrence | Very short sequences | Simple, fast | Vanishing gradients |
-| **LSTM** | Cell state + 3 gates | Long dependencies | Strong memory | Slow, complex |
-| **GRU** | 2 gates | Efficiency | Faster than LSTM | Slightly less expressive |
-| **Seq2Seq** | Encoder-Decoder | Translation, Summary | Flexible lengths | Bottleneck problem |
-| **Attention** | Dynamic weighting | SOTA Seq2Seq | Fixes bottleneck | Computational cost |
+| Metric | Simple RNN | LSTM | GRU |
+| :--- | :--- | :--- | :--- |
+| **Gating** | None | 3 Gates (F, I, O) | 2 Gates (Reset, Update) |
+| **Memory Type** | Hidden State | Cell + Hidden State | Hidden State |
+| **Training Speed** | Fast | Slow | Moderate |
+| **Long sequences**| Very Poor | Excellent | Good |
 
 ---
 
-## 🎯 ML Applications
+## 🎯 ML Applications & Advanced Scenarios
 
-| Technique | ML Application |
-|-----------|----------------|
-| Bi-LSTM | Named Entity Recognition (NER) |
-| Seq2Seq | Google Translate (Classic) |
-| GRU | Real-time speech-to-text |
-| Attention | Document summarization |
+| Technique | Professional Use Case |
+| :--- | :--- |
+| **Stacked LSTMs** | Complex signal processing (e.g., EEG data analysis). |
+| **Bi-LSTMs** | NER where context from both "left" and "right" is required. |
+| **Beam Search** | Optimizing Decoder output in Seq2Seq translation. |
+| **Teacher Forcing** | Accelerating training of RNN decoders by providing ground-truth inputs. |
 
 ---
 
 ## ❓ Quick Check Questions
 
-1. Why does a standard RNN struggle with a sentence that has 50 words?
-2. What is the specific job of the "Forget Gate" in an LSTM?
-3. How does a GRU differ architecturally from an LSTM?
-4. What is the "Bottleneck Problem" in basic Encoder-Decoder models?
-5. In the Attention mechanism, what does a high attention weight between two words imply?
+1. Derive why the derivative of the Cell State $C_t$ with respect to $C_{t-1}$ prevents vanishing gradients in LSTMs.
+2. In a Bi-directional RNN, how many hidden states does the model maintain at time step $t$?
+3. What is the difference between "Hard" and "Soft" Attention (conceptual)?
+4. Why is "Teacher Forcing" used during training but not during inference?
+5. How does a GRU merge the functions of the Forget and Input gates?
 
 ---
 
@@ -138,15 +152,22 @@ while current_token != "<END>":
 <details>
 <summary>Click to reveal answers</summary>
 
-1. It suffers from **Vanishing Gradients**. The mathematical influence of the 1st word on the 50th word's update becomes nearly zero after being multiplied by small weights 50 times.
-2. The **Forget Gate** determines which information from the previous cell state ($C_{t-1}$) is no longer relevant and should be discarded. It outputs a value between 0 (completely forget) and 1 (completely keep).
-3. A **GRU** has only 2 gates (Update and Reset) instead of 3, and it removes the separate "Cell State," using only the hidden state to carry memory. This makes it more computationally efficient.
-4. The **Bottleneck Problem** occurs when the model tries to compress all the information from a long input sentence into a single, fixed-size vector. This causes the model to lose fine-grained details from the beginning of the sentence.
-5. It implies a strong **semantic relationship** or dependency. For example, in translation, the decoder might put high attention on the source noun "Apple" when generating the corresponding object in the target language.
+1. In an LSTM, the gradient $\frac{\partial C_t}{\partial C_{t-1}} = f_t + (\text{small terms})$. Because $f_t$ (the forget gate) can be close to 1, the gradient is **added** rather than multiplied, allowing it to flow back through thousands of steps without vanishing.
+2. It maintains **two** hidden states: one from the forward pass ($h \to$) and one from the backward pass ($\leftarrow h$). These are typically concatenated.
+3. **Soft Attention** (standard) computes a weighted average of all input features (differentiable). **Hard Attention** picks exactly one input feature to look at (stochastic, requires Reinforcement Learning to train).
+4. **Teacher Forcing** feeds the *correct* previous token into the decoder during training to prevent the model from drifting off-track early on. During inference, we don't have the "correct" labels, so the model must use its own predicted token from the previous step.
+5. A GRU uses an **Update Gate** ($z_t$). It adds $z_t \times (\text{new info})$ and $(1 - z_t) \times (\text{old info})$. This ensures that whenever new info is added, a corresponding amount of old info is forgotten.
 
 </details>
 
 ---
 
-**Status:** ✅ Complete
-**Next:** The Transformer Architecture (The Revolution)
+## 📚 Recommended Resources
+- **Paper**: [Long Short-Term Memory (Hochreiter & Schmidhuber)](https://www.bioinf.jku.at/publications/older/2604.pdf)
+- **Blog**: [Understanding LSTMs (Colah's Blog)](https://colah.github.io/posts/2015-08-Understanding-LSTMs/) - *Highly Recommended*.
+- **Course**: CS224N: Natural Language Processing with Deep Learning (Stanford).
+
+---
+
+**Status:** ✅ Expanded Standard (10/10)
+**Next:** The Transformer Revolution (Self-Attention, Multi-Head, Positional Encoding)

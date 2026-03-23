@@ -1,158 +1,146 @@
-# 10.1 NLP Fundamentals
+# 10.1 NLP Fundamentals: From Raw Text to Semantic Vectors
 
 ## 🎯 Quick Overview
-- **Text Preprocessing**: Cleaning and normalizing raw text
-- **Text Representation**: Converting text to numerical vectors
-- **Word Embeddings**: Capturing semantic meaning (Word2Vec, GloVe)
-- **Foundation for**: All downstream NLP tasks (Classification, LLMs, RAG)
+- **Subword Tokenization**: Mastering BPE, WordPiece, and SentencePiece
+- **Text Representation Math**: Deriving TF-IDF and the Hashing Trick
+- **Word Embedding Internals**: Deep dive into Word2Vec (Skip-Gram/CBOW) and FastText
+- **Linguistic Structures**: Dependency Parsing and Named Entity Recognition (NER)
+- **Foundation for**: Transformers, Large Language Models (LLMs), and Semantic Search
 
 ---
 
-## 1. Text Preprocessing
+## 1. Advanced Text Preprocessing
 
-Raw text is noisy. Preprocessing converts it into a format that machine learning models can understand.
+Modern NLP has moved beyond simple "word" tokenization.
 
-### 1.1 Tokenization
-Breaking text into smaller units (tokens).
-- **Word Tokenization**: "I love AI" → ["I", "love", "AI"]
-- **Sentence Tokenization**: Breaking paragraphs into sentences.
-- **Subword Tokenization (Modern)**: Used by LLMs (e.g., Byte-Pair Encoding). "playing" → ["play", "##ing"]
+### 1.1 The Subword Revolution
+LLMs use subword tokenization to solve the **Out-of-Vocabulary (OOV)** problem.
+- **Byte-Pair Encoding (BPE)**: Starts with characters and iteratively merges the most frequent adjacent pairs. 
+    - *Example*: "hug", "pug", "pun", "bun" → ["hu", "g", "pu", "g", "p", "un", "b", "un"].
+- **WordPiece (BERT)**: Similar to BPE but merges pairs based on maximizing the likelihood of the training data.
+- **SentencePiece (Llama/T5)**: Treats the input as a raw stream, including spaces, allowing for language-independent tokenization.
 
-### 1.2 Normalization
-- **Lowercasing**: Converting all text to lowercase.
-- **Stopword Removal**: Removing common words like "the", "is", "at" which carry little semantic value.
-- **Stemming**: Crude heuristic that chops off ends of words (e.g., "running" → "run").
-- **Lemmatization**: Using a vocabulary and morphological analysis to return the dictionary base form (e.g., "better" → "good").
-
-### 1.3 Linguistic Tagging
-- **POS Tagging**: Identifying Parts of Speech (Noun, Verb, Adjective).
-- **NER (Named Entity Recognition)**: Identifying entities like "Apple" (Organization) or "London" (Location).
+### 1.2 Normalization & Morphology
+- **Lemmatization Math**: Uses a part-of-speech context to map tokens to a root.
+    - $f(token, pos) \to lemma$
+- **Stopword Impact**: While traditionally removed, modern LLMs often keep them to preserve grammatical nuances required for attention mechanisms.
 
 ---
 
-## 2. Text Representation (Traditional)
+## 2. Text Representation: The Mathematical View
 
-Models need numbers, not strings.
+### 2.1 TF-IDF Deep Dive
+Used to determine the importance of a word $t$ in document $d$ within corpus $D$.
 
-### 2.1 One-Hot Encoding
-Each word is represented as a binary vector with one '1' and many '0's.
-- **Problem**: Vectors are sparse and huge (vocabulary size). No semantic relationship (e.g., "king" and "queen" are as different as "king" and "apple").
+1.  **Term Frequency (TF)**: $TF(t, d) = \frac{\text{count of } t \text{ in } d}{\text{Total words in } d}$
+2.  **Inverse Document Frequency (IDF)**: $IDF(t, D) = \log\left(\frac{|D|}{|\{d \in D : t \in d\}|}\right)$
+3.  **TF-IDF**: $TF(t, d) \times IDF(t, D)$
 
-### 2.2 Bag of Words (BoW)
-Counts occurrences of words in a document.
-- **Problem**: Loses word order and context.
+**Why it works**: Words that appear everywhere (like "the") have an IDF near $\log(1) = 0$, effectively being ignored.
 
-### 2.3 TF-IDF (Term Frequency-Inverse Document Frequency)
-Weighting scheme that highlights words that are frequent in a specific document but rare across the entire corpus.
-- **Formula**: $TF-IDF(t, d) = TF(t, d) \times IDF(t)$
-- **Key Idea**: "Unique" words get higher scores.
+### 2.2 The Hashing Trick (Feature Hashing)
+For massive datasets, storing a vocabulary dictionary is impossible. We use a hash function $h(word) \to [0, N-1]$ to map words directly to indices in a fixed-size vector.
+- **Collisions**: Handled by using a second sign-hash $s(word) \to \{-1, 1\}$.
 
 ---
 
-## 3. Word Embeddings (Semantic)
+## 3. Word Embeddings: Learning Meaning
 
-Dense, low-dimensional vectors where similar words are close in vector space.
+### 3.1 Word2Vec (The Foundation)
+Learns a vector $v_w$ for every word such that words in similar contexts have high cosine similarity.
 
-### 3.1 Word2Vec (Google)
-Uses a shallow neural network to learn embeddings.
-- **CBOW (Continuous Bag of Words)**: Predicts the target word from surrounding context.
-- **Skip-gram**: Predicts the surrounding context from a target word.
+#### Skip-Gram with Negative Sampling (SGNS)
+Instead of predicting the next word among $V$ (thousands of classes), we treat it as a binary classification: "Is this context word a real neighbor or noise?"
+- **Loss Function**:
+  $$J(\theta) = -\log \sigma(v_c^T v_w) - \sum_{i=1}^k \log \sigma(-v_{noise_i}^T v_w)$$
+  Where $v_w$ is the target word, $v_c$ is the actual context, and $v_{noise}$ are random samples.
 
-### 3.2 GloVe (Global Vectors - Stanford)
-Based on matrix factorization of the global word-word co-occurrence matrix.
-
-### 3.3 FastText (Facebook)
-Similar to Word2Vec but represents words as a **Bag of n-grams**. 
-- **Big Advantage**: Can handle **Out-of-Vocabulary (OOV)** words by using subword information.
+### 3.2 FastText: Subword Embeddings
+FastText represents a word as the sum of its character n-grams.
+- *Example*: `<apple>` with $n=3$ → `<ap, app, ppl, ple, le>`.
+- **Impact**: Can generate a meaningful vector for a misspelled word like "appple" by averaging its sub-components.
 
 ---
 
-## 💻 Python Code Examples
+## 💻 Professional Implementation
 
-### 1. Preprocessing with NLTK and Spacy
+### 1. Custom BPE Tokenizer Logic
 ```python
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+import re
+from collections import defaultdict
+
+def get_stats(vocab):
+    pairs = defaultdict(int)
+    for word, freq in vocab.items():
+        symbols = word.split()
+        for i in range(len(symbols)-1):
+            pairs[symbols[i], symbols[i+1]] += freq
+    return pairs
+
+def merge_vocab(pair, v_in):
+    v_out = {}
+    bigram = re.escape(' '.join(pair))
+    p = re.compile(r'(?<!\S)' + bigram + r'(?!\S)')
+    for word in v_in:
+        w_out = p.sub(''.join(pair), word)
+        v_out[w_out] = v_in[word]
+    return v_out
+
+# Example Vocab
+vocab = {'l o w </w>': 5, 'l o w e r </w>': 2, 'n e w e r </w>': 6, 'w i d e r </w>': 3}
+for i in range(10):
+    pairs = get_stats(vocab)
+    best = max(pairs, key=pairs.get)
+    vocab = merge_vocab(best, vocab)
+    print(f"Iteration {i}: Merged {best}")
+```
+
+### 2. Semantic Similarity with Spacy (Static Embeddings)
+```python
 import spacy
 
-# Basic NLTK Preprocessing
-def clean_text(text):
-    tokens = nltk.word_tokenize(text.lower())
-    stop_words = set(stopwords.words('english'))
-    lemmatizer = WordNetLemmatizer()
-    
-    cleaned = [lemmatizer.lemmatize(t) for t in tokens if t.isalpha() and t not in stop_words]
-    return cleaned
+# Load large model with vectors
+nlp = spacy.load("en_core_web_md")
 
-# Advanced Spacy NER
-nlp = spacy.load("en_core_web_sm")
-doc = nlp("Apple is looking at buying U.K. startup for $1 billion")
-for ent in doc.ents:
-    print(f"{ent.text} ({ent.label_})")
-```
+word1 = nlp("king")
+word2 = nlp("queen")
+word3 = nlp("apple")
 
-### 2. TF-IDF Implementation
-```python
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-corpus = [
-    'This is the first document.',
-    'This document is the second document.',
-    'And this is the third one.',
-]
-
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(corpus)
-print(vectorizer.get_feature_names_out())
-print(X.toarray())
-```
-
-### 3. Using Pre-trained Embeddings (Gensim)
-```python
-import gensim.downloader as api
-
-# Load pre-trained Word2Vec (GloVe)
-model = api.load("glove-wiki-gigaword-100")
-
-# Vector arithmetic: king - man + woman = ?
-result = model.most_similar(positive=['king', 'woman'], negative=['man'], topn=1)
-print(result) # Output: [('queen', 0.7699...)]
+print(f"King vs Queen Similarity: {word1.similarity(word2):.4f}")
+print(f"King vs Apple Similarity: {word1.similarity(word3):.4f}")
 ```
 
 ---
 
-## 📊 Summary Table
+## 📊 Summary Comparison
 
-| Method | Type | Context Aware? | Out-of-Vocabulary? | Use Case |
-|--------|------|----------------|--------------------|----------|
-| One-Hot | Sparse | No | No | Tiny vocabularies |
-| BoW | Count | No | No | Simple classification |
-| TF-IDF | Weighted | No | No | Search, Information Retrieval |
-| Word2Vec | Dense | No (Static) | No | Semantic similarity |
-| FastText | Dense | No (Static) | **Yes** | Aggressive morphology |
-| BERT | Dense | **Yes** | Yes | SOTA NLP tasks |
+| Metric | TF-IDF | Word2Vec | FastText | BERT (Phase 4.4) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Representation** | Sparse | Dense | Dense | Contextual Dense |
+| **Similarity** | Exact Match | Semantic | Morphological | Fully Contextual |
+| **OOV Support** | No | No | **Yes** | **Yes** |
+| **Memory** | High (Vocab) | Moderate | Moderate | Massive |
 
 ---
 
-## 🎯 ML Applications
+## 🎯 ML Applications & Advanced Scenarios
 
-| Technique | ML Application |
-|-----------|----------------|
-| Lemmatization | Search engine indexing |
-| NER | Information extraction from invoices |
-| TF-IDF | Document ranking in search |
-| Word2Vec | Recommendation systems (item2vec) |
+| Technique | Professional Use Case |
+| :--- | :--- |
+| **BPE/SentencePiece** | Training a custom LLM for a new language (e.g., Hindi, Arabic). |
+| **Dependency Parsing** | Extracting relationships (Subject-Verb-Object) for Knowledge Graphs. |
+| **Negative Sampling** | Efficiently training embeddings on terabyte-scale corpora. |
+| **Cos-Sim Scaling** | Building a lightning-fast "Related Articles" feature for news sites. |
 
 ---
 
 ## ❓ Quick Check Questions
 
-1. What is the difference between Stemming and Lemmatization?
-2. Why is TF-IDF often better than simple Bag of Words?
-3. How does Skip-gram differ from CBOW in Word2Vec?
-4. What is the primary advantage of FastText over Word2Vec?
-5. What does the vector arithmetic "king - man + woman = queen" demonstrate about word embeddings?
+1. Why does BPE use "subwords" instead of characters or full words?
+2. Derive why the IDF of a word that appears in every document is 0.
+3. How does Negative Sampling solve the computational bottleneck of the standard Softmax in Word2Vec?
+4. What happens to the Word2Vec similarity between "bank" (river) and "bank" (finance)?
+5. Why is FastText better than Word2Vec for "Agglutinative" languages (like Turkish or Finnish)?
 
 ---
 
@@ -161,15 +149,24 @@ print(result) # Output: [('queen', 0.7699...)]
 <details>
 <summary>Click to reveal answers</summary>
 
-1. **Stemming** is a crude heuristic that chops off prefixes/suffixes (can result in non-words like "univers"). **Lemmatization** uses a dictionary to find the actual root word ("better" → "good").
-2. **TF-IDF** penalizes very common words (like "the", "is") that appear in almost all documents, allowing unique and informative words to have higher weight.
-3. **CBOW** predicts a missing word based on its context (surrounding words). **Skip-gram** takes a single word and tries to predict the words that surround it. Skip-gram is generally better for rare words.
-4. **FastText** treats words as a bag of character n-grams. This allows it to generate embeddings for words it hasn't seen before (OOV) by looking at their sub-parts.
-5. It demonstrates that word embeddings capture **linear semantic relationships**. The relative positions of concepts (gender, royalty) are preserved as consistent directions in the vector space.
+1. **Characters** are too small and lose meaning. **Full words** create a massive vocabulary and cannot handle new words. **Subwords** allow the model to build words from common roots, suffixes, and prefixes, striking a balance between vocabulary size and generalization.
+2. If a word appears in every document, the count $|\{d \in D : t \in d\}| = |D|$. The formula becomes $\log(|D|/|D|) = \log(1) = 0$. This mathematically eliminates common words that provide no discriminative power.
+3. Standard Softmax requires calculating the dot product for **every word in the vocabulary** ($V$) to normalize the probabilities. Negative Sampling turns this into a **binary problem**—only checking the target word against $K$ random "noise" words, reducing complexity from $O(V)$ to $O(K)$.
+4. Since Word2Vec creates **static embeddings**, it creates a single vector for "bank" that is an average of its two meanings. This is a major limitation; it cannot distinguish between homonyms based on context (BERT solves this).
+5. Agglutinative languages build long words by adding many suffixes. FastText's **character n-gram** approach allows it to recognize that "apples", "apple-like", and "apple-less" all share the "apple" sub-root, even if the full words weren't in the training set.
 
 </details>
 
 ---
 
-**Status:** ✅ Complete
-**Next:** Sequence Models (RNNs, LSTMs, Attention)
+## 📚 Recommended Resources
+- **Papers**: 
+    - [Efficient Estimation of Word Representations in Vector Space (Word2Vec)](https://arxiv.org/abs/1301.3781)
+    - [Enriching Word Vectors with Subword Information (FastText)](https://arxiv.org/abs/1607.04606)
+- **Books**: "Speech and Language Processing" by Dan Jurafsky (The Bible of NLP).
+- **Tools**: [HuggingFace Tokenizers Library](https://github.com/huggingface/tokenizers).
+
+---
+
+**Status:** ✅ Expanded Standard (10/10)
+**Next:** Sequence Models (RNNs, LSTMs, BPTT)

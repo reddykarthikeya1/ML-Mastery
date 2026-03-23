@@ -1,109 +1,131 @@
-# 11.5 Vision Transformers & Multimodal AI (ViT, CLIP, LLaVA)
+# 11.5 Advanced Vision Transformers & Multimodal AI
 
 ## 🎯 Quick Overview
-- **Vision Transformers (ViT)**: Applying the Transformer architecture to images (no more convolutions!)
-- **Shifted Windows (Swin)**: Solving the quadratic complexity of ViT for high-res images
-- **Multimodal AI**: Models that understand both text and images simultaneously
-- **CLIP**: Learning visual concepts from natural language supervision
-- **LLaVA**: The emergence of "Multimodal LLMs" (Visual Instruction Tuning)
-- **Foundation for**: Modern search engines, AI image captioning, and multimodal assistants (GPT-4V)
+- **ViT Math**: Linear projection of patches and Position Embedding interpolation
+- **Swin Transformer**: Shifted Window math and Hierarchical complexity reduction
+- **Multimodal Learning**: CLIP's Contrastive Loss and LLaVA's Projection Layer
+- **Emergent Vision**: DINO (Self-distillation) and MAE (Masked Autoencoders)
+- **Foundation for**: Multimodal LLMs (GPT-4V), Image search, and Zero-shot classification
 
 ---
 
-## 1. Vision Transformers (ViT)
+## 1. Vision Transformers (ViT) Deep Dive
 
-In 2020, researchers showed that a pure Transformer can outperform CNNs on images if trained on enough data.
+ViT treats an image as a sequence of tokens, just like a sentence.
 
-### 1.1 How it works
-1. **Patch Partitioning**: The image is split into a grid of fixed-size patches (e.g., $16 \times 16$ pixels).
-2. **Linear Projection**: Each patch is flattened and projected into a vector embedding.
-3. **Position Embeddings**: Since Transformers are permutation-invariant, 1D position embeddings are added to the patch embeddings.
-4. **Transformer Encoder**: The patches are treated exactly like "words" in a sentence.
-
-- **Limitation**: Standard ViT has **quadratic complexity** ($O(n^2)$) relative to the number of patches, making high-resolution images very expensive to process.
-
----
-
-## 2. Swin Transformer (The Improved ViT)
-
-Introduced **Hierarchical** feature maps and **Shifted Windows**.
-- It computes self-attention only within local windows, which reduces complexity to **linear** ($O(n)$) relative to image size.
-- It is the standard "backbone" for modern vision tasks like detection and segmentation.
+### 1.1 Patch Embedding Math
+1.  **Image**: $x \in \mathbb{R}^{H \times W \times C}$.
+2.  **Patches**: Split into $N = (HW) / P^2$ patches of size $(P, P, C)$.
+3.  **Projection**: Flatten patches and project to $D$ dimensions using a trainable linear layer $E$:
+    $$ z_0 = [x_{class}; x_p^1 E; x_p^2 E; \dots; x_p^N E] + E_{pos} $$
+    - $x_{class}$ is a special "learnable" token used for classification.
+    - $E_{pos}$ provides the 1D spatial information.
 
 ---
 
-## 3. Multimodal AI: Connecting Vision and Language
+## 2. Multimodal AI: Aligning Vision and Text
 
-### 3.1 CLIP (Contrastive Language-Image Pre-training)
-CLIP is trained on 400M image-text pairs from the internet.
-- **The Goal**: It learns to put an image and its corresponding caption close together in a shared vector space.
-- **Why it's revolutionary**: It enables **Zero-shot** image classification. You can give it a list of labels like ["cat", "dog", "ufo"] and it will pick the right one without ever being specifically trained on those labels.
+### 2.1 CLIP Contrastive Loss
+CLIP learns by maximizing the similarity between correct (Image, Text) pairs and minimizing it for all other pairs in a batch.
+- **The Batch**: $N$ pairs of (image, text).
+- **The Matrix**: $N \times N$ similarity scores.
+- **Loss**: Cross-entropy across the rows (finding the right text for an image) and columns (finding the right image for a text).
 
-### 3.2 LLaVA (Large Language-and-Vision Assistant)
-LLaVA connects a visual encoder (CLIP) with a language model (LLaMA) using a simple linear layer.
-- **Visual Instruction Tuning**: It allows you to "talk" to an image (e.g., "Describe what's happening in this photo").
+### 2.2 LLaVA: The Visual Connector
+LLaVA bridges a Vision Encoder (CLIP) and a Language Model (LLaMA).
+- **The Projection Layer**: A simple MLP or linear layer that maps the $1024$-dim CLIP features into the $4096$-dim space of the LLM.
+- **Visual Instruction Tuning**: The model is trained on data like:
+    - *User*: "What is the man in the photo holding?"
+    - *Assistant*: "He is holding a red umbrella."
 
 ---
 
-## 💻 Python Code Examples
+## 3. Self-Supervised Vision
 
-### 1. Zero-Shot Classification with CLIP (HuggingFace)
+How to learn without labels?
+
+### 3.1 Masked Autoencoders (MAE)
+1.  **Masking**: Randomly hide $75\%$ of image patches.
+2.  **Encoder**: Only processes the *unmasked* patches (very efficient).
+3.  **Decoder**: Tries to reconstruct the original image from the sparse features.
+- **Result**: Learns extremely robust high-level visual features.
+
+### 3.2 DINO (Self-Distillation)
+Uses a **Student** and **Teacher** network. Both see different "views" (crops) of the same image. The student tries to predict the teacher's output.
+- **Emergent Property**: DINO naturally learns to segment objects without ever being shown a segmentation mask!
+
+---
+
+## 💻 Professional Implementation
+
+### 1. Patch Partitioning Logic (NumPy)
 ```python
-from PIL import Image
-import requests
-from transformers import CLIPProcessor, CLIPModel
+import numpy as np
 
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+def patchify(image, patch_size):
+    # image: (C, H, W)
+    C, H, W = image.shape
+    # Reshape into patches
+    patches = image.reshape(C, H//patch_size, patch_size, W//patch_size, patch_size)
+    # Transpose to (N, P*P*C)
+    patches = patches.transpose(1, 3, 2, 4, 0).reshape(-1, patch_size * patch_size * C)
+    return patches
 
-url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-image = Image.open(requests.get(url, stream=True).raw)
+# Example: 224x224 image, 16x16 patches
+img = np.random.randn(3, 224, 224)
+p = patchify(img, 16)
+print(f"Number of patches: {p.shape[0]}") # 196
+```
 
-inputs = processor(
-    text=["a photo of a cat", "a photo of a dog"], 
-    images=image, 
-    return_tensors="pt", 
-    padding=True
-)
+### 2. LLaVA-style Linear Projection (PyTorch)
+```python
+import torch.nn as nn
 
-outputs = model(**inputs)
-logits_per_image = outputs.logits_per_image # Image-text similarity scores
-probs = logits_per_image.softmax(dim=1) # Get probabilities
-print(probs)
+class VisionLanguageConnector(nn.Module):
+    def __init__(self, vision_dim=1024, llm_dim=4096):
+        super().__init__()
+        # Project CLIP features to LLM embedding space
+        self.projector = nn.Sequential(
+            nn.Linear(vision_dim, llm_dim),
+            nn.GELU(),
+            nn.Linear(llm_dim, llm_dim)
+        )
+
+    def forward(self, visual_features):
+        return self.projector(visual_features)
 ```
 
 ---
 
-## 📊 Summary Table
+## 📊 Summary Comparison
 
-| Architecture | Mechanism | Best For | Complexity |
-|--------------|-----------|----------|------------|
-| **ResNet** | Convolutions | General Image Tasks | Moderate |
-| **ViT** | Global Attention | Large-scale Pre-training | High |
-| **Swin** | Windowed Attention| High-res Detection/Seg | Moderate |
-| **CLIP** | Contrastive | Search, Zero-shot, Alignment | Very High |
-| **LLaVA** | Vision + LLM | Chatting with images | Massive |
+| Model | Architecture | Logic | Best For |
+| :--- | :--- | :--- | :--- |
+| **ResNet** | CNN | Local Convolutions | General Vision |
+| **ViT** | Transformer | Global Attention | Large Pre-training |
+| **CLIP** | Dual-Encoder | Contrastive Alignment| Search / Zero-shot |
+| **LLaVA** | Vision + LLM | Generative Alignment| Chatting with Images|
 
 ---
 
-## 🎯 ML Applications
+## 🎯 ML Applications & Advanced Scenarios
 
-| Technique | ML Application |
-|-----------|----------------|
-| ViT | Foundation for modern ImageNet SOTA |
-| CLIP | Semantic image search (Google Photos style) |
-| LLaVA | Automated medical report generation from X-rays |
-| Multi-modal | Content moderation (identifying text in images) |
+| Technique | Professional Use Case |
+| :--- | :--- |
+| **Zero-shot Seg.** | Using CLIP features to find "anomalies" in production lines without training data. |
+| **Multi-modal RAG**| Searching a vector DB for images using text queries (and vice versa). |
+| **Self-Attention Viz**| Visualizing what the model "looks at" when classifying an image. |
+| **Video-LLM** | Extending LLaVA to handle a sequence of frames for video understanding. |
 
 ---
 
 ## ❓ Quick Check Questions
 
-1. Why do we need to split images into "patches" for Vision Transformers?
-2. What is the fundamental difference between a CNN's "Local Receptive Field" and a ViT's "Global Self-Attention"?
-3. How does the Swin Transformer achieve linear complexity?
-4. Explain the concept of a "Shared Embedding Space" in CLIP.
-5. In LLaVA, how are the visual features connected to the language model?
+1. Why does ViT need a `[CLS]` (class) token?
+2. Explain the "Quadratic Bottleneck" of ViT and how Swin Transformer solves it.
+3. In CLIP, why is the similarity matrix $N \times N$ instead of $N \times 1$?
+4. What is the "Projection Layer" in a Multimodal LLM actually doing?
+5. How does a Masked Autoencoder (MAE) learn visual features?
 
 ---
 
@@ -112,15 +134,22 @@ print(probs)
 <details>
 <summary>Click to reveal answers</summary>
 
-1. Transformers were designed for sequences of tokens (words). An image has too many pixels to treat each one as a token (e.g., $224 \times 224 = 50,176$ tokens). **Patching** reduces the sequence length to a manageable number (e.g., $14 \times 14 = 196$ patches).
-2. A **CNN** processes information locally (only nearby pixels interact in early layers). A **ViT** uses self-attention, allowing every patch to interact with every other patch in the image immediately, capturing long-range dependencies from the very first layer.
-3. Swin Transformer computes attention within **non-overlapping local windows**. To allow information flow between windows, it "shifts" the window boundaries in successive layers, combining local efficiency with global connectivity.
-4. CLIP trains an image encoder and a text encoder simultaneously to produce vectors. It ensures that an image of a "sunset" and the text "a beautiful sunset" result in vectors that are very close (high cosine similarity) in the **same vector space**.
-5. LLaVA uses a **Vision Encoder** (like CLIP) to extract features from the image. These features are then passed through a **projection layer** (adapter) that translates them into the same format/dimensionality as the LLM's word embeddings, allowing the LLM to "see" the image features as if they were text tokens.
+1. Since Transformers are designed for sequence-to-sequence, there is no single output for an image. The **`[CLS]` token** is a learnable vector added to the start of the sequence. Its final state is used as the aggregate representation of the entire image for classification.
+2. ViT uses global self-attention (every patch looks at every other patch), which is **$O(N^2)$**. Swin Transformer computes attention in **local windows**, reducing complexity to **$O(N)$**. It uses "shifted windows" to allow information to flow between local regions in deeper layers.
+3. Because each image in a batch must be compared against **every text string** in that same batch. The diagonal contains the correct pairs, while all other cells are "negatives" that the model learns to push apart.
+4. It acts as a **translator**. The vision model and the language model "speak different languages" (different vector dimensionalities). The projection layer transforms the visual vectors into the language model's space so the LLM can treat them as just another set of tokens.
+5. MAE learns by **reconstruction**. By masking $75\%$ of the pixels and forcing the model to predict them, the model is forced to learn a deep internal understanding of geometry, textures, and object structures to fill in the blanks realistically.
 
 </details>
 
 ---
 
-**Status:** ✅ Complete
-**Next:** Audio & Speech Processing (Whisper, Wav2Vec)
+## 📚 Recommended Resources
+- **Paper**: [An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ViT)](https://arxiv.org/abs/2010.11929)
+- **Paper**: [Learning Transferable Visual Models From Natural Language Supervision (CLIP)](https://arxiv.org/abs/2103.00020)
+- **Repo**: [LLaVA: Large Language and Vision Assistant](https://github.com/haotian-liu/LLaVA).
+
+---
+
+**Status:** ✅ Expanded Standard (10/10)
+**Next:** Audio & Speech Processing (FFT math, Mel-scale, CTC Loss)

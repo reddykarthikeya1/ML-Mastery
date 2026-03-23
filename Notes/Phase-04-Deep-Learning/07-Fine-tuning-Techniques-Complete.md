@@ -1,119 +1,126 @@
-# 10.7 Fine-tuning Techniques (PEFT, LoRA, DPO)
+# 10.7 Advanced Fine-tuning: PEFT, Alignment, and Quantization
 
 ## 🎯 Quick Overview
-- **Fine-tuning**: Adapting a pre-trained LLM to a specific task or dataset
-- **PEFT (Parameter-Efficient Fine-tuning)**: Training only a small subset of parameters
-- **LoRA (Low-Rank Adaptation)**: The industry standard for efficient adaptation
-- **Alignment (RLHF & DPO)**: Steering models to be helpful, honest, and harmless
-- **Foundation for**: Specialized AI models (e.g., Medical GPT, Coding Assistant)
+- **PEFT (Parameter-Efficient Fine-tuning)**: Why training <1% of parameters works
+- **LoRA & QLoRA**: Mathematical derivation of low-rank updates and 4-bit quantization
+- **Alignment Math**: DPO (Direct Preference Optimization) vs. RLHF (PPO) objective functions
+- **Advanced Quantization**: GGUF, EXL2, and the bits-per-weight frontier
+- **Foundation for**: Specializing LLMs for niche domains while keeping hardware costs low
 
 ---
 
-## 1. Full Fine-tuning vs. PEFT
+## 1. LoRA: Low-Rank Adaptation Math
 
-**Full Fine-tuning** updates all billions of parameters in a model. 
-- **Pros**: Maximum performance on the target task.
-- **Cons**: Extremely expensive (requires massive GPU VRAM) and risks **Catastrophic Forgetting** (the model forgets its original knowledge).
+LoRA assumes that during task adaptation, the change in weights $\Delta W$ has a low "intrinsic rank."
 
-**PEFT** keeps most of the model frozen and only trains small "adapter" layers.
-- **Pros**: Fast, cheap, and memory-efficient.
+### 1.1 The Derivation
+For a pre-trained weight matrix $W_0 \in \mathbb{R}^{d \times k}$, we freeze $W_0$ and learn $\Delta W = BA$, where:
+- $B \in \mathbb{R}^{d \times r}$
+- $A \in \mathbb{R}^{r \times k}$
+- $r \ll \min(d, k)$ (the Rank)
 
----
+#### Forward Pass:
+$$ h = W_0x + \Delta Wx = W_0x + BAx $$
 
-## 2. LoRA: Low-Rank Adaptation
-
-**LoRA** is the most popular PEFT technique. It assumes that the changes to the weights during fine-tuning have a "low intrinsic rank."
-
-1. **Mechanism**: It freezes the original weight matrix $W$ and injects two smaller matrices $A$ and $B$.
-2. **Math**: Instead of updating $W$, we learn $\Delta W = A \times B$.
-3. **Efficiency**: For a $4096 \times 4096$ matrix, LoRA might only train a few thousand parameters instead of 16 million.
-
-### 2.1 QLoRA
-**QLoRA** takes this further by quantizing the base model to **4-bit** precision, allowing you to fine-tune a 70B parameter model on a single consumer GPU (e.g., RTX 3090/4090).
+**Why it's brilliant**: At inference time, we can **merge** the weights ($W_{new} = W_0 + BA$) so there is **zero latency overhead** compared to the base model.
 
 ---
 
-## 3. Alignment & Preference Optimization
+## 2. Quantization Theory: Precision vs. Performance
 
-Fine-tuning on data is one thing; making the model "behave" is another.
+Quantization reduces the precision of weights (e.g., from FP32 to 4-bit) to save VRAM.
 
-### 3.1 RLHF (Reinforcement Learning from Human Feedback)
-1. **SFT**: Supervised Fine-tuning on high-quality examples.
-2. **Reward Model**: A separate model is trained to score LLM responses based on human preferences.
-3. **PPO**: The LLM is optimized using reinforcement learning to maximize the score from the reward model.
+### 2.1 NF4 (NormalFloat 4-bit)
+Introduced with **QLoRA**, NF4 is an information-theoretically optimal data type for normally distributed weights.
+1.  **Quantization**: Maps weights to 16 discrete levels.
+2.  **Double Quantization**: Quantizes the quantization constants themselves to save additional memory.
+3.  **Paged Optimizers**: Prevents OOM (Out-of-Memory) errors by managing optimizer states in CPU RAM when needed.
+
+---
+
+## 3. The Alignment Frontier: DPO vs. RLHF
+
+Making an LLM follow human values (Helpful, Honest, Harmless).
+
+### 3.1 RLHF (PPO)
+Uses a **Reward Model** ($R_\phi$) to score outputs.
+- **Objective**: Maximize $\mathbb{E}_{x, y \sim \pi_\theta} [R_\phi(x, y)] - \beta \text{KL}(\pi_\theta \| \pi_{ref})$
+- **Complexity**: Requires 4 models in memory (Base, Reference, Reward, Value).
 
 ### 3.2 DPO (Direct Preference Optimization)
-A newer, simpler alternative to RLHF. It removes the need for a separate reward model and PPO step by directly optimizing the model on pairs of "preferred" vs "rejected" responses.
+Directly optimizes the LLM on preference pairs $(x, y_w, y_l)$ where $y_w$ is preferred over $y_l$.
+- **The DPO Loss**:
+  $$ \mathcal{L}_{DPO}(\theta; \pi_{ref}) = -\mathbb{E}_{(x, y_w, y_l)} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{ref}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{ref}(y_l|x)} \right) \right] $$
+- **Why it's winning**: Mathematically equivalent to RLHF but significantly more stable and $2\times$ faster to train.
 
 ---
 
-## 💻 Python Code Examples
+## 💻 Professional Implementation
 
-### 1. Fine-tuning with LoRA (PEFT + Transformers)
+### 1. Merging LoRA Weights (Conceptual)
 ```python
-from peft import LoraConfig, get_peft_model
-from transformers import AutoModelForCausalLM
+import torch
 
-# 1. Load base model
-model = AutoModelForCausalLM.from_pretrained("llama-3-8b")
+def merge_lora(base_weight, lora_A, lora_B, alpha, r):
+    # scaling = lora_alpha / r
+    scaling = alpha / r
+    
+    # Calculate Delta W
+    delta_w = torch.matmul(lora_B, lora_A) * scaling
+    
+    # Merge
+    merged_weight = base_weight + delta_w
+    return merged_weight
+```
 
-# 2. Define LoRA Config
-config = LoraConfig(
-    r=8, # Rank
-    lora_alpha=32,
-    target_modules=["q_proj", "v_proj"], # Which layers to adapt
-    lora_dropout=0.05,
-    bias="none",
-    task_type="CAUSAL_LM"
+### 2. Loading a Model in 4-bit (bitsandbytes)
+```python
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig
+
+quant_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    bnb_4bit_use_double_quant=True
 )
 
-# 3. Create PEFT Model
-lora_model = get_peft_model(model, config)
-lora_model.print_trainable_parameters() 
-# Typically shows < 1% of total parameters!
-```
-
-### 2. Data Format for DPO
-```json
-{
-  "prompt": "Write a Python function to sort a list.",
-  "chosen": "def sort_list(l): return sorted(l)",
-  "rejected": "You should use a loop and compare every element manually."
-}
+model = AutoModelForCausalLM.from_pretrained(
+    "llama-3-8b", 
+    quantization_config=quant_config
+)
 ```
 
 ---
 
-## 📊 Summary Table
+## 📊 Summary Comparison
 
-| Technique | Cost | Complexity | Use Case |
-|-----------|------|------------|----------|
-| **Full Fine-tune** | Very High | High | Fundamental domain shift |
-| **LoRA** | Low | Medium | Most task-specific adaptation |
-| **QLoRA** | Very Low | Medium | Limited hardware (Single GPU) |
-| **DPO** | Medium | Medium | Aligning model tone/safety |
-| **RLHF** | High | Very High | SOTA alignment (GPT-4 level) |
+| Metric | Full Fine-tuning | LoRA | QLoRA | DPO |
+| :--- | :--- | :--- | :--- | :--- |
+| **Trainable Params** | 100% | < 1% | < 1% | 100% (or with LoRA)|
+| **VRAM Requirement** | Massive | Moderate | **Low** | Moderate |
+| **Inference Overhead**| Zero | Zero (if merged)| Zero (Quantized) | Zero |
+| **Task Performance** | **Highest** | High | High | Alignment only |
 
 ---
 
-## 🎯 ML Applications
+## 🎯 ML Applications & Advanced Scenarios
 
-| Technique | ML Application |
-|-----------|----------------|
-| LoRA | Adapting Llama-3 for medical diagnosis |
-| QLoRA | Fine-tuning personal coding assistants locally |
-| DPO | Reducing toxicity in customer service bots |
-| Continued Pre-training | Teaching an LLM a new language |
+| Technique | Professional Use Case |
+| :--- | :--- |
+| **Domain-SFT** | Training a Llama model on legal case law to understand specific terminology. |
+| **Adapters-Switching**| Swapping small LoRA files at runtime to handle different users (e.g., "Coding Expert" vs. "Creative Writer"). |
+| **KTO (Kahneman-Tversky)**| A simpler alignment method that only requires "thumbs up/down" data instead of pairs. |
+| **Unsloth** | A library that uses custom OpenAI Triton kernels to make LoRA training $2\times$ faster. |
 
 ---
 
 ## ❓ Quick Check Questions
 
-1. Why does Full Fine-tuning often lead to "Catastrophic Forgetting"?
-2. Explain the core mathematical idea behind LoRA.
-3. What is the main advantage of QLoRA over standard LoRA?
-4. How does DPO simplify the RLHF process?
-5. What does the "Rank" (r) parameter in LoRA control?
+1. In LoRA, why is the weight update $\Delta W = BA$ more efficient than $W$?
+2. What is the difference between "Post-Training Quantization" (PTQ) and "Quantization-Aware Training" (QAT)?
+3. Why does DPO eliminate the need for a separate Reward Model?
+4. What is "Catastrophic Forgetting," and how does PEFT mitigate it?
+5. Explain "Double Quantization" in the context of QLoRA.
 
 ---
 
@@ -122,15 +129,22 @@ lora_model.print_trainable_parameters()
 <details>
 <summary>Click to reveal answers</summary>
 
-1. **Catastrophic Forgetting** happens because the gradient updates modify every single weight in the model. As the model specializes in the new task, the weights that encoded its general knowledge are overwritten, causing it to lose its reasoning or general conversation abilities.
-2. LoRA assumes that the weight updates ($\Delta W$) can be represented as the product of two **low-rank matrices** ($A$ and $B$). This significantly reduces the number of parameters the model needs to learn during the optimization process.
-3. **QLoRA** uses 4-bit quantization for the base model weights. This massively reduces the memory (VRAM) required to load the model, allowing powerful LLMs to be fine-tuned on hardware that previously couldn't even run them.
-4. RLHF requires training a **Reward Model** and using a complex reinforcement learning algorithm (**PPO**). **DPO** (Direct Preference Optimization) replaces this with a simple cross-entropy loss applied to pairs of responses, making it much more stable and easier to implement.
-5. The **Rank (r)** determines the size of the adapter matrices. A higher rank allows the model to learn more complex patterns but increases the number of trainable parameters and memory usage. Standard values are 8, 16, or 32.
+1. If $W$ is $4096 \times 4096$ (16.7M params), and we use rank $r=8$, then $A$ is $8 \times 4096$ and $B$ is $4096 \times 8$. Total params = $2 \times (8 \times 4096) = 65,536$. This is a **$250\times$ reduction** in trainable parameters.
+2. **PTQ** quantizes a model after it has been trained (fast, slight accuracy drop). **QAT** simulates quantization during training so the model learns to be robust to the precision loss (slow, higher accuracy).
+3. The DPO derivation shows that human preferences can be expressed as a function of the **optimal policy** itself. By rearranging the RLHF math, we can optimize the model directly using the log-likelihood of the preferred answer relative to the reference model.
+4. **Catastrophic Forgetting** is when a model loses its general knowledge while learning a specific task. Because PEFT (like LoRA) freezes the original weights, the base knowledge remains untouched, and the model only learns "add-on" behaviors.
+5. QLoRA quantizes the weights to 4-bit. It then identifies the "Quantization Constants" (used to scale the 4-bit values back to floats) and quantizes **those constants** to 8-bit, saving an additional ~0.3 bits per parameter.
 
 </details>
 
 ---
 
-**Status:** ✅ Complete
-**Next:** Transition to Computer Vision (CNNs, Object Detection, Segmentation)
+## 📚 Recommended Resources
+- **Paper**: [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)
+- **Paper**: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290)
+- **Library**: [Unsloth AI](https://github.com/unslothai/unsloth) - *The fastest way to fine-tune LLMs*.
+
+---
+
+**Status:** ✅ Expanded Standard (10/10)
+**Next:** CNN Architectures (Receptive Fields, Depthwise Conv, EfficientNet)
