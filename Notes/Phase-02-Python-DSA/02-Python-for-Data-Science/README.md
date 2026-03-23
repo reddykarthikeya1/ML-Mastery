@@ -3,22 +3,24 @@
 ## 📚 Complete Topic List (4 Topics)
 
 ### 3.1 Jupyter Notebooks ✅
-- [x] Jupyter Basics (Notebook vs Lab, cells, magic commands)
-- [x] Notebook Features (Markdown, LaTeX, widgets)
-- [x] Best Practices (Organization, version control)
+- [x] Jupyter Basics
+- [x] Notebook Features
+- [x] Best Practices
 
 ### 3.2 NumPy ✅
-- [x] NumPy Arrays (Creation, attributes, indexing)
-- [x] Array Operations (Broadcasting, ufuncs, aggregation)
-- [x] Array Manipulation (Reshaping, stacking, splitting)
+- [x] NumPy Arrays
+- [x] Array Operations
+- [x] Array Manipulation
 - [x] Linear Algebra with NumPy
 - [x] Advanced NumPy
 
 ### 3.3 Pandas ✅
-- [x] Series and DataFrame Basics
-- [x] Data Inspection and Cleaning
+- [x] Series
+- [x] DataFrame Basics
+- [x] Data Inspection
+- [x] Data Cleaning
 - [x] Data Transformation
-- [x] Data Aggregation (GroupBy)
+- [x] Data Aggregation
 - [x] Merging and Joining
 - [x] Time Series
 - [x] Advanced Pandas
