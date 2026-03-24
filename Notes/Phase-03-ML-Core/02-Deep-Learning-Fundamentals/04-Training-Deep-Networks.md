@@ -265,6 +265,229 @@ class WeightInitializer:
             limit = np.sqrt(3.0) * std
             return np.random.uniform(-limit, limit, (n_out, n_in))
         
+### Implementation Example
+
+```python
+class WeightInitializer:
+    """Weight initialization utilities"""
+
+    @staticmethod
+    def initialize(method, n_in, n_out, gain=1.0):
+        """
+        Initialize weights using specified method.
+
+        Args:
+            method: 'xavier', 'he', 'lecun', 'orthogonal', 'kaiming'
+            n_in: Number of input units
+            n_out: Number of output units
+            gain: Scaling factor for weights
+        """
+        if method == 'xavier':
+            std = gain * np.sqrt(2.0 / (n_in + n_out))
+            return np.random.randn(n_out, n_in) * std
+
+        elif method == 'he':
+            std = gain * np.sqrt(2.0 / n_in)
+            return np.random.randn(n_out, n_in) * std
+
+        elif method == 'lecun':
+            std = gain * np.sqrt(1.0 / n_in)
+            return np.random.randn(n_out, n_in) * std
+
+        elif method == 'orthogonal':
+            # Orthogonal initialization (good for RNNs)
+            a = np.random.randn(n_out, n_in)
+            u, _, vt = np.linalg.svd(a, full_matrices=False)
+            return gain * u if n_out > n_in else gain * vt
+
+        elif method == 'kaiming_uniform':
+            # Kaiming uniform (PyTorch default for ReLU)
+            std = gain / np.sqrt(n_in)
+            limit = np.sqrt(3.0) * std
+            return np.random.uniform(-limit, limit, (n_out, n_in))
+
+        else:
+            raise ValueError(f"Unknown method: {method}")
+
+    @staticmethod
+    def get_gain(nonlinearity):
+        """
+        Get recommended gain for activation function.
+        """
+        gains = {
+            'relu': np.sqrt(2),
+            'leaky_relu': np.sqrt(2 / (1 + 0.01**2)),
+            'tanh': 5.0 / 3,
+            'sigmoid': 1,
+
+---
+
+#### 🧒 ELI5: Advanced Training Techniques - Gradient Clipping, Mixed Precision, Label Smoothing
+
+> Imagine you're teaching someone to ride a bike.
+>
+> **Gradient Clipping** (Preventing falls):
+>
+> **Problem**: Gradients too BIG!
+> - Update: "Change weights by 1000!"
+> - Network: "WHOA!" → Crashes (NaN!)
+> - Like: Pedaling so hard you flip over!
+>
+> **Gradient Clipping Solution**:
+> - "Max gradient = 5"
+> - Gradient = 1000? → Clip to 5!
+> - "Whoa there, slow down!"
+> - Network trains smoothly!
+>
+> **When to clip**:
+> - ✅ RNNs (prone to exploding gradients)
+> - ✅ Very deep networks
+> - ✅ When you see NaN losses
+> - ❌ Not usually needed for CNNs
+>
+> **Typical values**:
+> - Clip norm to 1.0 or 5.0
+> - "If gradient > 5, scale it down to 5"
+>
+> **Gradient Accumulation** (Simulating bigger batches):
+>
+> **Problem**: GPU memory too small!
+> - Want batch size = 128
+> - GPU fits: batch size = 32
+> - What to do?
+>
+> **Gradient Accumulation Solution**:
+> - Step 1: Process 32 → Save gradients
+> - Step 2: Process 32 → Add gradients
+> - Step 3: Process 32 → Add gradients
+> - Step 4: Process 32 → Add gradients
+> - Total: 128 samples!
+> - Update weights ONCE (after 4 steps)
+>
+> **Like**: Saving up allowance
+> - Week 1: Get $10, don't spend
+> - Week 2: Get $10, don't spend
+> - Week 3: Get $10, don't spend
+> - Week 4: Get $10, NOW spend ($40 total!)
+>
+> **Why accumulate?**:
+> - Simulates larger batch (more stable gradients)
+> - Fits in small GPU memory
+> - Trade-off: Slower (4 steps per update)
+>
+> **Mixed Precision Training** (Speed boost!):
+>
+> **Problem**: Training is SLOW!
+> - GPU does billions of calculations
+> - Each calculation: 32-bit (FP32)
+> - Takes time and memory!
+>
+> **Mixed Precision Solution**:
+> - Most calculations: 16-bit (FP16)
+>   - 2× faster!
+>   - 2× less memory!
+> - Critical parts: 32-bit (FP32)
+>   - Weight updates
+>   - Master weights
+>   - Prevents underflow!
+>
+> **Like**: Doing math homework
+> - Rough calculations: Quick estimates (FP16)
+> - Final answer: Precise (FP32)
+> - 2× faster, same accuracy!
+>
+> **Requirements**:
+> - Tensor Cores (NVIDIA Volta+)
+> - AMP (Automatic Mixed Precision)
+> - Loss scaling (prevent underflow)
+>
+> **Speed gains**:
+> - RTX 3090: 2-3× faster
+> - A100: 3-4× faster!
+> - Same accuracy, less time!
+>
+> **Label Smoothing** (Preventing overconfidence):
+>
+> **Problem**: Model too CONFIDENT!
+> - Actual: Cat [1, 0, 0]
+> - Prediction: [0.999, 0.0005, 0.0005]
+> - "I'm 99.9% sure!"
+> - Overfits to training data!
+>
+> **Label Smoothing Solution**:
+> - Actual: Cat [1, 0, 0]
+> - Smoothed: [0.9, 0.05, 0.05]
+> - "Probably cat, but could be something else"
+> - Model less confident!
+>
+> **Why it works**:
+> - Prevents "I'm always right" mentality
+> - Encourages uncertainty
+> - Better generalization!
+> - Like: "Be confident but humble"
+>
+> **Typical values**:
+> - Smoothing = 0.1 (10% uncertainty)
+> - [1, 0, 0] → [0.9, 0.05, 0.05]
+>
+> **When to use**:
+> - ✅ Image classification (ImageNet)
+> - ✅ Machine translation
+> - ✅ When model is overconfident
+> - ❌ Small datasets (need all signal)
+>
+> **Data Augmentation** (Free more data!):
+>
+> **Problem**: Only 1000 training images!
+> - Model memorizes them
+> - Fails on new images!
+>
+> **Augmentation Solutions**:
+>
+> **For Images**:
+> - Flip horizontally (cat still looks like cat!)
+> - Rotate slightly (±15 degrees)
+> - Zoom in/out (±10%)
+> - Change brightness/contrast
+> - Add random noise
+> - Cut out random patches (Cutout)
+>
+> **For Text**:
+> - Synonym replacement ("good" → "great")
+> - Random insertion (add synonyms)
+> - Random swap (swap adjacent words)
+> - Random deletion (remove words)
+>
+> **For Audio**:
+> - Add background noise
+> - Change speed/pitch
+> - Time stretching
+>
+> **Result**:
+> - 1000 images → 10,000 augmented images!
+> - Model sees variety
+> - Learns INVARIANTS (cat is cat regardless of angle!)
+>
+> **Why it works**:
+> - More data = better generalization
+> - Teaches invariance (rotation, flip, etc.)
+> - Free regularization!
+>
+> **Advanced techniques**:
+> - **Mixup**: Blend two images
+>   - 50% cat + 50% dog → Label: [0.5, 0.5]
+> - **CutMix**: Cut and paste patches
+>   - Cat head on dog body → Still learn features!
+> - **Mosaic**: Combine 4 images
+>   - Used in YOLOv4/v5 for detection!
+>
+> **Combining techniques**:
+> - Gradient Clipping + Mixed Precision = Fast & Stable
+> - Label Smoothing + Data Augmentation = Better Generalization
+> - All together = State-of-the-art training!
+
+</details>
+
         else:
             raise ValueError(f"Unknown method: {method}")
     
