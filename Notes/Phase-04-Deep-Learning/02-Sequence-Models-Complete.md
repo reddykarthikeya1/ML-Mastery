@@ -27,6 +27,29 @@ $$\frac{\partial L_t}{\partial W_{hh}} = \sum_{k=1}^t \frac{\partial L_t}{\parti
 
 ---
 
+#### 🧒 ELI5: The Telephone Game (Vanishing Gradients)
+
+> Remember the children's game where a message passes through 20 kids?
+>
+> **Forward pass** (making predictions):
+> - Kid 1 whispers to Kid 2, who whispers to Kid 3...
+> - Message: "The cat sat on the mat"
+>
+> **Backward pass** (BPTT - learning from mistakes):
+> - Kid 20 got it wrong! We need to tell Kid 1 what went wrong
+> - Kid 20 tells Kid 19: "You whispered too quietly"
+> - Kid 19 tells Kid 18... and the correction gets quieter each time
+> - By the time Kid 5 hears the correction, it's a barely audible whisper
+> - Kid 1 never learns what they did wrong!
+>
+> **Why it vanishes**: Each kid (layer) whispers a bit quieter (multiplies by < 1). After 20 kids, the correction is 0.5²⁰ = 0.000001 of the original. Gone!
+>
+> **LSTM solution**: Instead of whispering, kids pass a written note (cell state). The note stays clear even through 100 kids!
+
+</details>
+
+---
+
 ## 2. Gated Architectures (LSTM & GRU)
 
 LSTMs and GRUs use "gates" to protect and control the flow of information.
@@ -45,6 +68,33 @@ Introduces the **Cell State** ($C_t$), a "conveyor belt" that carries info throu
 4.  **Output Gate ($o_t$)**: Decides what to show.
     $o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)$
     $h_t = o_t * \tanh(C_t)$
+
+---
+
+#### 🧒 ELI5: Airport Security Checkpoint
+
+> Imagine you're going through airport security with your carry-on bag (Cell State).
+>
+> **1. Forget Gate** = Security makes you throw away liquids:
+> - "Do you need to keep that old water bottle from 10 airports ago?" → NO
+> - Some things need to be forgotten to make room for new stuff
+>
+> **2. Input Gate** = What new items can you add:
+> - You bought a souvenir at this airport (new information)
+> - Security checks if it's allowed (sigmoid decides what to accept)
+>
+> **3. Update Cell State** = Update your bag contents:
+> - Throw away the water (forget)
+> - Add the souvenir (input)
+> - Your bag now has updated contents for the next airport
+>
+> **4. Output Gate** = What you actually take out at security:
+> - Your bag might have 20 things, but you only take out laptop + liquids
+> - The output gate decides what to SHOW based on current situation
+>
+> **Why LSTMs remember long-term**: The cell state (your bag) goes through security mostly unchanged. Only small updates at each step. Information can travel through 100+ airports without being lost!
+
+</details>
 
 ---
 
