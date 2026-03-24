@@ -84,6 +84,124 @@ scores = cross_val_score(model, X, y, cv=loo)
 
 ### Learning Curves
 
+---
+
+#### 🧒 ELI5: Evaluation Metrics Deep Dive - F1-Score, mAP, IoU, Dice Coefficient
+
+> Imagine you're a teacher grading students, a doctor diagnosing patients, and a real estate agent measuring rooms.
+>
+> **F1-Score** (Balancing precision and recall):
+>
+> **Problem**: Precision vs Recall tradeoff!
+> - High precision: "When I say spam, it's ALWAYS spam"
+>   - But miss 50% of actual spam! (low recall)
+> - High recall: "I catch ALL the spam!"
+>   - But mark 30% of real emails as spam! (low precision)
+>
+> **F1-Score Solution**: Harmonic mean of both!
+> ```
+> F1 = 2 × (Precision × Recall) / (Precision + Recall)
+> ```
+>
+> **Why harmonic mean?** (Not regular average)
+> - Regular average: P=1.0, R=0.1 → Average = 0.55 (looks okay!)
+> - Harmonic mean: P=1.0, R=0.1 → F1 = 0.18 (penalizes imbalance!)
+> - Like: "Being great at one and terrible at other = BAD!"
+>
+> **When to use F1**:
+> - Imbalanced datasets (99% negative, 1% positive)
+> - Both false positives AND false negatives matter
+> - Need single number to compare models
+>
+> **IoU** (Intersection over Union - for object detection):
+>
+> **Problem**: How accurate is my bounding box?
+> - Predicted box: [10, 10, 100, 100]
+> - Actual box: [15, 15, 105, 105]
+> - Are they close? How close?
+>
+> **IoU Solution**: Overlap ratio!
+> ```
+> IoU = Overlap Area / Combined Area
+>     = (A ∩ B) / (A ∪ B)
+> ```
+>
+> **Example**:
+> - Predicted box area: 100
+> - Actual box area: 100
+> - Overlap: 80
+> - Combined: 100 + 100 - 80 = 120
+> - IoU = 80/120 = 0.67 (67% overlap)
+>
+> **Thresholds**:
+> - IoU > 0.5: Good detection!
+> - IoU > 0.75: Excellent!
+> - IoU < 0.3: Missed the object!
+>
+> **mAP** (mean Average Precision - for detection):
+>
+> **Problem**: Model detects objects at different confidences!
+> - Confidence 0.9: 5 correct, 0 wrong
+> - Confidence 0.7: 10 correct, 2 wrong
+> - Confidence 0.5: 15 correct, 5 wrong
+> - Which threshold is best?
+>
+> **Average Precision (AP)**:
+> - Calculate precision at EVERY recall level
+> - Average them all!
+> - Single number summarizing ALL thresholds!
+>
+> **mAP** = Average AP across ALL classes!
+> - Car: AP = 0.85
+> - Person: AP = 0.78
+> - Dog: AP = 0.92
+> - mAP = (0.85 + 0.78 + 0.92) / 3 = 0.85
+>
+> **mAP@0.5**: IoU threshold = 0.5
+> **mAP@0.5:0.95**: Average of thresholds 0.5, 0.55, 0.6, ..., 0.95
+> - More rigorous!
+> - COCO competition standard!
+>
+> **Dice Coefficient** (For segmentation):
+>
+> **Problem**: How well does my segmentation mask match?
+> - Actual tumor: 1000 pixels
+> - Predicted tumor: 900 pixels
+> - Overlap: 850 pixels
+> - How good is this?
+>
+> **Dice Solution**: Similarity measure!
+> ```
+> Dice = 2 × |A ∩ B| / (|A| + |B|)
+>      = 2 × 850 / (1000 + 900)
+>      = 1700 / 1900
+>      = 0.89 (89% similar!)
+> ```
+>
+> **Dice vs IoU**:
+> - Dice: 2×Overlap / (Sum of areas)
+> - IoU: Overlap / (Union of areas)
+> - They're related! Dice = 2×IoU / (1 + IoU)
+> - Both measure overlap, just scaled differently!
+>
+> **When to use which**:
+> - **F1-Score**: Classification with imbalance
+> - **IoU**: Object detection (bounding boxes)
+> - **mAP**: Comparing detection models
+> - **Dice**: Image segmentation (medical, masks)
+>
+> **Real-world examples**:
+> - **Medical diagnosis**: F1-Score (balance false positives/negatives)
+> - **Self-driving cars**: mAP@0.75 (need HIGH precision!)
+> - **Tumor segmentation**: Dice > 0.85 (life or death!)
+> - **Face detection**: mAP@0.5:0.95 (industry standard)
+
+</details>
+
+---
+
+### Validation Curves
+
 ```python
 from sklearn.model_selection import learning_curve
 
