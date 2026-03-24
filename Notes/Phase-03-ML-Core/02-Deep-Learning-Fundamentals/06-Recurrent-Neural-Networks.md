@@ -11,6 +11,101 @@ After completing this section, you will master:
 
 ---
 
+#### 🧒 ELI5: RNN, LSTM, GRU & BPTT
+
+> Imagine you're reading a mystery novel.
+>
+> **Why RNN for sequences?** (Memory for order):
+>
+> **Feedforward Network** (No memory):
+> - Reads each word INDEPENDENTLY
+> - "I", "love", "machine", "learning"
+> - Doesn't know "learning" connects to "machine"!
+> - Like: Shuffling sentence words - same words, no meaning!
+>
+> **RNN** (Has memory):
+> - Reads: "I" → remembers → "love" → remembers → "machine learning"
+> - "Ah! 'learning' is connected to 'machine' which is connected to 'love'!"
+> - Understands: "I love machine learning" vs "Machine learning loves me"
+> - ORDER matters!
+>
+> **Hidden State** (The memory):
+> - Like sticky notes as you read
+> - Page 1: "Hero is detective"
+> - Page 50: "Still investigating murder"
+> - Page 100: "Ah! The butler was mentioned on page 10!"
+> - Carries info forward!
+>
+> **BPTT** (Backpropagation Through Time):
+>
+> Mistake on page 100. Where did you go wrong?
+>
+> **Step 1**: Look at page 100 mistake
+> **Step 2**: Go back to page 99 - "Was the clue here?"
+> **Step 3**: Go back to page 50 - "Maybe the clue was here?"
+> **Step 4**: Go back to page 10 - "AH! The REAL clue was here!"
+>
+> Update ALL pages based on what you learned!
+>
+> **Vanishing Gradient Problem** (Forgetting early pages):
+>
+> **Problem**: Book has 500 pages
+> - Error on page 500
+> - Backpropagate to page 499...498...497...
+> - By page 100: "I forgot why I was investigating!"
+> - Gradient becomes TINY (multiplied 400 times!)
+> - Early pages NEVER learn!
+>
+> **LSTM** (Long Short-Term Memory - Careful reader):
+>
+> **LSTM has GATES** (Deciding what to remember):
+>
+> **Forget Gate** (What to throw away):
+> - "Do I still need 'character was in kitchen'?"
+> - "That was 200 pages ago, probably not relevant"
+> - FORGET old info that doesn't matter
+>
+> **Input Gate** (What new info to store):
+> - "OH! New clue: 'butler has scar'"
+> - "This is IMPORTANT! Write it down!"
+> - Remember key information
+>
+> **Output Gate** (What to use NOW):
+> - "Detective is questioning someone"
+> - "Do I need the 'scar' fact right now?"
+> - "No, save it for later"
+> - Only output relevant memories
+>
+> **Cell State** (The conveyor belt):
+> - Runs through ENTIRE book
+> - Some info stays for 10 pages
+> - Some info stays for 200 pages!
+> - Protected by gates!
+>
+> **GRU** (Simplified LSTM):
+>
+> **GRU** = "LSTM but simpler"
+> - Forget gate + Input gate = UPDATE gate
+> - "Should I change my memory?"
+> - One gate instead of two!
+> - Faster to train, almost as good!
+> - Like: "Good enough and quicker"
+>
+> **When to use which**:
+> - **Simple RNN**: Short sequences (< 10 steps)
+> - **GRU**: Medium sequences, want speed
+> - **LSTM**: Long sequences, need best performance
+>
+> **Applications**:
+> - **Translation**: "Je t'aime" → "I love you" (sequence to sequence)
+> - **Sentiment**: "Movie was... boring" → Negative (sequence to label)
+> - **Text generation**: "Once upon" → "a time there was..." (sequence to more sequence)
+> - **Stock prediction**: [Day1, Day2, Day3] → Predict Day4 (time series)
+
+</details>
+
+---
+
 ## 📚 Sequence Modeling
 
 ### 8.6.1 Why RNNs?
