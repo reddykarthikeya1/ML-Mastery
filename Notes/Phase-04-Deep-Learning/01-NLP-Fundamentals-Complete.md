@@ -15,10 +15,35 @@ Modern NLP has moved beyond simple "word" tokenization.
 
 ### 1.1 The Subword Revolution
 LLMs use subword tokenization to solve the **Out-of-Vocabulary (OOV)** problem.
-- **Byte-Pair Encoding (BPE)**: Starts with characters and iteratively merges the most frequent adjacent pairs. 
+- **Byte-Pair Encoding (BPE)**: Starts with characters and iteratively merges the most frequent adjacent pairs.
     - *Example*: "hug", "pug", "pun", "bun" → ["hu", "g", "pu", "g", "p", "un", "b", "un"].
 - **WordPiece (BERT)**: Similar to BPE but merges pairs based on maximizing the likelihood of the training data.
 - **SentencePiece (Llama/T5)**: Treats the input as a raw stream, including spaces, allowing for language-independent tokenization.
+
+---
+
+#### 🧒 ELI5: Building with LEGO Blocks
+
+> Imagine you're building with LEGO, but you want to save space in your toy box.
+>
+> **Character-level** (too small):
+> - Every single LEGO brick is separate: h, u, g, p, u, n
+> - Takes forever to build "hug" - you pick 3 individual bricks!
+>
+> **Word-level** (too big):
+> - You pre-build entire words: "hug" as one piece, "pug" as another
+> - Problem: What about "hugs"? "hugging"? You need infinite pieces!
+>
+> **BPE (Subword)** - Just right:
+> - Start with individual bricks
+> - Notice "h" and "u" always stick together → glue them: "hu"
+> - Notice "pu" appears often → glue them: "pu"
+> - Now "hug" = "hu" + "g" (2 pieces instead of 3)
+> - "hugs" = "hu" + "g" + "s" (3 pieces - works without new glue!)
+>
+> **The magic**: Common patterns get glued (efficient), rare words still buildable from pieces (flexible). No more "out of bricks" problems!
+
+</details>
 
 ### 1.2 Normalization & Morphology
 - **Lemmatization Math**: Uses a part-of-speech context to map tokens to a root.
@@ -38,6 +63,31 @@ Used to determine the importance of a word $t$ in document $d$ within corpus $D$
 
 **Why it works**: Words that appear everywhere (like "the") have an IDF near $\log(1) = 0$, effectively being ignored.
 
+---
+
+#### 🧒 ELI5: The Unique Nickname Test
+
+> Imagine you're at a school with 1000 students trying to identify one person.
+>
+> **TF (Term Frequency)** = How often someone is called by a name:
+> - "Hey John!" → 50 times a day
+> - "Hey Zeus!" → 1 time a day
+> - By itself, "John" seems more important (used more)
+>
+> **IDF (Inverse Document Frequency)** = How unique the name is:
+> - There are 50 Johns in school → "John" isn't helpful for identification
+> - There's only 1 Zeus → "Zeus" is VERY helpful for identification!
+> - IDF formula: $\log(1000 / 50) = \log(20) ≈ 1.3$ for John
+> - IDF formula: $\log(1000 / 1) = \log(1000) ≈ 3$ for Zeus
+>
+> **TF-IDF** = Combine both:
+> - "John": High TF (50) × Low IDF (1.3) = 65 (not very identifying)
+> - "Zeus": Low TF (1) × High IDF (3) = 3 (VERY identifying!)
+>
+> **Why log in IDF?**: If "the" appears in ALL 1000 documents, IDF = log(1000/1000) = log(1) = 0. It contributes NOTHING to importance!
+
+</details>
+
 ### 2.2 The Hashing Trick (Feature Hashing)
 For massive datasets, storing a vocabulary dictionary is impossible. We use a hash function $h(word) \to [0, N-1]$ to map words directly to indices in a fixed-size vector.
 - **Collisions**: Handled by using a second sign-hash $s(word) \to \{-1, 1\}$.
@@ -54,6 +104,31 @@ Instead of predicting the next word among $V$ (thousands of classes), we treat i
 - **Loss Function**:
   $$J(\theta) = -\log \sigma(v_c^T v_w) - \sum_{i=1}^k \log \sigma(-v_{noise_i}^T v_w)$$
   Where $v_w$ is the target word, $v_c$ is the actual context, and $v_{noise}$ are random samples.
+
+---
+
+#### 🧒 ELI5: Guess the Coworker Game
+
+> Imagine you're trying to learn who works together at a company.
+>
+> **Skip-Gram** (predicting context):
+> - You see Alice at her desk (target word)
+> - You guess: "Bob and Carol probably sit nearby!" (context words)
+> - If Bob DOES sit nearby → Good guess! Strengthen Alice-Bob connection
+> - If Dave NEVER sits nearby → Bad guess! Weaken Alice-Dave connection
+>
+> **Negative Sampling** (learning from wrong guesses):
+> - Besides checking Bob (real context), you also check:
+>   - "Does Dave sit near Alice?" → NO (negative sample)
+>   - "Does Eve sit near Alice?" → NO (negative sample)
+> - Learning from "who DOESN'T belong" is as important as "who DOES"!
+>
+> **Why it works**: After seeing thousands of "who sits near whom" examples:
+> - Alice, Bob, Carol get similar vectors (they're on the same team)
+> - Dave, Eve get different vectors (different team)
+> - Vector math works: King - Man + Woman ≈ Queen (because patterns are similar!)
+
+</details>
 
 ### 3.2 FastText: Subword Embeddings
 FastText represents a word as the sum of its character n-grams.

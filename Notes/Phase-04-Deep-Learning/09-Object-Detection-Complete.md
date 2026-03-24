@@ -31,6 +31,33 @@ Instead of predicting $x, y, w, h$ from scratch, models predict **offsets** $(\d
   - $x_{pred} = x_{anchor} + \delta x \cdot w_{anchor}$
   - $w_{pred} = w_{anchor} \cdot e^{\delta w}$
 
+---
+
+#### 🧒 ELI5: Picture Frames on the Wall
+
+> Imagine you're hanging pictures on a wall.
+>
+> **Predicting from scratch** (hard way):
+> - For each picture: measure exact x, y position, measure width, measure height
+> - Takes forever! And you might predict a 10-meter wide picture (impossible!)
+>
+> **Anchor Boxes** (smart way):
+> - Pre-hang 9 different frames at each spot on the wall:
+>   - 3 sizes (small, medium, large)
+>   - 3 shapes (square, wide, tall)
+> - For each frame, just predict:
+>   - "Shift this small square frame 5cm right"
+>   - "Make this medium wide frame 10% wider"
+> - Much easier than predicting from nothing!
+>
+> **Why it works**:
+> - Most objects are roughly person-sized, car-sized, or dog-sized
+> - Anchors cover common sizes/shapes
+> - Model only learns small adjustments (offsets)
+> - Like: "adjust the frame" vs. "build a new frame from scratch"
+
+</details>
+
 ### 2.2 Non-Maximum Suppression (NMS)
 NMS removes overlapping boxes for the same object.
 **The Algorithm**:
@@ -39,6 +66,35 @@ NMS removes overlapping boxes for the same object.
 3.  Calculate IoU of $B$ with all other boxes of the same class.
 4.  If $IoU > \text{threshold}$, remove the other box.
 5.  Repeat for the next highest remaining box.
+
+---
+
+#### 🧒 ELI5: Group Photo with Similar Faces
+
+> Imagine you took 10 photos of your friend at a party, and they all look almost the same.
+>
+> **Before NMS** (too many duplicates):
+> - Photo 1: Friend smiling (confidence: 95%)
+> - Photo 2: Friend smiling, slightly different angle (confidence: 92%)
+> - Photo 3: Friend smiling, another angle (confidence: 88%)
+> - ... 7 more nearly identical photos!
+>
+> **NMS Process**:
+> 1. Sort by quality: Photo 1 (95%), Photo 2 (92%), Photo 3 (88%)...
+> 2. Keep Photo 1 (best one)
+> 3. Compare Photo 2 to Photo 1: "Are they 80% similar?" → YES → Delete Photo 2
+> 4. Compare Photo 3 to Photo 1: "Are they 80% similar?" → YES → Delete Photo 3
+> 5. Continue...
+> 6. Result: Keep only Photo 1!
+>
+> **IoU Threshold**:
+> - Low threshold (0.3): Only VERY similar photos get deleted → Keep more photos
+> - High threshold (0.9): Only IDENTICAL photos get deleted → Keep many photos
+> - Sweet spot (0.5): Remove obvious duplicates, keep different shots
+>
+> **Why NMS matters**: Without it, you'd have 10 boxes around the same person instead of 1 clean box!
+
+</details>
 
 ---
 
@@ -228,6 +284,36 @@ Where:
 - $\mathbb{1}_{c_i \neq \varnothing}$: Indicator for non-background
 - $\mathcal{L}_{cls}$: Focal loss for classification
 - $\mathcal{L}_{box}$: L1 + GIoU loss for boxes
+
+---
+
+#### 🧒 ELI5: Speed Dating Matching Game
+
+> Imagine a speed dating event with 100 people (predictions) and 20 actual singles looking to match (ground truth objects).
+>
+> **The Problem**:
+> - Each of the 100 people claims to be interested in someone
+> - But many are interested in the SAME person
+> - How do you find the BEST overall matching?
+>
+> **Hungarian Algorithm** (optimal matching):
+> 1. Calculate "compatibility score" between every pair (IoU for boxes)
+> 2. Find the matching where:
+>    - Each ground truth person gets AT MOST ONE match
+>    - Total compatibility is MAXIMIZED
+>    - 80 people get "no match" (background class)
+>
+> **Why not simple matching?**:
+> - Simple: "Person A likes Bob most → match A with Bob"
+> - Problem: But Person B ALSO likes Bob most! Who gets Bob?
+> - Hungarian: Looks at ALL matches together, finds globally optimal solution
+>
+> **In DETR**:
+> - 100 predictions, ~5 actual objects
+> - Hungarian matches: prediction 7 → object 1, prediction 23 → object 2, etc.
+> - Other 95 predictions learn to predict "no object" (background)
+
+</details>
 
 ```python
 import torch

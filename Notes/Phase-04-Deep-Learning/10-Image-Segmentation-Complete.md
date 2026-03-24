@@ -35,6 +35,37 @@ $$ \text{Dice} = \frac{2 |A \cap B|}{|A| + |B|} $$
 - **Range**: 0 to 1 (1 is perfect).
 - **Benefit**: Immune to class imbalance because it only looks at the intersection relative to the sizes of the predicted and ground-truth regions.
 
+---
+
+#### 🧒 ELI5: The Cookie Cutter Test
+
+> Imagine you're making cookies with a star-shaped cookie cutter.
+>
+> **The Test**: How well does your cookie match the cutter?
+>
+> **Dice Score**:
+> - Perfect cookie: Exactly fills the star cutter → Dice = 1.0 (100%)
+> - Too small: Only fills half the star → Dice = 0.5 (50%)
+> - Wrong shape: Circle cookie, star cutter → Dice = 0.2 (20%)
+>
+> **Formula Explained**:
+> ```
+> Dice = 2 × (overlap area) / (your cookie area + cutter area)
+> ```
+>
+> **Why Dice for segmentation?**:
+> - Medical image: Tiny tumor in huge brain
+> - Accuracy says: "99% correct!" (just predict everything as healthy)
+> - Dice says: "0% overlap with tumor!" (actually useful!)
+> - Dice doesn't care about the 99% background—only cares about overlap
+>
+> **Class Imbalance Solution**: 
+> - If tumor is 1% of image, background is 99%
+> - Cross-entropy: Dominated by 99% background
+> - Dice: Only looks at tumor overlap, ignores background!
+
+</details>
+
 ### 2.2 IoU (Jaccard) Loss
 $$ \text{IoU} = \frac{|A \cap B|}{|A \cup B|} $$
 - Very similar to Dice but slightly more "punishing" for incorrect pixels.
@@ -153,6 +184,37 @@ SAM (Meta, 2023) introduced promptable segmentation at scale.
 1.  **Promptable interface**: Segment from points, boxes, masks, or text
 2.  **Massive training data**: SA-1B dataset with 1.1B masks
 3.  **Zero-shot generalization**: Works on unseen objects and domains
+
+---
+
+#### 🧒 ELI5: Magic Scissors that Follow Instructions
+
+> Imagine you have a pair of magic scissors that can cut out ANY object from a photo.
+>
+> **Old segmentation models** (dumb scissors):
+> - Can only cut out cats (trained on cats)
+> - Show it a dog → "I don't know what that is"
+> - Need to retrain for each new object type
+>
+> **SAM** (magic scissors):
+> - **Point prompt**: Tap on the dog → cuts out the dog
+> - **Box prompt**: Draw a box around the dog → cuts out the dog
+> - **Text prompt**: "Cut out the dog" → cuts out the dog
+> - Show it a unicorn (never seen before) → still cuts it out!
+>
+> **How SAM learned**:
+> - Trained on 1.1 BILLION masks (more than any human would see in 10 lifetimes)
+> - Learned GENERAL concept of "objectness"
+> - Like: "Things that have clear edges and are separate from background"
+>
+> **The architecture**:
+> - **Image Encoder**: Studies the photo once, creates a "map" of objects
+> - **Prompt Encoder**: Translates your tap/box/text into instructions
+> - **Mask Decoder**: Uses the map + instructions to cut out the object
+>
+> **Zero-shot magic**: SAM never saw your specific photo, but it learned what "objects" look like in general—so it works on ANY photo!
+
+</details>
 
 ---
 
@@ -308,6 +370,41 @@ class PromptEncoder(nn.Module):
 Mask2Former handles semantic, instance, and panoptic segmentation with one model.
 
 **Key Innovation**: Masked attention limits computation to predicted mask regions.
+
+---
+
+#### 🧒 ELI5: The Spotlight Operator
+
+> Imagine you're directing a play with multiple spotlights on stage.
+>
+> **Standard attention** (floodlights):
+> - Every actor looks at EVERY other actor
+> - 100 actors = 10,000 connections to track
+> - Wasteful: Most actors aren't interacting!
+>
+> **Masked attention** (spotlights):
+> - Each spotlight operator (query) is assigned ONE actor
+> - Operator ONLY looks at pixels in their spotlight (predicted mask)
+> - 100 operators × 10 pixels each = 1,000 connections (10× less!)
+>
+> **How Mask2Former works**:
+> 1. **100 queries** = 100 spotlight operators
+> 2. Each predicts: "I'm responsible for THIS region" (mask)
+> 3. Each only pays attention to their region (masked attention)
+> 4. Operator 1: "I see a dog here" → mask + class
+> 5. Operator 2: "I see grass there" → mask + class
+>
+> **Why it's better**:
+> - Doesn't confuse "dog pixels" with "grass pixels"
+> - Each operator becomes expert on their region
+> - Computation scales with NUM OBJECTS, not IMAGE SIZE
+>
+> **Universal segmentation**:
+> - Semantic: "Where is grass?" (multiple operators say "grass")
+> - Instance: "Where is dog #1 vs dog #2?" (different operators)
+> - Panoptic: Both combined!
+
+</details>
 
 ```python
 class Mask2Former(nn.Module):

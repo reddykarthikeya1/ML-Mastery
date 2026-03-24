@@ -16,10 +16,75 @@ Audio is originally a continuous waveform. We discretize it via sampling (e.g., 
 - **Math**: $X(m, \omega) = \sum_{n=-\infty}^{\infty} x(n) w(n - m) e^{-j\omega n}$
 - **Intuition**: We slide a window ($w$) over the audio and perform a Fourier Transform on each segment to see which frequencies are present at that exact moment.
 
+---
+
+#### 🧒 ELI5: The Prism for Sound
+
+> Imagine you have a beam of white light and you want to know what colors are inside.
+>
+> **Time domain** (waveform):
+> - You see: Light gets brighter and darker over time
+> - Like: Audio wave goes up and down
+> - Question: "What COLORS make up this light?" → Can't tell!
+>
+> **Fourier Transform** (the prism):
+> - Pass light through prism → splits into rainbow
+> - Now you see: "Ah! This light has lots of red, some green, no blue!"
+> - For audio: "This sound has lots of bass (low freq), some treble (high freq)!"
+>
+> **Short-Time Fourier Transform (STFT)**:
+> - Problem: Music CHANGES. A song isn't one chord throughout!
+> - Solution: Use a SLIDING prism
+>   - 0-1 second: "C major chord"
+>   - 1-2 seconds: "G major chord"
+>   - 2-3 seconds: "F major chord"
+> - Creates a SPECTROGRAM: time on X-axis, frequency on Y-axis, intensity as color
+>
+> **Why we need it**:
+> - Human ear is a biological Fourier Transform!
+> - Cochlea in ear separates sounds by frequency (like a prism)
+> - AI needs spectrograms to "hear" like we do
+
+</details>
+
 ### 1.2 The Mel-Scale
 Humans don't hear frequencies linearly. We are much better at distinguishing low-pitched sounds.
 - **Mel Conversion**: $M(f) = 2595 \log_{10}(1 + f/700)$
 - **Log-Mel Spectrogram**: Taking the log of the Mel-scaled frequencies. This is the "standard" input for most speech models like Whisper.
+
+---
+
+#### 🧒 ELI5: The Piano Keyboard That's Squished at the Top
+
+> Imagine a piano keyboard where the low notes are spread out, but the high notes are squished together.
+>
+> **Linear frequency** (normal ruler):
+> - 100 Hz to 200 Hz: 100 Hz apart
+> - 10,000 Hz to 10,100 Hz: Also 100 Hz apart
+> - Same distance, BUT...
+>
+> **Human hearing** (Mel scale):
+> - 100 Hz to 200 Hz: "These sound VERY different!" (bass vs. higher bass)
+> - 10,000 Hz to 10,100 Hz: "These sound basically the same" (both just "high")
+> - Our ears care more about low frequencies where speech lives!
+>
+> **Why 700 in the formula?**:
+> - Below 700 Hz: We're SUPER sensitive (where most speech sounds are)
+> - Above 700 Hz: We're less sensitive (fine details, not crucial)
+> - The formula squishes high frequencies to match human perception
+>
+> **Log-Mel Spectrogram**:
+> 1. Take spectrogram (Fourier → frequencies)
+> 2. Apply Mel filterbank (squish high frequencies)
+> 3. Take log (we hear loudness logarithmically too!)
+> 4. Result: Looks like what human ear "sees"
+>
+> **Why AI needs Mel scale**:
+> - Raw frequencies: Wastes space on details humans don't hear
+> - Mel frequencies: Focuses on what matters for speech understanding
+> - Like: Compressing an image but keeping the important parts sharp!
+
+</details>
 
 ---
 
@@ -32,6 +97,45 @@ Allows the model to predict tokens at every time step and then "collapses" them.
 - **The Blank Token ($\epsilon$)**: A special character used to separate repeating letters (e.g., "hello" vs "helo").
 - **Collapse Rule**: Remove all $\epsilon$ tokens and merge identical adjacent characters.
 - **Benefit**: No need for manual word-level alignment in the training data.
+
+---
+
+#### 🧒 ELI5: Morse Code with Pauses
+
+> Imagine you're listening to Morse code, but the operator is REALLY slow.
+>
+> **The Alignment Problem**:
+> - Audio: "beep... beep... beepbeepbeep... beep"
+> - Text: "SOS"
+> - Question: Which beeps go with which letters?
+> - 1 second of audio = 1 letter? or 10 letters stretched out?
+>
+> **CTC Solution** (predict at every timestep):
+> - Timestep 1: "S"
+> - Timestep 2: "S"
+> - Timestep 3: "S"
+> - Timestep 4: "blank" (pause)
+> - Timestep 5: "O"
+> - Timestep 6: "O"
+> - ...
+>
+> **Collapse Rules**:
+> 1. Remove blanks: "SSS OOO SSS" → "SSSOOOS SS"
+> 2. Merge repeats: "SSSOOOS SS" → "SOS"
+>
+> **The Blank Token** (why we need it):
+> - "hello" → h-e-l-l-o (how to distinguish double-L from single-L?)
+> - With blank: "h-e-l-blank-l-o" → collapse → "hello"
+> - Without blank: "h-e-l-l" → collapse → "hel" (wrong!)
+>
+> **Why CTC is brilliant**:
+> - No need to manually label "this millisecond = letter H"
+> - Model learns alignment AUTOMATICALLY
+> - Fast speaker? More blanks between letters
+> - Slow speaker? More repeated predictions per letter
+> - Same collapse rules work for both!
+
+</details>
 
 ---
 

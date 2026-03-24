@@ -21,6 +21,36 @@ $$ \mathcal{L}(\theta, \phi; x) = \mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)] -
 
 ---
 
+#### 🧒 ELI5: The Vending Machine with a Window
+
+> Imagine a magical vending machine that creates images.
+>
+> **Standard Autoencoder** (no window):
+> - You put in a photo of a cat
+> - Machine secretly picks a code (like "A7")
+> - Machine reconstructs the cat from code "A7"
+> - Problem: Codes are random! "A7" might be cats today, cars tomorrow
+>
+> **VAE** (with a window):
+> - You put in a photo of a cat
+> - Machine shows you THROUGH A WINDOW: "I'm picking from the CAT ZONE (centered around mean=0, variance=1)"
+> - The window forces the machine to pick codes from a predictable zone
+> - KL divergence = Penalty if machine tries to pick from outside the zone
+>
+> **Reparameterization Trick** (why it's needed):
+> - Problem: You can't backpropagate through "randomly pick a code"
+> - Solution: 
+>   1. Machine tells you: "Mean = 5, Variance = 2"
+>   2. YOU generate random noise ε (this is external, not the machine's choice)
+>   3. Code = Mean + Variance × ε = 5 + 2 × ε
+>   4. Now you can backpropagate through Mean and Variance!
+>
+> **Analogy**: Instead of "machine magically picks a number," it's "machine picks a formula (mean/variance), you supply randomness, together you get the code."
+
+</details>
+
+---
+
 ## 2. Generative Adversarial Networks (GANs)
 
 Standard GANs use Jensen-Shannon divergence, which leads to vanishing gradients.
@@ -46,6 +76,38 @@ Where $\epsilon \sim N(0, I)$.
 A U-Net is trained to predict the noise $\epsilon$ that was added at time $t$.
 - **Objective**: $\mathcal{L}_{simple} = \mathbb{E}_{t, x_0, \epsilon} [\| \epsilon - \epsilon_\theta(x_t, t) \|^2]$
 - **Guidance**: **Classifier-Free Guidance (CFG)** allows the model to follow text prompts by blending the conditional and unconditional predictions.
+
+---
+
+#### 🧒 ELI5: Shredding and Reconstructing a Photo
+
+> Imagine you have a beautiful photo and a paper shredder.
+>
+> **Forward Process (Destroying)**:
+> 1. Start with perfect photo ($x_0$)
+> 2. Run through shredder once → slightly noisy ($x_1$)
+> 3. Run through again → more noisy ($x_2$)
+> 4. Repeat 1000 times → pure static ($x_{1000}$)
+>
+> **Reverse Process (Reconstructing)**:
+> - Train a model to do ONE thing: "Given a slightly shredded photo, remove the shredding"
+> - At step 500: "What noise was added at step 500?" → Remove it
+> - At step 499: "What noise was added at step 499?" → Remove it
+> - Repeat until you reconstruct the original!
+>
+> **Why predict noise, not image?**
+> - Predicting the whole image from noise = "Create a masterpiece from nothing" (HARD!)
+> - Predicting noise = "What's the tiny difference between these two similar images?" (EASY!)
+> - Like: "Spot the difference" vs. "Draw this from memory"
+>
+> **Classifier-Free Guidance (CFG)**:
+> Imagine a GPS that gives you TWO routes:
+> - Route A: Fastest way (unconditional - no preferences)
+> - Route B: Fastest way avoiding tolls (conditional - your preference)
+> - CFG blends them: "Mostly avoid tolls, but if it's MUCH faster, maybe one toll is okay"
+> - Guidance scale = How much you prefer avoiding tolls
+
+</details>
 
 ---
 
