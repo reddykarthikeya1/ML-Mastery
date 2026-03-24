@@ -164,6 +164,86 @@ plt.show()
 
 ## 3. Hyperparameter Tuning
 
+---
+
+#### 🧒 ELI5: Hyperparameter Tuning - Grid Search, Random Search, Bayesian Optimization
+
+> Imagine you're baking a cake and need to find the perfect recipe.
+>
+> **Hyperparameters** (Recipe settings):
+> - Flour: 2 cups, 3 cups, or 4 cups?
+> - Sugar: 1 cup or 1.5 cups?
+> - Bake time: 30 min, 45 min, or 60 min?
+> - Oven temp: 350°F or 375°F?
+>
+> **These are HYPERparameters** (set BEFORE baking/training)
+> NOT regular parameters (amount of batter = learned during training)
+>
+> **Grid Search** (Try EVERY combination):
+>
+> **The approach**:
+> - Flour: [2, 3, 4] cups
+> - Sugar: [1, 1.5] cups
+> - Time: [30, 45, 60] min
+>
+> Try ALL combinations:
+> 1. 2 cups flour + 1 cup sugar + 30 min
+> 2. 2 cups flour + 1 cup sugar + 45 min
+> 3. 2 cups flour + 1 cup sugar + 60 min
+> 4. 2 cups flour + 1.5 cups sugar + 30 min
+> ... (continues for ALL 3×2×3 = 18 combinations!)
+>
+> **Pros**: Guaranteed to find best combo
+> **Cons**: SLOW! (What if you have 10 ingredients with 10 options each? = 10¹⁰ = 10 BILLION cakes!)
+>
+> **Random Search** (Try RANDOM combinations):
+>
+> **The approach**:
+> - "I'll try 50 random recipes"
+> - Recipe 1: 2.3 cups flour, 1.1 cups sugar, 37 min (random!)
+> - Recipe 2: 3.7 cups flour, 1.4 cups sugar, 52 min (random!)
+> - ...
+>
+> **Pros**: Much faster!
+> **Cons**: Might miss the perfect combo
+>
+> **Why Random often beats Grid**:
+> - Some ingredients don't matter much (sugar between 1-1.5 cups = same)
+> - Grid wastes time on unimportant settings
+> - Random explores MORE of the important settings!
+>
+> **Bayesian Optimization** (Smart guessing):
+>
+> **The approach**:
+> - Try recipe 1: "Too dry"
+> - Think: "Need more moisture → more sugar OR less time"
+> - Try recipe 2 (smart choice based on recipe 1!)
+> - "Better! But too sweet"
+> - Try recipe 3 (even smarter!): "Less sugar, same time"
+>
+> **Like**: Having a intuition that gets better with each try!
+>
+> **Bayesian Optimization uses**:
+> - "Surrogate model" (predicts how good untried recipes are)
+> - "Acquisition function" (decides which recipe to try next)
+>
+> **Pros**: Finds best with FEWEST tries!
+> **Cons**: More complex to implement
+>
+> **When to use which**:
+> - **Grid Search**: 2-3 hyperparameters, small ranges
+> - **Random Search**: 4-10 hyperparameters (default choice!)
+> - **Bayesian**: Expensive training (each try takes hours/days)
+>
+> **Real example**:
+> - Training neural network takes 1 day
+> - Grid Search: 100 combinations = 100 days! 😱
+> - Bayesian: Finds good combo in 10-15 tries = 15 days! ✅
+
+</details>
+
+---
+
 ### Grid Search
 
 ```python
