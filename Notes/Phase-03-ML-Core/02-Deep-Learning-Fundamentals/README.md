@@ -44,6 +44,112 @@
 - [x] GRU (Reset Gate, Update Gate)
 - [x] Bidirectional RNNs, Deep RNNs
 - [x] RNN Applications (Time Series, Text Generation)
+- [x] Attention Mechanisms, Encoder-Decoder
+
+---
+
+#### 🧒 ELI5: Neural Architecture Search & Knowledge Distillation
+
+> Imagine you're designing a house and teaching a student.
+>
+> **Neural Architecture Search (NAS)** (Auto-designing networks):
+>
+> **Problem**: Designing CNNs is HARD!
+> - How many layers?
+> - What filter sizes?
+> - How many channels?
+> - Takes experts MONTHS to design!
+>
+> **NAS Solution**: Let AI design AI!
+>
+> **How NAS works**:
+> 1. **Search Space**: "You can use 3×3, 5×5, 7×7 convolutions"
+> 2. **Search Strategy**: Try different combinations
+>    - RL-based: "Good architecture → reward!"
+>    - Evolutionary: "Mutate best architectures"
+>    - Gradient-based: "Optimize architecture directly"
+> 3. **Evaluation**: Train each architecture, measure accuracy
+> 4. **Repeat**: Find the BEST!
+>
+> **Like**: Auto-chef designing recipes
+> - "Try salt, pepper, garlic"
+> - "Too salty! Try less salt next time"
+> - "Perfect! This is the best recipe!"
+>
+> **NAS Results**:
+> - NASNet: Better than human-designed!
+> - EfficientNet: NAS found optimal scaling!
+> - MobileNetV3: NAS for mobile!
+>
+> **Pros**:
+> - ✅ Finds architectures humans miss
+> - ✅ State-of-the-art performance
+> - ✅ Saves expert time
+>
+> **Cons**:
+> - ❌ EXPENSIVE (1000s of GPU hours!)
+> - ❌ Black box (why this architecture?)
+>
+> **Knowledge Distillation** (Teacher → Student):
+>
+> **Problem**: Best models are HUGE!
+> - ResNet-152: 60M parameters
+> - Won't fit on phone!
+> - Too slow for real-time!
+>
+> **Distillation Solution**: Small model learns from big model!
+>
+> **How it works**:
+> ```
+> Teacher (ResNet-152)
+>     ↓ (predictions)
+> Student (TinyNet)
+>     ↓ (learn to match)
+> ```
+>
+> **Teacher provides**:
+> - "This is 80% cat, 15% dog, 5% bird"
+> - Not just "It's a cat!"
+> - Dark knowledge: "Looks a bit like a dog too"
+>
+> **Student learns**:
+> - Match teacher's probabilities
+> - Not just the label!
+> - Learns teacher's "intuition"
+>
+> **Why it works**:
+> - Teacher's soft labels are INFORMATIVE
+> - "80% cat, 15% dog" teaches more than "cat"
+> - Student learns decision boundaries!
+>
+> **Like**: Master teaching apprentice
+> - Master: "I think it's X, but could be Y"
+> - Apprentice learns the REASONING
+> - Not just the answer!
+>
+> **Distillation variants**:
+> - **Response-based**: Match final predictions
+> - **Feature-based**: Match intermediate features
+> - **Attention-based**: Match attention maps
+>
+> **Real-world examples**:
+> - **BERT → DistilBERT**: 40% smaller, 97% accuracy
+> - **GPT → DistilGPT**: Faster inference
+> - **ImageNet**: ResNet → MobileNet
+>
+> **When to use**:
+> - ✅ Deploying to mobile/edge
+> - ✅ Need real-time inference
+> - ✅ Have a trained teacher model
+> - ❌ Training from scratch (no teacher)
+>
+> **Combining NAS + Distillation**:
+> - NAS finds best architecture
+> - Distillation compresses it
+> - Best of both worlds!
+> - Like: "Design perfect car, then make it lighter"
+
+</details>
 
 ---
 
