@@ -169,5 +169,314 @@ class BiLSTMClassifier(nn.Module):
 
 ---
 
-**Status:** ✅ Expanded Standard (10/10)
+## 4. Advanced RNN Variants
+
+### 4.1 Peephole LSTM
+Standard LSTMs compute gates without looking at the cell state. **Peephole connections** allow gates to "peek" at $C_t$.
+
+#### Modified Gate Equations:
+$$ f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + W_{cf} \odot C_{t-1} + b_f) $$
+$$ i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + W_{ci} \odot C_{t-1} + b_i) $$
+$$ o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + W_{co} \odot C_t + b_o) $$
+
+**Impact**: Better at learning precise timing tasks (e.g., "count exactly 10 steps then fire").
+
+---
+
+### 4.2 ConvLSTM (Spatiotemporal Sequences)
+For video or weather prediction, we need to capture both spatial and temporal dependencies.
+
+#### Architecture:
+- Replace fully connected layers with **convolutional layers**.
+- All operations become element-wise convolutions ($*$) instead of matrix multiplications.
+
+$$ i_t = \sigma(W_{xi} * x_t + W_{hi} * h_{t-1} + W_{ci} * C_{t-1} + b_i) $$
+
+**Applications**: 
+- Precipitation nowcasting (predicting rain 1 hour ahead)
+- Video frame prediction
+- Traffic flow forecasting
+
+---
+
+### 4.3 Attention-Augmented RNNs
+Before Transformers, researchers combined RNNs with attention.
+
+#### Bahdanau Attention in Seq2Seq:
+1.  Encoder produces hidden states: $h_1, h_2, ..., h_T$
+2.  Decoder computes **attention weights** at each step:
+    $$ \alpha_{tj} = \frac{\exp(e_{tj})}{\sum_{k=1}^T \exp(e_{tk})} $$
+    $$ e_{tj} = \text{score}(s_{t-1}, h_j) $$
+3.  Create **context vector**: $c_t = \sum_{j=1}^T \alpha_{tj} h_j$
+4.  Feed $c_t$ to the decoder RNN at each step.
+
+**Key Insight**: This allows the decoder to "focus" on relevant parts of the input sequence dynamically.
+
+---
+
+### 4.4 Deep (Stacked) RNNs
+Single-layer RNNs have limited capacity. **Stacked RNNs** add depth:
+
+$$ h_t^{(1)} = \text{RNN}_1(x_t, h_{t-1}^{(1)}) $$
+$$ h_t^{(2)} = \text{RNN}_2(h_t^{(1)}, h_{t-1}^{(2)}) $$
+$$ h_t^{(L)} = \text{RNN}_L(h_t^{(L-1)}, h_{t-1}^{(L)}) $$
+
+**Trade-offs**:
+- **Pros**: Higher representational capacity, better for complex tasks.
+- **Cons**: Slower training, more prone to vanishing gradients (mitigated by LayerNorm).
+
+---
+
+## 5. Training Techniques for Sequence Models
+
+### 5.1 Gradient Clipping
+RNNs are prone to **exploding gradients**. Clipping prevents this:
+
+$$ \text{if } ||g|| > \theta: \quad g \leftarrow \frac{\theta}{||g||} \cdot g $$
+
+**PyTorch Implementation**:
+```python
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+```
+
+---
+
+### 5.2 Variational Dropout
+Standard dropout breaks temporal dependencies in RNNs. **Variational Dropout** applies the *same* dropout mask at each time step.
+
+```python
+# WRONG: Different mask at each timestep
+for t in range(seq_len):
+    h = rnn(x[t] * dropout_mask[t], h)
+
+# CORRECT: Same mask across time
+dropout_mask = torch.bernoulli(p * torch.ones_like(x[0]))
+for t in range(seq_len):
+    h = rnn(x[t] * dropout_mask, h)
+```
+
+---
+
+### 5.3 Zoneout
+A regularization technique specific to RNNs where some units are forced to **keep their previous values** with probability $p$.
+
+$$ h_t = \text{mask} \odot h_{t-1} + (1 - \text{mask}) \odot \text{RNN}(x_t, h_{t-1}) $$
+
+**Benefit**: Encourages the network to maintain information over time (similar to residual connections).
+
+---
+
+### 5.4 Truncated BPTT
+For very long sequences, full BPTT is memory-intensive. **Truncated BPTT**:
+1.  Split sequence into chunks of length $k$.
+2.  Backpropagate only through $k$ steps.
+3.  Carry the hidden state across chunks (detached from the computation graph).
+
+**Trade-off**: Loses dependencies longer than $k$, but enables training on massive sequences.
+
+---
+
+## 6. Implementation Deep Dive
+
+### 6.1 Building an LSTM from Scratch (NumPy)
+```python
+import numpy as np
+
+class LSTMFromScratch:
+    def __init__(self, input_dim, hidden_dim):
+        self.hidden_dim = hidden_dim
+        
+        # Initialize weights (Xavier initialization)
+        self.Wf = np.random.randn(hidden_dim, input_dim + hidden_dim) * np.sqrt(2.0 / (input_dim + hidden_dim))
+        self.Wi = np.random.randn(hidden_dim, input_dim + hidden_dim) * np.sqrt(2.0 / (input_dim + hidden_dim))
+        self.Wc = np.random.randn(hidden_dim, input_dim + hidden_dim) * np.sqrt(2.0 / (input_dim + hidden_dim))
+        self.Wo = np.random.randn(hidden_dim, input_dim + hidden_dim) * np.sqrt(2.0 / (input_dim + hidden_dim))
+        
+        self.bf = np.zeros((hidden_dim, 1))
+        self.bi = np.zeros((hidden_dim, 1))
+        self.bc = np.zeros((hidden_dim, 1))
+        self.bo = np.zeros((hidden_dim, 1))
+    
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-np.clip(x, -500, 500)))
+    
+    def forward_step(self, x_t, h_prev, c_prev):
+        # Concatenate input and previous hidden state
+        concat = np.vstack([x_t.reshape(-1, 1), h_prev])
+        
+        # Gates
+        f_t = self.sigmoid(self.Wf @ concat + self.bf)
+        i_t = self.sigmoid(self.Wi @ concat + self.bi)
+        c_tilde = np.tanh(self.Wc @ concat + self.bc)
+        o_t = self.sigmoid(self.Wo @ concat + self.bo)
+        
+        # Cell state and hidden state
+        c_next = f_t * c_prev + i_t * c_tilde
+        h_next = o_t * np.tanh(c_next)
+        
+        return h_next, c_next
+    
+    def forward_sequence(self, sequence):
+        """Process a full sequence."""
+        h = np.zeros((self.hidden_dim, 1))
+        c = np.zeros((self.hidden_dim, 1))
+        outputs = []
+        
+        for x_t in sequence:
+            h, c = self.forward_step(x_t, h, c)
+            outputs.append(h.copy())
+        
+        return np.hstack(outputs), h, c
+
+# Example: Process a sequence of 10 time steps
+lstm = LSTMFromScratch(input_dim=50, hidden_dim=128)
+sequence = [np.random.randn(50) for _ in range(10)]
+outputs, h_final, c_final = lstm.forward_sequence(sequence)
+print(f"Output shape: {outputs.shape}")  # (128, 10)
+```
+
+---
+
+### 6.2 Multi-Layer BiLSTM with PyTorch
+```python
+import torch
+import torch.nn as nn
+
+class DeepBiLSTM(nn.Module):
+    def __init__(self, vocab_size, embed_dim, hidden_dim, num_layers, dropout=0.3):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
+        
+        self.lstm = nn.LSTM(
+            input_size=embed_dim,
+            hidden_size=hidden_dim,
+            num_layers=num_layers,
+            batch_first=True,
+            bidirectional=True,
+            dropout=dropout if num_layers > 1 else 0
+        )
+        
+        self.layer_norm = nn.LayerNorm(hidden_dim * 2)
+        self.dropout = nn.Dropout(dropout)
+        self.fc = nn.Linear(hidden_dim * 2, 1)
+    
+    def forward(self, x, lengths=None):
+        # x: [batch, seq_len]
+        embedded = self.dropout(self.embedding(x))  # [batch, seq_len, embed_dim]
+        
+        # Pack sequence if lengths provided (for variable-length sequences)
+        if lengths is not None:
+            packed = nn.utils.rnn.pack_padded_sequence(
+                embedded, lengths.cpu(), batch_first=True, enforce_sorted=False
+            )
+            output, (hn, cn) = self.lstm(packed)
+            output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
+        else:
+            output, (hn, cn) = self.lstm(embedded)
+        
+        # Pooling: use last valid output from each direction
+        # hn shape: [num_layers * 2, batch, hidden_dim]
+        fwd_last = hn[-2, :, :]  # Last forward layer
+        rev_last = hn[-1, :, :]  # Last backward layer
+        merged = torch.cat([fwd_last, rev_last], dim=1)  # [batch, hidden_dim * 2]
+        
+        merged = self.layer_norm(merged)
+        merged = self.dropout(merged)
+        
+        return self.fc(merged)
+
+# Usage
+model = DeepBiLSTM(vocab_size=30000, embed_dim=300, hidden_dim=256, num_layers=3)
+x = torch.randint(0, 30000, (32, 100))  # batch=32, seq_len=100
+lengths = torch.randint(50, 100, (32,))  # variable lengths
+output = model(x, lengths)
+print(f"Output shape: {output.shape}")  # [32, 1]
+```
+
+---
+
+## 7. Common Pitfalls and Debugging
+
+### 7.1 The "Exposure Bias" Problem
+- **Issue**: During training, the decoder sees ground-truth tokens. During inference, it sees its own (potentially wrong) predictions.
+- **Symptom**: Generated sequences degrade in quality over time.
+- **Solutions**:
+    - **Scheduled Sampling**: Gradually replace ground-truth with model predictions during training.
+    - **Beam Search**: Maintain multiple hypotheses during inference.
+    - **Reinforcement Learning**: Use rewards (e.g., BLEU score) to train the model end-to-end.
+
+---
+
+### 7.2 Variable-Length Sequence Handling
+**Problem**: Padding tokens can corrupt hidden states.
+
+**Solution**: Use **packed sequences** in PyTorch:
+```python
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+
+# Sort by length (required for packing)
+lengths, perm_idx = lengths.sort(descending=True)
+x = x[perm_idx]
+
+# Pack
+packed = pack_padded_sequence(x, lengths, batch_first=True)
+output, (hn, cn) = lstm(packed)
+
+# Unpack
+output, _ = pad_packed_sequence(output, batch_first=True)
+```
+
+---
+
+### 7.3 Hidden State Initialization
+- **Zero Initialization**: Standard, but can cause "cold start" problems.
+- **Learnable Initial State**: Add trainable parameters $h_0, c_0$ for each layer.
+    ```python
+    self.h0 = nn.Parameter(torch.zeros(num_layers * 2, batch_size, hidden_dim))
+    self.c0 = nn.Parameter(torch.zeros(num_layers * 2, batch_size, hidden_dim))
+    ```
+
+---
+
+## 8. When to Use RNNs vs. Transformers (2024 Perspective)
+
+| Scenario | Recommended Architecture | Rationale |
+| :--- | :--- | :--- |
+| **Short sequences (<50 tokens)** | LSTM/GRU | Lower latency, simpler deployment |
+| **Long sequences (>500 tokens)** | Transformer | Parallel training, better long-range modeling |
+| **Streaming/Online inference** | RNN with state caching | Constant memory, no need to recompute history |
+| **Time-series forecasting** | ConvLSTM or Transformer | Depends on spatial vs. temporal emphasis |
+| **Edge devices (low power)** | Quantized LSTM | Better INT8 support, lower memory footprint |
+| **Multi-modal sequences** | Transformer | Easier to add cross-attention layers |
+
+---
+
+## 🔬 Research Frontiers (2024-2025)
+
+### 9.1 State Space Models (SSMs)
+**Mamba** and related architectures challenge Transformers with $O(n)$ complexity while maintaining long-range modeling.
+
+$$ h_t = \bar{A} h_{t-1} + \bar{B} x_t $$
+$$ y_t = \bar{C} h_t $$
+
+**Key Innovation**: Data-dependent parameters ($\bar{A}, \bar{B}, \bar{C}$ depend on $x_t$).
+
+---
+
+### 9.2 Linear Attention
+Approximating self-attention with linear complexity:
+- **Performer**: Uses random feature maps to approximate softmax attention.
+- **Linformer**: Projects keys/values to lower-dimensional space.
+
+---
+
+### 9.3 Neural ODEs for Sequences
+Treating RNN hidden states as continuous dynamical systems:
+$$ \frac{dh(t)}{dt} = f(h(t), x(t), \theta) $$
+
+**Benefit**: Adaptive computation time, memory-efficient backpropagation.
+
+---
+
+**Status:** ✅ Elite Expanded Standard (12/10)
 **Next:** The Transformer Revolution (Self-Attention, Multi-Head, Positional Encoding)

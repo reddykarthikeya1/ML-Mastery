@@ -154,5 +154,509 @@ class DiffusionGenerator:
 
 ---
 
-**Status:** ✅ Expanded Standard (10/10)
-**Next:** Vision Transformers & Multimodal AI (ViT, CLIP, LLaVA math)
+## 4. Advanced Diffusion Techniques
+
+### 4.1 Classifier-Free Guidance (CFG)
+Enable conditional generation without a separate classifier.
+
+**The Trick**: Train the model with occasional null conditioning ($c = \varnothing$).
+
+**Guidance Formula**:
+$$ \epsilon_\theta^{guided}(x_t, c) = \epsilon_\theta(x_t, \varnothing) + w \cdot (\epsilon_\theta(x_t, c) - \epsilon_\theta(x_t, \varnothing)) $$
+
+Where $w$ is the guidance scale (typically 7-15).
+
+```python
+class GuidedDiffusion:
+    def __init__(self, model, guidance_scale=7.5):
+        self.model = model
+        self.guidance_scale = guidance_scale
+    
+    def sample(self, prompt_embed, steps=50):
+        # Start from pure noise
+        x_t = torch.randn(1, 4, 64, 64)  # Latent space
+        
+        for t in reversed(range(steps)):
+            # Unconditional prediction
+            eps_uncond = self.model(x_t, t, None)
+            
+            # Conditional prediction
+            eps_cond = self.model(x_t, t, prompt_embed)
+            
+            # Apply guidance
+            eps_guided = eps_uncond + self.guidance_scale * (eps_cond - eps_uncond)
+            
+            # Denoising step
+            x_t = self.denoise_step(x_t, t, eps_guided)
+        
+        return x_t
+```
+
+---
+
+### 4.2 ControlNet: Spatial Conditioning
+Add fine-grained spatial control to diffusion models.
+
+**Architecture**:
+- Clone the diffusion model's encoder
+- Train the clone on conditioning input (edges, depth, pose)
+- Zero convolution layers for clean integration
+
+```python
+class ControlNet(nn.Module):
+    def __init__(self, unet, conditioning_channels=3):
+        super().__init__()
+        self.unet = unet
+        
+        # ControlNet encoder (copy of UNet encoder)
+        self.control_encoder = copy.deepcopy(unet.encoder)
+        
+        # Zero convolution layers (start with zero weights)
+        self.zero_convs = nn.ModuleList([
+            ZeroConv2d(ch, ch) for ch in unet.encoder_channels
+        ])
+        
+        # Conditioning input
+        self.cond_input = nn.Conv2d(conditioning_channels, 3, 3, padding=1)
+    
+    def forward(self, x, t, cond, context=None):
+        # Process conditioning
+        cond = self.cond_input(cond)
+        
+        # Run control encoder
+        control_features = self.control_encoder(cond, t)
+        
+        # Apply zero convolutions
+        control_outputs = [
+            zero_conv(feature) 
+            for feature, zero_conv in zip(control_features, self.zero_convs)
+        ]
+        
+        # Run UNet with control signals
+        output = self.unet(x, t, context, control=control_outputs)
+        
+        return output
+
+
+class ZeroConv2d(nn.Module):
+    """Convolution layer initialized to zero."""
+    def __init__(self, in_ch, out_ch):
+        super().__init__()
+        self.conv = nn.Conv2d(in_ch, out_ch, 3, padding=1)
+        
+        # Initialize to zero
+        nn.init.zeros_(self.conv.weight)
+        nn.init.zeros_(self.conv.bias)
+    
+    def forward(self, x):
+        return self.conv(x)
+```
+
+---
+
+### 4.3 IP-Adapter: Image Prompting
+Use images instead of text for prompting.
+
+**The Method**:
+1.  Encode reference image with CLIP
+2.  Project CLIP features to match text embedding dimension
+3.  Use as cross-attention context
+
+```python
+class IPAdapter(nn.Module):
+    def __init__(self, unet, clip_model, projection_dim=768):
+        super().__init__()
+        self.unet = unet
+        self.clip = clip_model
+        
+        # Image projection to text space
+        self.image_proj = nn.Linear(clip_model.dim, projection_dim)
+        
+        # Additional cross-attention for image features
+        self.image_cross_attn = nn.MultiheadAttention(
+            embed_dim=projection_dim,
+            num_heads=8,
+            batch_first=True
+        )
+    
+    def encode_image_prompt(self, image):
+        """Encode image to use as prompt."""
+        with torch.no_grad():
+            clip_features = self.clip.encode_image(image)
+        
+        # Project to text embedding space
+        image_embeds = self.image_proj(clip_features)
+        
+        return image_embeds
+    
+    def forward(self, x, t, image_prompt_embeds, text_embeds=None):
+        # Combine image and text prompts
+        if text_embeds is not None:
+            context = torch.cat([text_embeds, image_prompt_embeds], dim=1)
+        else:
+            context = image_prompt_embeds
+        
+        # Standard diffusion forward pass
+        return self.unet(x, t, context=context)
+```
+
+---
+
+## 5. Consistency Models: One-Step Generation
+
+### 5.1 The Consistency Approach
+Train a model that directly maps noisy input to clean output in one step.
+
+**Key Insight**: Learn a function that satisfies the consistency property:
+$$ f(x_t, t) = f(x_{t'}, t') \quad \forall t, t' $$
+
+Where $f$ maps any noisy version to the same clean output.
+
+---
+
+### 5.2 Consistency Model Training
+
+```python
+class ConsistencyModel(nn.Module):
+    def __init__(self, unet, num_steps=64):
+        super().__init__()
+        self.unet = unet
+        self.num_steps = num_steps
+        
+        # Time conditioning
+        self.time_embed = nn.Embedding(num_steps, 256)
+        
+        # Skip connection scaling
+        self.c_skip = nn.Parameter(torch.ones(1))
+        self.c_out = nn.Parameter(torch.zeros(1))
+    
+    def forward(self, x, t):
+        """Map noisy input at time t to clean output."""
+        # Time embedding
+        t_emb = self.time_embed(t)
+        
+        # UNet forward pass
+        f_t = self.unet(x, t_emb)
+        
+        # Skip connection + output scaling
+        output = self.c_skip * x + self.c_out * f_t
+        
+        return output
+    
+    def sample_one_step(self, noise):
+        """Generate image in single step."""
+        t = torch.full((noise.shape[0],), self.num_steps - 1, dtype=torch.long)
+        return self(noise, t)
+    
+    def sample_multistep(self, noise, steps=4):
+        """Generate with multiple refinement steps."""
+        x = noise
+        
+        for i in reversed(range(steps)):
+            t = torch.full((noise.shape[0],), i, dtype=torch.long)
+            x = self(x, t)
+            
+            # Add noise for next step (if not last)
+            if i > 0:
+                noise_level = self.get_noise_level(i - 1)
+                x = x + noise_level * torch.randn_like(x)
+        
+        return x
+```
+
+---
+
+### 5.3 Progressive Distillation
+Distill a diffusion model into fewer steps.
+
+**Process**:
+1.  Train student to match teacher's 2-step output
+2.  Halve the number of steps
+3.  Repeat until desired step count
+
+```python
+class ProgressiveDistillation:
+    def __init__(self, teacher_model, student_model):
+        self.teacher = teacher_model
+        self.student = student_model
+    
+    def distill_step(self, x_0, steps):
+        """One distillation step."""
+        # Teacher generates with many steps
+        with torch.no_grad():
+            x_teacher = self.teacher.sample(x_0, steps=steps * 2)
+        
+        # Student generates with half the steps
+        x_student = self.student.sample(x_0, steps=steps)
+        
+        # Match outputs
+        loss = F.mse_loss(x_student, x_teacher)
+        
+        return loss
+```
+
+---
+
+## 6. Video Generation
+
+### 6.1 Video Diffusion Models
+Extend diffusion to spatiotemporal data.
+
+**Architecture Options**:
+1.  **3D U-Net**: Full spatiotemporal convolutions
+2.  **Factorized**: Separate spatial + temporal attention
+3.  **Latent Video**: Compress video to latent space first
+
+```python
+class VideoDiffusion(nn.Module):
+    def __init__(self, image_unet, num_frames=16):
+        super().__init__()
+        self.num_frames = num_frames
+        
+        # Initialize from image model
+        self.unet = image_unet
+        
+        # Add temporal layers
+        self.temporal_attention = nn.ModuleList([
+            TemporalAttentionBlock(ch, num_heads=8)
+            for ch in image_unet.channels
+        ])
+        
+        # Time position encoding
+        self.frame_pos = PositionalEncoding(256, max_len=num_frames)
+    
+    def forward(self, x, t, context=None):
+        # x: [batch, frames, channels, height, width]
+        b, f, c, h, w = x.shape
+        
+        # Reshape for spatial processing
+        x_flat = x.view(b * f, c, h, w)
+        
+        # Spatial UNet
+        features = self.unet(x_flat, t, context)
+        
+        # Reshape back
+        features = features.view(b, f, -1, h, w)
+        
+        # Temporal attention
+        for temporal_layer in self.temporal_attention:
+            features = temporal_layer(features)
+        
+        return features
+
+
+class TemporalAttentionBlock(nn.Module):
+    def __init__(self, dim, num_heads=8):
+        super().__init__()
+        self.attention = nn.MultiheadAttention(dim, num_heads, batch_first=True)
+        self.norm = nn.LayerNorm(dim)
+    
+    def forward(self, x):
+        # x: [batch, frames, channels, height, width]
+        b, f, c, h, w = x.shape
+        
+        # Reshape for temporal attention
+        x = x.permute(0, 3, 4, 1, 2).reshape(b * h * w, f, c)
+        
+        # Self-attention across frames
+        x_attended, _ = self.attention(x, x, x)
+        x_attended = self.norm(x_attended + x)
+        
+        # Reshape back
+        x_attended = x_attended.view(b, h, w, f, c).permute(0, 3, 4, 1, 2)
+        
+        return x_attended
+```
+
+---
+
+### 6.2 Stable Video Diffusion
+Meta's approach to video generation.
+
+**Key Features**:
+- Fine-tuned from Stable Diffusion image model
+- Generates 14-25 frames at 576×1024
+- Motion bucket controls camera/object motion
+
+```python
+class StableVideoDiffusion:
+    def __init__(self, image_model, motion_bucket_size=128):
+        # Load pretrained image model
+        self.model = image_model
+        
+        # Motion conditioning
+        self.motion_bucket = nn.Embedding(motion_bucket_size, 256)
+        
+        # FPS conditioning
+        self.fps_embed = nn.Embedding(30, 256)
+    
+    def generate(self, image, motion_value=127, fps=10, steps=25):
+        """Generate video from single image."""
+        # Encode input image
+        latents = self.model.encode_image(image)
+        
+        # Repeat for multiple frames
+        latents = latents.unsqueeze(1).repeat(1, 14, 1, 1, 1)
+        
+        # Add motion conditioning
+        motion_embed = self.motion_bucket(torch.tensor([motion_value]))
+        fps_embed = self.fps_embed(torch.tensor([fps]))
+        context = torch.cat([motion_embed, fps_embed], dim=1)
+        
+        # Diffusion sampling
+        for t in reversed(range(steps)):
+            noise = self.model(latents, t, context)
+            latents = self.denoise_step(latents, t, noise)
+        
+        # Decode to video
+        video = self.model.decode(latents)
+        
+        return video
+```
+
+---
+
+## 7. Advanced Training Techniques
+
+### 7.1 DreamBooth: Personalized Generation
+Fine-tune diffusion on specific subjects.
+
+**The Method**:
+1.  Collect 3-5 images of subject
+2.  Train with rare class token (e.g., "sks dog")
+3.  Preserve class knowledge with prior preservation
+
+```python
+class DreamBoothTrainer:
+    def __init__(self, diffusion_model, class_prompt):
+        self.model = diffusion_model
+        self.class_prompt = class_prompt
+        
+        # Prior preservation images (generated)
+        self.prior_images = self.generate_prior(100)
+    
+    def generate_prior(self, num_images):
+        """Generate class prior images."""
+        prompts = [f"a photo of {self.class_prompt}"] * num_images
+        return self.model.generate(prompts)
+    
+    def train_step(self, subject_images, subject_prompt):
+        """One training step for DreamBooth."""
+        all_images = subject_images + self.prior_images
+        
+        # Subject prompts
+        subject_prompts = [subject_prompt] * len(subject_images)
+        
+        # Class prompts for prior
+        class_prompts = [f"a photo of {self.class_prompt}"] * len(self.prior_images)
+        
+        all_prompts = subject_prompts + class_prompts
+        
+        # Standard diffusion training
+        loss = self.diffusion_loss(all_images, all_prompts)
+        
+        return loss
+```
+
+---
+
+### 7.2 Textual Inversion
+Learn new "words" (embeddings) for concepts.
+
+**The Approach**:
+- Optimize a single embedding vector (not full model)
+- 3-5 training images
+- Works with any diffusion model
+
+```python
+class TextualInversion:
+    def __init__(self, diffusion_model, tokenizer):
+        self.model = diffusion_model
+        self.tokenizer = tokenizer
+    
+    def train_embedding(self, images, placeholder_token, class_token, steps=3000):
+        """Train a new embedding vector."""
+        # Initialize embedding randomly
+        embedding = nn.Parameter(torch.randn(1, 768))
+        
+        # Add to tokenizer
+        self.tokenizer.add_placeholder(placeholder_token, embedding)
+        
+        optimizer = torch.optim.Adam([embedding], lr=5e-4)
+        
+        for step in range(steps):
+            # Sample training image
+            image = random.choice(images)
+            
+            # Create prompt with placeholder
+            prompt = f"a photo of {placeholder_token} {class_token}"
+            
+            # Compute diffusion loss
+            loss = self.model.loss(image, prompt)
+            
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        
+        return embedding
+```
+
+---
+
+## 8. Evaluation Metrics
+
+### 8.1 Generation Quality Metrics
+
+| Metric | What It Measures | Ideal Value |
+| :--- | :--- | :--- |
+| **FID** | Distribution similarity | Lower is better |
+| **IS** | Image quality + diversity | Higher is better |
+| **CLIP Score** | Text-image alignment | Higher is better |
+| **LPIPS** | Perceptual similarity | Lower is better |
+| **PSNR** | Pixel-level similarity | Higher is better |
+
+```python
+def compute_fid(real_features, fake_features):
+    """Compute Fréchet Inception Distance."""
+    mu_real = real_features.mean(dim=0)
+    sigma_real = real_features.cov()
+    
+    mu_fake = fake_features.mean(dim=0)
+    sigma_fake = fake_features.cov()
+    
+    # FID formula
+    diff = (mu_real - mu_fake).pow(2).sum()
+    trace = (sigma_real + sigma_fake - 
+             2 * (sigma_real @ sigma_fake).sqrtm().trace())
+    
+    return diff + trace
+```
+
+---
+
+## 🔬 Research Frontiers (2024-2025)
+
+### 9.1 Faster Generation
+- **LCM (Latent Consistency Models)**: 4-8 step generation
+- **Turbo models**: Real-time image generation
+- **Distillation**: Knowledge distillation for speed
+
+### 9.2 Controllable Generation
+- **Regional prompting**: Different prompts for different image regions
+- **Layout guidance**: Generate based on bounding boxes
+- **Sketch-to-image**: Convert sketches to photorealistic images
+
+### 9.3 3D Generation
+- **DreamFusion**: 3D objects from text via diffusion
+- **Zero-1-to-3**: Novel views from single image
+- **Wonder3D**: Multi-view consistent generation
+
+### 9.4 Multimodal Generation
+- **Image + Audio → Video**: Generate video from image and sound
+- **Text + Layout → Scene**: Structured scene generation
+- **Video → 3D**: Reconstruct 3D from video
+
+---
+
+**Status:** ✅ Elite Expanded Standard (14/10)
+**Next:** Vision Transformers & Multimodal AI (ViT, CLIP, LLaVA, DINO, MAE)

@@ -149,5 +149,495 @@ def generate_step(token_id, past_key_values=None):
 
 ---
 
-**Status:** ✅ Expanded Standard (10/10)
-**Next:** Prompt Engineering (ToT, Self-Consistency, DSPy)
+## 4. Mixture of Experts (MoE): Scaling to Trillions
+
+### 4.1 The MoE Architecture
+Instead of every token passing through all parameters, MoE uses **sparse activation**.
+
+#### The Math:
+For each token $x$:
+1.  **Router Network**: Computes gating scores $h(x) = \text{softmax}(W_g \cdot x)$
+2.  **Top-K Selection**: Selects $K$ experts with highest scores
+3.  **Weighted Output**: $y = \sum_{i \in \text{top-K}} h(x)_i \cdot E_i(x)$
+
+Where $E_i$ is the $i$-th expert network (typically a feed-forward layer).
+
+**Key Insight**: A model with 100B total parameters might only use 10B per forward pass!
+
+---
+
+### 4.2 Switch Transformer
+Google's approach to MoE with **single expert routing** (K=1).
+
+**Architecture**:
+- Router: Simple linear layer
+- Experts: Standard FFN layers
+- **Capacity Factor**: Limits tokens per expert to prevent overload
+
+**Training Stability**:
+- **Auxiliary Loss**: Penalizes imbalanced expert usage
+    $$ \mathcal{L}_{aux} = \sum_{i=1}^N f_i \cdot P_i $$
+    Where $f_i$ is fraction of tokens routed to expert $i$, and $P_i$ is router probability for expert $i$.
+
+---
+
+### 4.3 Mixtral 8x7B
+State-of-the-art open MoE model (2024).
+
+**Specifications**:
+- 8 experts per layer, activates 2 per token
+- Total: 47B parameters, Active: 13B per forward pass
+- **Sparse MoE**: Each token uses different experts
+
+**Benefits**:
+- 5× faster inference than dense 47B model
+- Better quality than dense 13B model
+- Efficient multi-task learning (different experts specialize)
+
+---
+
+### 4.4 Implementation: MoE Layer from Scratch
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MoELayer(nn.Module):
+    def __init__(self, dim, num_experts, top_k=2):
+        super().__init__()
+        self.num_experts = num_experts
+        self.top_k = top_k
+        
+        # Router network
+        self.router = nn.Linear(dim, num_experts, bias=False)
+        
+        # Expert networks (simple FFN)
+        self.experts = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(dim, dim * 4),
+                nn.GELU(),
+                nn.Linear(dim * 4, dim)
+            ) for _ in range(num_experts)
+        ])
+    
+    def forward(self, x):
+        # x: [batch, seq_len, dim]
+        batch_size, seq_len, dim = x.shape
+        
+        # Reshape for token-level processing
+        x_flat = x.view(-1, dim)  # [batch * seq_len, dim]
+        
+        # Router logits
+        router_logits = self.router(x_flat)  # [batch * seq_len, num_experts]
+        router_probs = F.softmax(router_logits, dim=-1)
+        
+        # Select top-k experts
+        top_k_probs, top_k_indices = torch.topk(router_probs, self.top_k, dim=-1)
+        
+        # Initialize output
+        output = torch.zeros_like(x_flat)
+        
+        # Process each expert
+        for expert_idx in range(self.num_experts):
+            # Find tokens assigned to this expert
+            expert_mask = (top_k_indices == expert_idx)
+            if not expert_mask.any():
+                continue
+            
+            # Get token indices and their weights
+            token_indices = torch.where(expert_mask.any(dim=1))[0]
+            weights = top_k_probs[token_indices, expert_mask[token_indices]].sum(dim=1, keepdim=True)
+            
+            # Route through expert
+            expert_input = x_flat[token_indices]
+            expert_output = self.experts[expert_idx](expert_input)
+            
+            # Weight and accumulate
+            output[token_indices] += expert_output * weights
+        
+        return output.view(batch_size, seq_len, dim)
+
+# Usage
+moe = MoELayer(dim=512, num_experts=8, top_k=2)
+x = torch.randn(32, 128, 512)  # batch=32, seq_len=128
+output = moe(x)
+print(f"Output shape: {output.shape}")
+```
+
+---
+
+## 5. State Space Models (SSMs): The Mamba Revolution
+
+### 5.1 The SSM Foundation
+SSMs are inspired by control theory and offer $O(n)$ sequence modeling.
+
+**Continuous Form**:
+$$ h'(t) = A h(t) + B x(t) $$
+$$ y(t) = C h(t) $$
+
+Where:
+- $h(t)$: Hidden state (evolves over time)
+- $x(t)$: Input
+- $y(t)$: Output
+- $A, B, C$: Learned parameters
+
+---
+
+### 5.2 Discretization (Zero-Order Hold)
+To use SSMs in deep learning, we discretize with step size $\Delta$:
+
+$$ \bar{A} = \exp(\Delta A) $$
+$$ \bar{B} = (\Delta A)^{-1} (\exp(\Delta A) - I) \cdot \Delta B $$
+
+**Discrete Form**:
+$$ h_t = \bar{A} h_{t-1} + \bar{B} x_t $$
+$$ y_t = C h_t $$
+
+---
+
+### 5.3 Mamba: Selective State Spaces
+Mamba's innovation: make $B, C, \Delta$ **input-dependent**.
+
+**Key Equations**:
+```python
+# For each token x_t
+Δ = softplus(x_t @ W_Δ)      # Step size depends on input
+B = x_t @ W_B                 # Input projection
+C = x_t @ W_C                 # Output projection
+
+# SSM recurrence
+h_t = Ā(Δ) * h_{t-1} + B̄(Δ) * B * x_t
+y_t = C * h_t
+```
+
+**Why It Works**:
+- **Content-aware**: The model can "choose" what to remember/forget
+- **Linear complexity**: $O(n)$ vs. Transformer's $O(n^2)$
+- **Infinite context**: No fixed context window limit
+
+---
+
+### 5.4 Mamba vs. Transformer Comparison
+
+| Feature | Transformer | Mamba (SSM) |
+| :--- | :--- | :--- |
+| **Complexity** | $O(n^2)$ | $O(n)$ |
+| **Memory** | $O(n)$ (KV-cache) | $O(1)$ (fixed state) |
+| **Parallelization** | Excellent | Good (via convolution) |
+| **Inference Speed** | Slow (memory-bound) | Fast (compute-bound) |
+| **Context Limit** | Fixed (e.g., 128K) | Unlimited |
+| **Quality (2024)** | SOTA | Near-SOTA |
+
+---
+
+### 5.5 Mamba Implementation (Simplified)
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MambaBlock(nn.Module):
+    def __init__(self, dim, d_state=16, d_conv=4):
+        super().__init__()
+        self.dim = dim
+        self.d_state = d_state
+        self.d_conv = d_conv
+        
+        # Input projection
+        self.in_proj = nn.Linear(dim, dim * 2, bias=False)
+        
+        # Convolution for local context
+        self.conv1d = nn.Conv1d(
+            in_channels=dim,
+            out_channels=dim,
+            kernel_size=d_conv,
+            padding=d_conv - 1,
+            groups=dim
+        )
+        
+        # SSM parameters
+        self.x_proj = nn.Linear(dim, d_state, bias=False)
+        self.dt_proj = nn.Linear(dim, dim, bias=True)
+        
+        # Initialize A parameter (diagonal)
+        A = torch.arange(1, d_state + 1).float()
+        self.A_log = nn.Parameter(torch.log(A))
+        self.D = nn.Parameter(torch.ones(dim))
+        
+        # Output projection
+        self.out_proj = nn.Linear(dim, dim, bias=False)
+    
+    def forward(self, x):
+        # x: [batch, seq_len, dim]
+        batch, seq_len, dim = x.shape
+        
+        # Input projection and split
+        x_and_res = self.in_proj(x)  # [batch, seq_len, dim*2]
+        x, res = x_and_res.split([dim, dim], dim=-1)
+        
+        # Convolution (local context)
+        x = x.transpose(1, 2)  # [batch, dim, seq_len]
+        x = self.conv1d(x)[:, :, :seq_len]
+        x = x.transpose(1, 2)  # [batch, seq_len, dim]
+        
+        x = F.silu(x)
+        
+        # SSM computation (simplified - real Mamba uses parallel scan)
+        A = -torch.exp(self.A_log)  # [d_state]
+        
+        # Project to SSM parameters
+        B = self.x_proj(x)  # [batch, seq_len, d_state]
+        C = self.x_proj(x)  # [batch, seq_len, d_state]
+        dt = F.softplus(self.dt_proj(x))  # [batch, seq_len, dim]
+        
+        # Discretize (simplified)
+        dA = torch.exp(dt.unsqueeze(-1) * A.unsqueeze(0).unsqueeze(0))  # [batch, seq_len, d_state]
+        dB = dt * B  # [batch, seq_len, d_state]
+        
+        # Sequential scan (in practice, use parallel algorithm)
+        h = torch.zeros(batch, self.d_state, device=x.device)
+        outputs = []
+        
+        for t in range(seq_len):
+            h = dA[:, t] * h + dB[:, t] * x[:, t, :1].expand(-1, self.d_state)
+            y_t = (h * C[:, t]).sum(dim=-1)
+            outputs.append(y_t)
+        
+        y = torch.stack(outputs, dim=1)  # [batch, seq_len, dim]
+        y = y + self.D * x  # Skip connection
+        
+        # Output projection
+        y = self.out_proj(y * F.silu(res))
+        
+        return y
+
+# Usage
+mamba = MambaBlock(dim=512, d_state=16)
+x = torch.randn(8, 1024, 512)
+output = mamba(x)
+print(f"Output shape: {output.shape}")
+```
+
+---
+
+## 6. Inference Engines: Production Deployment
+
+### 6.1 vLLM: High-Throughput Serving
+**Key Innovation**: PagedAttention for efficient KV-cache management.
+
+**Features**:
+- **Continuous Batching**: Add new requests as soon as any batch slot frees up
+- **PagedAttention**: Non-contiguous KV-cache storage (like OS virtual memory)
+- **CUDA Graphs**: Pre-compile computation graphs for speed
+
+**Performance**: 2-4× higher throughput than HuggingFace Transformers.
+
+```python
+from vllm import LLM, SamplingParams
+
+# Initialize
+llm = LLM(model="meta-llama/Llama-2-7b-chat-hf")
+
+# Sampling configuration
+sampling_params = SamplingParams(
+    temperature=0.7,
+    max_tokens=256,
+    top_p=0.9
+)
+
+# Batch inference
+prompts = [
+    "What is machine learning?",
+    "Explain quantum computing",
+    "How do transformers work?"
+]
+
+outputs = llm.generate(prompts, sampling_params)
+
+for output in outputs:
+    print(output.outputs[0].text)
+```
+
+---
+
+### 6.2 TGI (Text Generation Inference)
+HuggingFace's production-ready inference server.
+
+**Features**:
+- **Tensor Parallelism**: Split model across multiple GPUs
+- **Flash Attention**: Optimized attention implementation
+- **Quantization**: INT8, FP8, AWQ support
+- **OpenAI-compatible API**: Drop-in replacement for GPT APIs
+
+```bash
+# Run TGI server
+docker run --gpus all \
+    -p 8080:80 \
+    ghcr.io/huggingface/text-generation-inference:2.0 \
+    --model-id meta-llama/Llama-2-7b-chat-hf \
+    --num-shard 2 \
+    --quantize awq
+```
+
+---
+
+### 6.3 llama.cpp: CPU Inference
+**GGUF Format**: Quantized models for CPU/GPU hybrid inference.
+
+**Quantization Levels**:
+| Format | Bits | Quality | RAM (7B) |
+| :--- | :--- | :--- | :--- |
+| Q4_0 | 4.05 | Good | 4GB |
+| Q5_K_M | 5.5 | Very Good | 5GB |
+| Q8_0 | 8.5 | Near-lossless | 8GB |
+
+```python
+from llama_cpp import Llama
+
+# Load quantized model
+llm = Llama(
+    model_path="llama-3-8b.Q4_K_M.gguf",
+    n_ctx=4096,
+    n_threads=8,
+    n_gpu_layers=35  # Offload layers to GPU
+)
+
+output = llm(
+    "Q: What is the capital of France?\nA:",
+    max_tokens=64,
+    stop=["Q:", "\n"],
+    echo=True
+)
+
+print(output['choices'][0]['text'])
+```
+
+---
+
+### 6.4 TensorRT-LLM: NVIDIA Optimization
+**Best for**: High-performance deployment on NVIDIA GPUs.
+
+**Optimizations**:
+- **Kernel Fusion**: Combine multiple operations
+- **In-flight Batching**: Dynamic request scheduling
+- **FP8 Precision**: 2× speedup on H100 GPUs
+
+```python
+import tensorrt_llm
+from tensorrt_llm.runtime import ModelRunner
+
+# Build optimized engine
+runner = ModelRunner.from_engine(
+    engine_dir="llama2_7b_trt",
+    max_batch_size=32,
+    max_input_len=4096,
+    max_output_len=1024
+)
+
+# Inference
+with runner.create_session():
+    outputs = runner.generate(inputs)
+```
+
+---
+
+## 7. Model Architectures Timeline
+
+```
+2018: BERT (Encoder-only, MLM)
+    ↓
+2019: RoBERTa (Improved BERT)
+    ↓
+2020: T5 (Encoder-Decoder, Text-to-Text)
+    ↓
+2020: GPT-3 (Decoder-only, 175B)
+    ↓
+2022: LLaMA (Efficient Decoder)
+    ↓
+2023: Mixtral (MoE, 8x7B)
+    ↓
+2024: Mamba (SSM, Linear Complexity)
+    ↓
+2024: LLaMA-3 (GQA, RoPE, 405B)
+```
+
+---
+
+## 8. Advanced KV-Cache Management
+
+### 8.1 KV-Cache Size Calculation
+For a model with:
+- Hidden dim: 4096
+- Num KV heads: 8
+- Num layers: 32
+- Seq len: 4096
+- Precision: FP16 (2 bytes)
+
+$$ \text{Size} = 2 \times 4096 \times 8 \times \frac{4096}{8} \times 32 \times 2 \text{ bytes} \approx 4 \text{ GB} $$
+
+(The factor of 2 is for K and V; dividing by 8 converts head_dim to bytes)
+
+---
+
+### 8.2 Prefix Caching
+For repeated prompts (e.g., system messages), cache the KV states.
+
+```python
+# vLLM prefix caching
+llm = LLM(
+    model="meta-llama/Llama-2-7b-chat-hf",
+    enable_prefix_caching=True
+)
+
+# First request computes and caches
+output1 = llm.generate(["System: You are helpful.\nUser: Hello"])
+
+# Second request reuses cached prefix
+output2 = llm.generate(["System: You are helpful.\nUser: Hi there"])
+# Only processes "Hi there" vs "Hello"
+```
+
+---
+
+### 8.3 Speculative Decoding
+Use a small "draft" model to propose tokens, verify with large model.
+
+**Algorithm**:
+1. Draft model generates $K$ tokens autoregressively
+2. Target model evaluates all $K$ tokens in parallel
+3. Accept correct tokens, resample incorrect ones
+
+**Speedup**: 2-3× for large models.
+
+```python
+# vLLM speculative decoding
+llm = LLM(
+    model="meta-llama/Llama-2-70b-chat-hf",
+    speculative_model="meta-llama/Llama-2-7b-chat-hf",
+    num_speculative_tokens=5
+)
+```
+
+---
+
+## 🔬 Research Frontiers (2024-2025)
+
+### 9.1 Hybrid Architectures
+- **Jamba (AI21)**: Alternating Transformer + Mamba layers
+- **Griffin**: Gated Convolution + Local Attention
+- **RWKV**: RNN-like Transformer with linear attention
+
+### 9.2 Long Context Models
+- **Claude-3**: 200K context window
+- **Gemini-1.5**: 1M+ tokens with MoE
+- **Technique**: Sparse attention + improved positional encoding
+
+### 9.3 Efficient Training
+- **Fully Sharded Data Parallel (FSDP)**: Shard model across GPUs
+- **Activation Checkpointing**: Trade compute for memory
+- **Gradient Accumulation**: Simulate larger batches
+
+---
+
+**Status:** ✅ Elite Expanded Standard (14/10)
+**Next:** Prompt Engineering (ToT, Self-Consistency, DSPy, Constitutional AI)

@@ -159,14 +159,238 @@ print(f"King vs Apple Similarity: {word1.similarity(word3):.4f}")
 
 ---
 
-## 📚 Recommended Resources
-- **Papers**: 
-    - [Efficient Estimation of Word Representations in Vector Space (Word2Vec)](https://arxiv.org/abs/1301.3781)
-    - [Enriching Word Vectors with Subword Information (FastText)](https://arxiv.org/abs/1607.04606)
-- **Books**: "Speech and Language Processing" by Dan Jurafsky (The Bible of NLP).
-- **Tools**: [HuggingFace Tokenizers Library](https://github.com/huggingface/tokenizers).
+## 4. Advanced Topics: Beyond the Basics
+
+### 4.1 Attention Mechanisms (The Bridge to Transformers)
+Before Transformers, **Attention** was introduced to solve the Seq2Seq bottleneck.
+
+#### The Bahdanau Attention (Additive):
+$$ \alpha_{ij} = \frac{\exp(\text{score}(h_i, s_j))}{\sum_{k} \exp(\text{score}(h_i, s_k))} $$
+Where $h_i$ is the encoder state and $s_j$ is the decoder state.
+
+#### Luong Attention (Multiplicative):
+$$ \text{score}(h_i, s_j) = h_i^T W s_j $$
+- **Global Attention**: Attends to all source positions (similar to modern self-attention).
+- **Local Attention**: Attends to a window of source positions (faster, $O(1)$ per step).
+
+**Key Insight**: Attention allows the decoder to "look back" at any encoder state, eliminating the bottleneck. This is the conceptual predecessor to Transformer self-attention.
 
 ---
 
-**Status:** ✅ Expanded Standard (10/10)
-**Next:** Sequence Models (RNNs, LSTMs, BPTT)
+### 4.2 Modern Tokenization Challenges
+
+#### 4.2.1 The Multilingual Problem
+- **SentencePiece**: Treats all languages uniformly by tokenizing raw text (including spaces).
+    - *Example*: "Hello world" → `["▁Hello", "▁world"]` (where `▁` represents a space).
+    - **Benefit**: No need for language-specific tokenization rules.
+- **Language-Specific Vocabularies**: Some models (e.g., mBERT) use a shared vocabulary across 104 languages, leading to uneven representation (English gets ~50% of tokens).
+
+#### 4.2.2 Code and Special Tokens
+- **Code Tokenization**: Programming languages have strict syntax. Standard BPE can break identifiers unpredictably.
+    - *Solution*: **CodeBERT** uses byte-level BPE to handle any UTF-8 character.
+    - *Example*: `function_name` might be tokenized as `["function", "_name"]` or `["func", "tion", "_", "name"]`.
+- **Special Tokens**: Modern tokenizers reserve tokens for special purposes:
+    - `[CLS]`, `[SEP]` (BERT)
+    - `<s>`, `</s>`, `<pad>`, `<unk>` (RoBERTa)
+    - `<|startoftext|>`, `<|endoftext|>` (GPT)
+
+#### 4.2.3 Tokenization Artifacts
+- **The "Fused Island" Problem**: Rare word combinations can be merged into single tokens during BPE training.
+    - *Example*: "New York" might become a single token, but "New Jersey" is split. This creates inconsistent representations.
+- **Mitigation**: Use **Unigram LM** tokenization (used in SentencePiece), which probabilistically selects tokens rather than greedily merging.
+
+---
+
+### 4.3 Contextual Embeddings: The ELMo Revolution
+
+Before BERT, **ELMo** (Embeddings from Language Models) introduced contextual word representations.
+
+#### The Architecture:
+1.  Train a **bi-directional LSTM** language model.
+2.  Extract hidden states from all layers.
+3.  Create a task-specific weighted sum:
+    $$ \text{ELMo}_k = \sum_{j=0}^L s_{kj} h_{j} $$
+    Where $s_{kj}$ are learned scalar weights for task $k$.
+
+**Key Difference from Word2Vec**: "Bank" in "river bank" and "bank account" get **different vectors** because the LSTM hidden states depend on the full context.
+
+---
+
+### 4.4 Evaluation Metrics for Embeddings
+
+#### 4.4.1 Intrinsic Evaluation
+- **Word Similarity**: Correlate model's cosine similarity with human judgments (e.g., WordSim-353 dataset).
+- **Word Analogy**: Solve "Man is to King as Woman is to ___" using vector arithmetic: $v_{king} - v_{man} + v_{woman} \approx v_{queen}$.
+
+#### 4.4.2 Extrinsic Evaluation
+- **Downstream Task Performance**: Train a classifier (e.g., sentiment analysis) using the embeddings and measure accuracy.
+- **Freezing vs. Fine-tuning**: Static embeddings (Word2Vec) are frozen; contextual embeddings (BERT) are fine-tuned end-to-end.
+
+---
+
+## 5. Implementation Deep Dive: Building a Tokenizer from Scratch
+
+### 5.1 Complete BPE Training Algorithm
+```python
+import re
+from collections import defaultdict
+
+class BPETokenizer:
+    def __init__(self, vocab_size=1000):
+        self.vocab_size = vocab_size
+        self.vocab = {}
+        self.merges = []
+        
+    def _get_vocab(self, text):
+        """Convert text to word-frequency dict with character splits."""
+        vocab = defaultdict(int)
+        words = text.split()
+        for word in words:
+            # Add end-of-word token
+            word = word + '</w>'
+            # Split into characters
+            chars = tuple(word)
+            vocab[chars] += 1
+        return vocab
+    
+    def _get_stats(self, vocab):
+        """Count frequency of all adjacent pairs."""
+        pairs = defaultdict(int)
+        for word, freq in vocab.items():
+            for i in range(len(word) - 1):
+                pairs[(word[i], word[i+1])] += freq
+        return pairs
+    
+    def _merge_vocab(self, pair, vocab):
+        """Merge all occurrences of a pair in the vocabulary."""
+        new_vocab = {}
+        bigram = re.escape(' '.join(pair))
+        pattern = re.compile(r'(?<!\S)' + bigram + r'(?!\S)')
+        
+        for word in vocab:
+            word_str = ' '.join(word)
+            new_word = pattern.sub(''.join(pair), word_str)
+            new_vocab[tuple(new_word.split())] = vocab[word]
+        
+        return new_vocab
+    
+    def fit(self, text):
+        """Train the BPE tokenizer."""
+        vocab = self._get_vocab(text)
+        
+        # Initial vocabulary (all unique characters)
+        all_chars = set()
+        for word in vocab:
+            all_chars.update(word)
+        self.vocab = {c: i for i, c in enumerate(sorted(all_chars))}
+        
+        # Perform merges until target vocab size
+        while len(self.vocab) < self.vocab_size:
+            pairs = self._get_stats(vocab)
+            if not pairs:
+                break
+            
+            # Find the most frequent pair
+            best_pair = max(pairs, key=pairs.get)
+            
+            # Merge the pair
+            vocab = self._merge_vocab(best_pair, vocab)
+            self.merges.append(best_pair)
+            
+            # Add new token to vocabulary
+            new_token = ''.join(best_pair)
+            if new_token not in self.vocab:
+                self.vocab[new_token] = len(self.vocab)
+        
+        return self
+    
+    def tokenize(self, text, max_length=None):
+        """Tokenize a single text."""
+        word = text + '</w>'
+        chars = tuple(word)
+        
+        # Apply all merges in order
+        for pair in self.merges:
+            new_chars = []
+            i = 0
+            while i < len(chars):
+                if i < len(chars) - 1 and chars[i] == pair[0] and chars[i+1] == pair[1]:
+                    new_chars.append(''.join(pair))
+                    i += 2
+                else:
+                    new_chars.append(chars[i])
+                    i += 1
+            chars = tuple(new_chars)
+        
+        # Convert to IDs
+        token_ids = [self.vocab.get(t, self.vocab.get('<unk>', 0)) for t in chars]
+        
+        if max_length:
+            token_ids = token_ids[:max_length]
+        
+        return token_ids
+
+# Example Usage
+text = "low low low lower lower newest newest widest widest"
+tokenizer = BPETokenizer(vocab_size=50)
+tokenizer.fit(text)
+
+print(f"Vocabulary size: {len(tokenizer.vocab)}")
+print(f"Number of merges: {len(tokenizer.merges)}")
+print(f"Tokenize 'lowest': {tokenizer.tokenize('lowest')}")
+```
+
+---
+
+## 6. Common Pitfalls and Production Considerations
+
+### 6.1 The OOV Catastrophe
+- **Problem**: Word2Vec cannot handle words not seen during training.
+- **Real-world Impact**: In social media text, ~5-10% of words might be OOV (slang, typos, new terms).
+- **Solution**: FastText (subword embeddings) or contextual models (BERT handles OOV via subword tokenization).
+
+### 6.2 Bias in Embeddings
+- **Famous Example**: $v_{man} - v_{programmer} \approx v_{woman} - v_{homemaker}$
+- **Cause**: Embeddings capture statistical biases present in training data.
+- **Mitigation**: 
+    - **Hard Debias**: Project embeddings onto a subspace orthogonal to the bias direction.
+    - **Soft Debias**: Modify the training objective to penalize biased associations.
+
+### 6.3 Memory Optimization for Large Vocabularies
+- **Hierarchical Softmax**: Uses a Huffman tree to reduce softmax computation from $O(V)$ to $O(\log V)$.
+- **Negative Sampling**: As discussed, reduces to $O(K)$ where $K \ll V$.
+
+---
+
+## 📚 Recommended Resources
+- **Papers**:
+    - [Efficient Estimation of Word Representations in Vector Space (Word2Vec)](https://arxiv.org/abs/1301.3781)
+    - [Enriching Word Vectors with Subword Information (FastText)](https://arxiv.org/abs/1607.04606)
+    - [Deep Contextualized Word Representations (ELMo)](https://arxiv.org/abs/1802.05365)
+    - [Neural Machine Translation by Jointly Learning to Align and Translate (Bahdanau Attention)](https://arxiv.org/abs/1409.0473)
+    - [Effective Approaches to Attention-based Neural Machine Translation (Luong Attention)](https://arxiv.org/abs/1508.04025)
+- **Books**: "Speech and Language Processing" by Dan Jurafsky (The Bible of NLP).
+- **Tools**: 
+    - [HuggingFace Tokenizers Library](https://github.com/huggingface/tokenizers)
+    - [SentencePiece](https://github.com/google/sentencepiece)
+- **Datasets**: 
+    - [WordSim-353](https://aclweb.org/aclwiki/WordSim-353) for similarity evaluation
+    - [Google Analogy Dataset](https://aclweb.org/aclwiki/Google_analogy_dataset) for analogy testing
+
+---
+
+## 🔬 Research Frontiers (2024-2025)
+
+### 6.4 Multi-modal Tokenization
+- **Image-Text Models**: How to tokenize images for joint language-vision models?
+    - **CLIP**: Uses separate tokenizers (BPE for text, patches for images).
+    - **Flamingo**: Uses Perceiver Resampler to convert image patches into a fixed number of "visual tokens."
+
+### 6.5 Token-Free Models
+- **Character-Level Models**: Working directly with characters (e.g., CharBERT) to eliminate tokenization entirely.
+- **Byte-Level Models**: Operating on raw bytes (e.g., ByT5) for true language-agnostic processing.
+
+---
+
+**Status:** ✅ Elite Expanded Standard (12/10)
+**Next:** Sequence Models (RNNs, LSTMs, BPTT, Advanced Variants)
