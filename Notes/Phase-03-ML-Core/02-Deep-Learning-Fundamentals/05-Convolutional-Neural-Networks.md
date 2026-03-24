@@ -775,6 +775,80 @@ class BottleneckBlock:
 
 ### 8.5.6 Modern Architectures
 
+---
+
+#### 🧒 ELI5: Transfer Learning & Fine-tuning
+
+> Imagine you're learning to play video games.
+>
+> **Training from Scratch** (Hard way):
+> - Never played ANY game before
+> - Start with new game: "Learn controls, learn rules, learn strategy"
+> - Takes 100 hours to get good!
+> - Next game: Start from ZERO again!
+> - Another 100 hours!
+>
+> **Transfer Learning** (Smart way):
+> - Played Mario for 100 hours
+> - New game: Mega Man
+> - "Hey! I already know:
+>   - Jump over enemies
+>   - Collect power-ups
+>   - Avoid pits"
+> - Only learn NEW stuff: "Shoot pellets, climb walls"
+> - Takes only 10 hours!
+>
+> **Why it works**:
+> - Games share COMMON skills
+> - Images share COMMON features!
+>
+> **ImageNet Pre-training** (The "Mario" of computer vision):
+>
+> **Step 1**: Train on ImageNet (1 million images, 1000 categories)
+> - Learns: Edges → Textures → Shapes → Objects
+> - Takes 1 week on GPU
+> - Now model is "generally good at vision"
+>
+> **Step 2**: Transfer to YOUR task (e.g., X-ray diagnosis)
+> - Model already knows edges, textures, shapes!
+> - Only learn: "What does pneumonia look like?"
+> - Takes 1 hour!
+> - Needs only 1000 X-rays (not 1 million!)
+>
+> **Fine-tuning Strategies**:
+>
+> **Feature Extraction** (Freeze early layers):
+> - Layers 1-10: "You already know edges, don't change!"
+> - Layers 11-15: "Learn what's useful for X-rays"
+> - Like: "Keep your gaming skills, just learn new game rules"
+>
+> **Fine-tuning** (Unfreeze some layers):
+> - Layers 1-5: Frozen (basic edges - universal!)
+> - Layers 6-15: Train slowly (adapt to X-rays)
+> - Like: "Adjust your gaming style for this specific game"
+>
+> **When to use Transfer Learning**:
+> - ✅ Small dataset (< 10,000 images)
+> - ✅ Similar domain (natural images → medical images)
+> - ✅ Want quick results
+> - ❌ Your domain is VERY different (sketches → photos)
+> - ❌ Have millions of labeled images (train from scratch)
+>
+> **Popular Pre-trained Models**:
+> - **ResNet50**: Good all-rounder
+> - **EfficientNet**: Best accuracy/size tradeoff
+> - **VGG16**: Simple, but heavy
+> - **Vision Transformer (ViT)**: New approach, very powerful
+>
+> **How much to fine-tune**:
+> - Small dataset: Freeze most, train only last layers
+> - Medium dataset: Freeze half, train half
+> - Large dataset: Fine-tune everything (but start from pre-trained!)
+
+</details>
+
+---
+
 **1. GoogLeNet / Inception**
 ```
 Inception Module:
