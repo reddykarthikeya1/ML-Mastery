@@ -115,6 +115,62 @@ For perceptron, σ is typically:
 - Sigmoid (modern variant)
 ```
 
+---
+
+#### 🧒 ELI5: Perceptron, Activation Functions & Neural Networks
+
+> Imagine a brain cell (neuron) making decisions.
+>
+> **Perceptron** (Artificial Neuron):
+>
+> Think of deciding "Should I go outside?"
+> - Input 1: Is it raining? (x₁ = 1 if yes, 0 if no)
+> - Input 2: Is it warm? (x₂ = 1 if yes, 0 if no)
+> - Input 3: Do I have plans? (x₃ = 1 if yes, 0 if no)
+>
+> **Weights** (How much you care about each factor):
+> - w₁ = -0.8 ( REALLY don't want to go in rain!)
+> - w₂ = +0.5 (slightly prefer warm weather)
+> - w₃ = +0.6 (somewhat want to keep plans)
+>
+> **Weighted Sum**: 
+> z = (-0.8 × 1) + (0.5 × 0) + (0.6 × 1) = -0.2
+>
+> **Bias** (Your general tendency):
+> b = +0.3 (you're generally an outgoing person)
+> z = -0.2 + 0.3 = +0.1
+>
+> **Activation Function** (Final decision):
+> - If z > 0 → YES, go outside!
+> - If z < 0 → NO, stay inside!
+> - Result: +0.1 > 0 → GO OUTSIDE!
+>
+> **Why Different Activation Functions?**:
+>
+> **Sigmoid** (Squishes to 0-1):
+> - Like: "How CONFIDENT are you?" (0% to 100%)
+> - Good for: Probability (will this customer buy?)
+> - Bad for: Deep networks (vanishing gradient)
+>
+> **ReLU** (Max of 0 and z):
+> - Like: Light switch - either OFF (0) or ON (positive)
+> - Good for: Hidden layers (most common choice!)
+> - Why: Doesn't vanish, fast to compute
+>
+> **Tanh** (Squishes to -1 to +1):
+> - Like: "How negative or positive?"
+> - Good for: Hidden layers (better than sigmoid)
+> - Zero-centered (helps training)
+>
+> **Why Non-Linear?**:
+> - Linear only: Can only draw STRAIGHT lines
+> - Non-linear: Can draw CURVY boundaries!
+> - Real world is curvy, not straight!
+
+</details>
+
+---
+
 ### Complete Perceptron Class
 
 ```python

@@ -9,6 +9,78 @@
 
 ---
 
+#### 🧒 ELI5: Gradient Descent, Backpropagation & Optimizers
+
+> Imagine you're on a foggy mountain and need to get to the bottom.
+>
+> **Gradient Descent** (Finding the bottom):
+> - You can't see the bottom (minimum loss)
+> - But you can feel which way is DOWN (gradient)
+> - Take a step downhill
+> - Repeat until you reach flat ground (minimum)
+>
+> **Learning Rate** (Step size):
+> - Too big: You might overshoot and bounce around!
+> - Too small: Takes FOREVER to get down!
+> - Just right: Smooth descent to bottom
+>
+> **Batch vs SGD vs Mini-Batch**:
+>
+> **Batch GD** (Measure ALL stairs before stepping):
+> - Check EVERY training example
+> - Calculate EXACT direction downhill
+> - Take ONE precise step
+> - Slow but steady
+> - Like: Carefully planning each move
+>
+> **SGD** (Feel one stair, step immediately):
+> - Check ONE training example
+> - Step in that direction
+> - Check NEXT example, step again
+> - Fast but zig-zags a lot!
+> - Like: Running down quickly but clumsily
+>
+> **Mini-Batch** (Check a few stairs, then step):
+> - Check 32 examples (batch)
+> - Calculate average direction
+> - Take step
+> - Best of both worlds!
+> - Like: Quick but not reckless
+>
+> **Backpropagation** (How the network learns):
+>
+> Imagine a tower of 10 people passing buckets:
+> - Top person (output) sees: "We're 5 gallons short!"
+> - Tells person below: "You're responsible for 2 gallons"
+> - That person tells person below them: "You're responsible for 1 gallon"
+> - Continues down to bottom (input layer)
+> - Everyone adjusts how much they carry!
+>
+> **Chain Rule**: Each person calculates their share of the error
+> **Backward pass**: Error info flows from top to bottom
+>
+> **Momentum** (Rolling ball):
+> - Normal GD: Only looks at current slope
+> - Momentum: Remembers which way it was rolling
+> - Like a ball rolling downhill - builds up speed!
+> - Helps roll through small bumps (local minima)
+>
+> **Adam Optimizer** (Smart step adjustment):
+> - Some stairs are steep, some are gentle
+> - Adam: "Steep stairs → small steps, gentle stairs → bigger steps"
+> - Adapts learning rate for EACH weight!
+> - Like: Careful on steep parts, fast on flat parts
+>
+> **Why so many optimizers?**:
+> - Different problems need different strategies
+> - Adam: Good default choice (works for most things)
+> - SGD with Momentum: Sometimes better for final accuracy
+> - It's like choosing between walking, running, or biking downhill!
+
+</details>
+
+---
+
 ## 1. Gradient Descent Variants
 
 ### Batch Gradient Descent
