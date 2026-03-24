@@ -212,6 +212,95 @@ def mini_batch_gd(X, y, learning_rate=0.01, epochs=1000, batch_size=32):
 
 ### Momentum
 
+---
+
+#### 🧒 ELI5: Momentum, NAG, Adam & Learning Rate Schedules
+
+> Imagine you're riding a bike down a hilly road.
+>
+> **SGD** (No momentum - cautious rider):
+> - Every pedal stroke: "Am I going downhill?"
+> - Stops at every small bump
+> - Takes FOREVER to reach bottom!
+> - Like: Checking GPS after every meter
+>
+> **Momentum** (Building speed):
+> - "I was going fast last step, keep going!"
+> - Rolls over small bumps
+> - Builds up speed in consistent direction
+> - Like: Coasting downhill without pedaling
+>
+> **Velocity term** (The memory):
+> - "Last update: 0.5, This update: 0.5"
+> - Momentum: "Keep going at 0.9 × 0.5 + 0.1 × 0.5"
+> - Smooths out the journey!
+>
+> **Nesterov Accelerated Gradient** (Looking ahead):
+>
+> **Normal Momentum**:
+> - "I'm here, gradient says go left"
+> - Takes step left
+> - "Oops, that was wrong!"
+>
+> **NAG** (Smart momentum):
+> - "If I keep going this way, where will I be?"
+> - Checks gradient at FUTURE position
+> - "Oh, cliff ahead! Slow down!"
+> - Like: Looking before jumping!
+>
+> **Adam** (Adaptive + Momentum = Best of both):
+>
+> **Adam has TWO memories**:
+>
+> **Momentum** (First moment - where am I going):
+> - "I've been going left consistently"
+> - Keep going left!
+>
+> **Adaptive** (Second moment - how steep is it):
+> - "This direction is steep → small steps"
+> - "That direction is flat → big steps"
+> - Each weight gets its OWN learning rate!
+>
+> **Why Adam works so well**:
+> - Momentum: Don't stop at every bump
+> - Adaptive: Adjust step size per feature
+> - Like: Expert skier who knows when to speed up/slow down!
+>
+> **Learning Rate Schedules** (Changing speed during training):
+>
+> **Constant LR** (Same speed always):
+> - Problem: Fast at start (good), fast at end (overshoot!)
+> - Like: Driving 100 km/h even when parking!
+>
+> **Step Decay** (Slow down at checkpoints):
+> - Epoch 0-30: LR = 0.01 (fast learning)
+> - Epoch 31-60: LR = 0.001 (fine-tuning)
+> - Epoch 61+: LR = 0.0001 (polishing)
+> - Like: "Run fast first, then slow down to perfect!"
+>
+> **Cosine Annealing** (Smooth slowdown):
+> - Start fast, gradually slow down
+> - Like: Natural deceleration
+> - Smooth curve, no sudden changes!
+>
+> **Warm Restarts** (Periodic fresh starts):
+> - Train for 10 epochs with decay
+> - "Restart!" → Back to high LR
+> - Train for 10 more epochs
+> - Like: "Take a break, come back refreshed!"
+> - Helps escape local minima!
+>
+> **Why schedule matters**:
+> - Start: Big steps to get close
+> - End: Tiny steps to find exact minimum
+> - Like: "Run to the treasure island, then carefully dig!"
+
+</details>
+
+---
+
+### Momentum
+
 ```python
 def momentum_gd(X, y, learning_rate=0.01, epochs=1000, momentum=0.9):
     """Gradient Descent with Momentum"""
