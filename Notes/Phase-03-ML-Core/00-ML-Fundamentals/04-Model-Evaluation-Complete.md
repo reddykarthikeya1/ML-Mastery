@@ -45,6 +45,41 @@ scores = cross_val_score(model, X, y, cv=loo)
 
 ---
 
+#### 🧒 ELI5: Cross-Validation (K-Fold, LOOCV)
+
+> Imagine you have ONE textbook and 5 students need to study from it.
+>
+> **Problem**: If you give the whole book to 1 student, others can't study!
+>
+> **K-Fold Cross-Validation** (Sharing the textbook):
+> 1. Tear book into 5 equal parts (5 folds)
+> 2. Round 1: Student 1 studies parts 2-5, gets tested on part 1
+> 3. Round 2: Student 2 studies parts 1,3-5, gets tested on part 2
+> 4. Continue for all 5 students...
+> 5. Average all 5 test scores = TRUE understanding!
+>
+> **Why not just ONE train/test split?**:
+> - What if you got unlucky and test has ONLY hard questions?
+> - Or training has ONLY easy examples?
+> - K-Fold: EVERY page gets used for testing ONCE
+> - More reliable estimate!
+>
+> **Leave-One-Out CV (LOOCV)** - Extreme sharing:
+> - Book has 100 pages
+> - Round 1: Study 99 pages, test on page 1
+> - Round 2: Study 99 pages, test on page 2
+> - ...100 rounds!
+> - Super accurate but SLOW (100 training sessions!)
+>
+> **When to use**:
+> - **5-Fold or 10-Fold**: Standard, good balance
+> - **LOOCV**: Tiny dataset (every example counts!)
+> - **Stratified K-Fold**: Unbalanced classes (keep same % in each fold)
+
+</details>
+
+---
+
 ## 2. Bias-Variance Tradeoff
 
 ### Learning Curves
@@ -67,6 +102,43 @@ plt.ylabel('Accuracy')
 plt.legend()
 plt.show()
 ```
+
+---
+
+#### 🧒 ELI5: Bias-Variance Tradeoff, Overfitting & Underfitting
+
+> Imagine you're studying for a math test.
+>
+> **High Bias (Underfitting)** - The Student Who Didn't Study Enough:
+> - Learns ONLY: "Addition exists"
+> - Test question: "What's 2+2?" → "Hmm, I know it's some math... 1?"
+> - Too simple! Doesn't know enough to answer correctly
+> - **Fix**: Study more (add more features, use complex model)
+>
+> **High Variance (Overfitting)** - The Student Who Memorized Everything:
+> - Memorizes EVERY practice problem: "2+2=4, 3+5=8, 7+9=16"
+> - Test question: "What's 4+6?" → Never saw THIS exact problem! PANIC!
+> - Too complex! Memorized instead of understanding
+> - **Fix**: Understand concepts, not just memorize (regularization, simpler model)
+>
+> **Good Balance** - The Student Who Understands Concepts:
+> - Learns the RULE: "Addition combines numbers"
+> - Practices with DIFFERENT problems
+> - Test question: "What's 4+6?" → "I understand addition, it's 10!"
+> - Works on problems NEVER seen before!
+>
+> **The Tradeoff**:
+> - Simple model → High bias, low variance (underfits)
+> - Complex model → Low bias, high variance (overfits)
+> - Just right → Low bias, low variance (generalizes well)
+>
+> **Learning Curves Explained**:
+> - **Training score**: How well model does on practice problems
+> - **Validation score**: How well model does on NEW test problems
+> - **Gap between them**: How much is it overfitting?
+> - Small gap = Good! Large gap = Overfitting!
+
+</details>
 
 ### Validation Curves
 

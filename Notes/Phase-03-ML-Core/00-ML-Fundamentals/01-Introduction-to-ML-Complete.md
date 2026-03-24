@@ -62,6 +62,45 @@ Self-Supervised Learning:
 
 ---
 
+#### 🧒 ELI5: Types of Machine Learning
+
+> Imagine different ways a student can learn.
+>
+> **Supervised Learning** (Teacher with answer key):
+> - Teacher gives problems WITH answers: "2+2=4, 3+3=6"
+> - Student learns the pattern
+> - Test: "What's 5+5?" → Student knows it's 10!
+> - Like: Learning with labeled training data
+>
+> **Unsupervised Learning** (No teacher, just data):
+> - Student gets a box of mixed LEGO: red, blue, squares, circles
+> - No instructions, but student notices: "Hmm, reds are mostly squares"
+> - Creates own groups/clusters
+> - Like: Finding hidden patterns in unlabeled data
+>
+> **Reinforcement Learning** (Learning by trial and error):
+> - Student plays a video game
+> - Die → lose points (bad action!)
+> - Beat level → gain points (good action!)
+> - Learns which actions lead to rewards
+> - Like: Training AI to play games or drive cars
+>
+> **Semi-Supervised** (Few answers, lots of practice):
+> - Teacher gives 10 problems with answers
+> - Plus 1000 problems WITHOUT answers
+> - Student uses the 10 to figure out the rest
+> - Like: Medical diagnosis (few labeled scans, many unlabeled)
+>
+> **Self-Supervised** (Making your own homework):
+> - Student covers up words in a sentence: "The cat sat on the ___"
+> - Tries to guess: "mat"? "chair"?
+> - Checks by uncovering: "mat" - correct!
+> - Like: How BERT/GPT learn from text without labels
+
+</details>
+
+---
+
 ## 2. ML Problem Types
 
 ### Regression Problems
