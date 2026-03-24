@@ -269,6 +269,107 @@ X_selected = selector.fit_transform(X, y)
 
 ---
 
+#### 🧒 ELI5: Feature Selection - Filter, Wrapper, Embedded Methods
+
+> Imagine you're packing for a trip but your suitcase is too small.
+>
+> **Feature Selection Problem** (Too many features!):
+> - You have 1000 features (clothes, gadgets, books)
+> - Model gets confused (too many choices!)
+> - Overfits (memorizes instead of learning)
+> - Slow training (processing everything!)
+>
+> **Solution**: Pack only what you NEED!
+>
+> **Filter Methods** (Quick screening):
+>
+> **How it works**:
+> - Score EACH feature independently
+> - "How much does this feature correlate with target?"
+> - Top K features win!
+>
+> **Methods**:
+> - **Correlation**: "Does feature move with target?"
+> - **Chi-square**: "Are feature and target dependent?"
+> - **ANOVA F-test**: "Do feature values differ across classes?"
+> - **Mutual Information**: "How much does feature tell us about target?"
+>
+> **Pros**:
+> - ✅ Fast (score once, done!)
+> - ✅ Model-agnostic (works with any model)
+> - ✅ Scales to millions of features
+>
+> **Cons**:
+> - ❌ Ignores feature interactions
+> - ❌ "Height" and "Weight" might both score high, but redundant!
+>
+> **Like**: Job applications
+> - Filter: "Must have 5+ years experience" (quick screen)
+> - Fast but might miss great candidates!
+>
+> **Wrapper Methods** (Try combinations):
+>
+> **How it works**:
+> - Try DIFFERENT feature subsets
+> - Train model on each subset
+> - Keep the best!
+>
+> **Methods**:
+> - **Forward Selection**: Start with 0 features, add best one at a time
+> - **Backward Elimination**: Start with ALL features, remove worst one at a time
+> - **Recursive Feature Elimination (RFE)**: Train model, remove weakest, repeat!
+>
+> **Pros**:
+> - ✅ Considers feature interactions
+> - ✅ Finds best subset for YOUR model
+>
+> **Cons**:
+> - ❌ SLOW (train model many times!)
+> - ❌ 1000 features → 2¹⁰⁰⁰ combinations! (impossible!)
+>
+> **Like**: Trying outfit combinations
+> - "Does this shirt go with these pants?"
+> - Takes forever but looks great!
+>
+> **Embedded Methods** (Built-in selection):
+>
+> **How it works**:
+> - Feature selection happens DURING training!
+> - Model learns which features are useful
+> - Automatically ignores useless ones!
+>
+> **Methods**:
+> - **Lasso (L1)**: Forces some feature weights to ZERO
+> - **Random Forest**: "Feature importance" - how much each feature helps
+> - **XGBoost/LightGBM**: Built-in feature selection
+>
+> **Pros**:
+> - ✅ Fast (no extra training!)
+> - ✅ Model-specific (optimized for your model)
+> - ✅ Considers interactions
+>
+> **Cons**:
+> - ❌ Tied to specific model
+>
+> **Like**: Smart packing
+> - "I'll only pack what I'll actually USE"
+> - Learn while packing!
+>
+> **When to use which**:
+> - **Filter**: Millions of features, need quick reduction
+> - **Wrapper**: Small dataset (< 100 features), want best accuracy
+> - **Embedded**: Default choice! (best balance)
+>
+> **Real workflow**:
+> 1. Filter: 10,000 → 1,000 features (quick screen)
+> 2. Embedded (Lasso): 1,000 → 100 features (model-based)
+> 3. Wrapper (RFE): 100 → 50 features (fine-tune)
+> - Best of all worlds!
+
+</details>
+
+---
+
 ## 2. Feature Extraction
 
 ### PCA
