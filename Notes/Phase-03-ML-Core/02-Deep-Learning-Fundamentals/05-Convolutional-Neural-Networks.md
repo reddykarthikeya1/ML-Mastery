@@ -625,7 +625,208 @@ Parameters: ~138M (VGG16)
 ```python
 class VGGBlock:
     """VGG block with multiple convolutions"""
-    
+
+    def __init__(self, in_channels, out_channels, num_convs=2):
+        self.convs = []
+
+---
+
+#### 🧒 ELI5: Advanced CNN Architectures - ResNet, Inception, DenseNet
+
+> Imagine you're building a tower of knowledge, layer by layer.
+>
+> **The Depth Problem** (Why deeper isn't always better):
+>
+> **Intuition**: More layers = more learning!
+> - 10 layers: Good
+> - 50 layers: Better!
+> - 1000 layers: BEST! ...right?
+>
+> **Reality**: VERY deep networks FAIL!
+> - 56 layers: 92% accuracy
+> - 20 layers: 94% accuracy! 😱
+> - Deeper performs WORSE!
+>
+> **Why? Degradation Problem**:
+> - Not overfitting (fails on training too!)
+> - Gradients vanish/explode
+> - Identity function is hard to learn!
+> - Like: "Trying to improve perfection makes it worse"
+>
+> **ResNet** (Residual Networks - The breakthrough):
+>
+> **Key Idea**: Skip connections!
+>
+> **Normal layer**:
+> ```
+> Input → [Layer] → Output
+> Output = F(Input)
+> ```
+>
+> **Residual block**:
+> ```
+> Input → [Layer] → Output
+>   ↓_______________↑
+>        (skip)
+> Output = F(Input) + Input
+> ```
+>
+> **Why skip connections work**:
+> - Layer learns RESIDUAL (what to CHANGE)
+> - Not the full transformation!
+> - "Input is already good, just tweak it"
+> - Easier to learn!
+>
+> **Like**: Editing a essay
+> - Normal: "Write entire essay from scratch" (HARD!)
+> - Residual: "Here's a draft, just improve it" (EASIER!)
+>
+> **ResNet variants**:
+> - ResNet-18: 18 layers (baseline)
+> - ResNet-34: 34 layers (better)
+> - ResNet-50: 50 layers (sweet spot!)
+> - ResNet-101: 101 layers (best for large datasets)
+> - ResNet-152: 152 layers (diminishing returns)
+>
+> **Inception** (GoogLeNet - Multi-scale processing):
+>
+> **Problem**: What filter size is best?
+> - 1×1: Too small!
+> - 3×3: Maybe?
+> - 5×5: Too big?
+> - Which one?!
+>
+> **Inception Solution**: Use ALL of them!
+>
+> **Inception Module**:
+> ```
+>              Input
+>               ↓
+>     ┌─────────┼─────────┐
+>     ↓         ↓         ↓
+>   1×1 conv   3×3 conv   5×5 conv
+>     ↓         ↓         ↓
+>     └─────────┼─────────┘
+>          Concatenate
+>              ↓
+>           Output
+> ```
+>
+> **Why it works**:
+> - Different filters see different scales!
+> - 1×1: Fine details
+> - 3×3: Medium patterns
+> - 5×5: Large structures
+> - Network learns which to trust!
+>
+> **1×1 Convolutions** (The secret weapon):
+> - Reduce dimensionality BEFORE expensive ops
+> - "Compress 256 channels → 64 channels"
+> - Then do 3×3 or 5×5 (much cheaper!)
+> - Then expand back!
+> - Like: "Summarize book, read summary, expand notes"
+>
+> **DenseNet** (Dense Networks - Maximum connections):
+>
+> **ResNet**: Each layer connects to NEXT layer
+> - Layer 1 → Layer 2 → Layer 3
+> - Skip: Layer 1 → Layer 3
+>
+> **DenseNet**: EVERY layer connects to EVERY layer!
+> - Layer 1 → Layers 2,3,4,5,6...
+> - Layer 2 → Layers 3,4,5,6...
+> - Layer 3 → Layers 4,5,6...
+> - Maximum information flow!
+>
+> **Why DenseNet works**:
+> - Feature reuse (don't relearn same features)
+> - Better gradient flow (many paths!)
+> - Implicit deep supervision
+> - Like: "Everyone shares notes with everyone"
+>
+> **DenseNet vs ResNet**:
+> - **ResNet**: Adds features (F(x) + x)
+> - **DenseNet**: Concatenates features [F(x), x]
+> - DenseNet: More parameters, better accuracy
+> - ResNet: Fewer parameters, faster
+>
+> **MobileNet** (Efficient for mobile):
+>
+> **Problem**: CNNs are HUGE!
+> - 100M parameters
+> - Won't fit on phone!
+> - Too slow for real-time!
+>
+> **Depthwise Separable Convolution**:
+>
+> **Standard Conv**:
+> - 3×3 filter on 64 channels
+> - 3×3×64 = 576 multiplications per pixel!
+>
+> **Depthwise Separable**:
+> - Step 1: Depthwise (spatial only)
+>   - 3×3 filter, one per channel
+>   - 3×3×1 = 9 multiplications
+> - Step 2: Pointwise (combine channels)
+>   - 1×1 filter to mix channels
+>   - 1×1×64 = 64 multiplications
+> - Total: 9 + 64 = 73 multiplications!
+> - **8× fewer computations!**
+>
+> **MobileNet variants**:
+> - MobileNetV1: Depthwise separable
+> - MobileNetV2: Inverted residuals
+> - MobileNetV3: Neural architecture search
+>
+> **EfficientNet** (Optimal scaling):
+>
+> **Problem**: How to scale networks?
+> - Make deeper? (more layers)
+> - Make wider? (more channels)
+> - Make higher-res? (bigger input)
+> - Which is best?
+>
+> **EfficientNet Solution**: Scale ALL dimensions!
+> - Depth: φ = 1.2×
+> - Width: φ = 1.1×
+> - Resolution: φ = 1.15×
+> - Compound scaling!
+>
+> **EfficientNet variants**:
+> - B0: Baseline (5M params, 77% accuracy)
+> - B1-B7: Progressively larger
+> - B7: 66M params, 84% accuracy!
+> - Better accuracy/efficiency than ANY network!
+>
+> **When to use which**:
+> - **ResNet-50**: Default choice, good balance
+> - **ResNet-101/152**: Large datasets, need max accuracy
+> - **Inception-V3**: When you need interpretability
+> - **DenseNet-121**: Medical imaging, feature reuse important
+> - **MobileNet**: Mobile/edge deployment
+> - **EfficientNet**: State-of-the-art accuracy/efficiency
+>
+> **Architecture evolution**:
+> ```
+> LeNet (1998) → First successful CNN
+>     ↓
+> AlexNet (2012) → Deep learning revolution!
+>     ↓
+> VGG (2014) → Uniform architecture
+>     ↓
+> GoogLeNet (2014) → Inception modules
+>     ↓
+> ResNet (2015) → Skip connections (GAME CHANGER!)
+>     ↓
+> DenseNet (2017) → Dense connections
+>     ↓
+> MobileNet (2017) → Efficient for mobile
+>     ↓
+> EfficientNet (2019) → Optimal scaling
+> ```
+
+</details>
+
     def __init__(self, in_channels, out_channels, num_convs=2):
         self.convs = []
         for i in range(num_convs):
