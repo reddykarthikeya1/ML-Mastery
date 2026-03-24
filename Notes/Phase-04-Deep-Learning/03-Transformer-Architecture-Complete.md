@@ -26,12 +26,53 @@ $$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right
 
 ---
 
+#### 🧒 ELI5: The Library Search
+
+> Imagine you're at a library looking for books about dinosaurs.
+>
+> - **Query (Q)** = Your request to the librarian: "I want books about T-Rex"
+> - **Keys (K)** = The catalog cards for every book (what each book is about)
+> - **Values (V)** = The actual books on the shelves (the information content)
+>
+> **How it works:**
+> 1. You match your request against all catalog cards (Q × Kᵀ)
+> 2. You find which cards match best (softmax picks the winners)
+> 3. You pull those specific books off the shelf (multiply by V)
+>
+> **Why divide by √dₖ?** Imagine grading on a curve. If a test has 1000 questions instead of 10, everyone's score would be huge! Dividing by √dₖ is like grading on a curve—it keeps scores comparable whether you have few or many dimensions.
+
+</details>
+
+---
+
 ## 2. Multi-Head Attention (MHA)
 
 Instead of one high-dimensional attention, we split the $d_{model}$ into $h$ "heads."
 - Each head $i$ learns a different projection ($Q_i, K_i, V_i$).
 - **Intuition**: Head 1 might attend to grammatical dependencies, Head 2 to semantic entities, and Head 3 to punctuation.
 - **Aggregation**: Outputs are concatenated and projected back to $d_{model}$.
+
+---
+
+#### 🧒 ELI5: The Team of Detectives
+
+> Imagine a crime scene with multiple detectives investigating.
+>
+> - **Detective 1** looks only at fingerprints
+> - **Detective 2** studies footprints and tire tracks
+> - **Detective 3** interviews witnesses
+> - **Detective 4** examines physical evidence
+>
+> Each detective works independently (parallel heads), then they combine their findings to solve the case. One detective alone might miss crucial clues, but together they get the full picture!
+>
+> **In Transformers:**
+> - Each "detective" (head) focuses on different relationship types
+> - Head 1 might learn subject-verb grammar connections
+> - Head 2 might learn pronoun references ("he" → "John")
+> - Head 3 might learn emotional tone indicators
+> - Combined, they understand the sentence completely
+
+</details>
 
 ---
 
@@ -42,6 +83,25 @@ $$ PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}}) $$
 $$ PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}}) $$
 
 **Why this math?**: It allows the model to easily learn to attend by relative positions since for any fixed offset $k$, $PE_{pos+k}$ can be represented as a linear function of $PE_{pos}$.
+
+---
+
+#### 🧒 ELI5: Numbered Seats in a Theater
+
+> Imagine words are people sitting in a theater.
+>
+> **Without positional encoding**: Everyone is in the theater, but nobody knows their seat number. "The cat bit the dog" could mean the same as "The dog bit the cat" because we don't know who sat where!
+>
+> **With positional encoding**: Each person gets a colored badge based on their seat number. The color pattern (sine/cosine) is special:
+> - Seat 1 gets red-blue
+> - Seat 2 gets green-yellow
+> - Seat 3 gets purple-orange
+>
+> **The magic**: The color pattern helps the model understand that "seat 5 is 2 seats after seat 3" just by looking at the colors, even if they're far apart in the theater!
+>
+> **Why sine/cosine?** These functions create a unique "color" for each position that also encodes relative distances mathematically.
+
+</details>
 
 ---
 
