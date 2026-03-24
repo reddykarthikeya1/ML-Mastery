@@ -27,6 +27,41 @@ $$\frac{\partial L_t}{\partial W_{hh}} = \sum_{k=1}^t \frac{\partial L_t}{\parti
 
 ---
 
+#### 🧒 ELI5: Unrolling a Carpet Through Time
+
+> Imagine you have a rolled-up carpet (the RNN through time) and you need to clean it.
+>
+> **Forward pass** (using the RNN):
+> - You walk across the carpet from start to end
+> - At each step, you make a prediction (what pattern is here?)
+> - You note mistakes but don't fix them yet
+>
+> **BPTT** (learning from mistakes):
+> - UNROLL the entire carpet (unroll through time)
+> - Now you can see ALL steps at once!
+> - Start from the END: "Step 100 was wrong because..."
+> - Move backward: "Step 99 contributed to that error because..."
+> - Update EVERY step's weights based on its contribution
+>
+> **Why "through time"?**:
+> - Normal backprop: Errors flow through layers (spatial)
+> - BPTT: Errors flow through TIME STEPS (temporal)
+> - Same math, but unrolled across time instead of depth
+>
+> **The challenge**:
+> - Long carpet (100+ time steps) = errors fade before reaching the start
+> - That's why we need LSTM (written notes instead of whispers)
+>
+> **Truncated BPTT**:
+> - Instead of unrolling the WHOLE carpet (expensive!)
+> - Unroll in sections: 10 steps at a time
+> - Faster, but you miss long-term dependencies
+
+</details>
+
+
+---
+
 #### 🧒 ELI5: The Telephone Game (Vanishing Gradients)
 
 > Remember the children's game where a message passes through 20 kids?
@@ -104,7 +139,7 @@ Used for mapping a variable-length input to a variable-length output.
 
 ### 3.1 The Encoder-Decoder Logic
 ```
-Input: "How are you?" 
+Input: "How are you?"
 Encoder -> [h1, h2, h3] -> final state 'z' (Context Vector)
 Decoder -> 'z' + <START> -> "Comment"
 Decoder -> h_dec1 + "Comment" -> "allez"
@@ -115,6 +150,37 @@ Decoder -> h_dec2 + "allez" -> "vous?"
 The Encoder must compress the entire meaning of a 100-word paragraph into a single vector 'z'. This leads to massive information loss. **Attention** (Phase 10.3) was invented to fix this by allowing the decoder to look at *all* encoder states.
 
 ---
+
+#### 🧒 ELI5: The Translator Phone Call
+
+> Imagine you're on a phone call with someone who speaks French, but you only speak English. You need a translator!
+>
+> **Encoder** (English → Thought):
+> - You say: "How are you today? I hope you're doing well!"
+> - Translator listens to EVERYTHING you said
+> - Translator compresses it into ONE idea: "greeting + well-wishing"
+> - This "thought vector" is the bottleneck!
+>
+> **Decoder** (Thought → French):
+> - Translator takes the "thought" and converts to French
+> - "Comment allez-vous aujourd'hui? J'espère que..."
+> - Generates word by word, checking the "thought" each time
+>
+> **The Bottleneck Problem**:
+> - Your speech: 100 words of complex meaning
+> - Translator's notes: ONE sentence summary
+> - French output: Missing nuances from original!
+> - Like: Compressing a 100MB file to 1KB - data is LOST!
+>
+> **Attention (the fix)**:
+> - Instead of ONE summary, translator keeps YOUR ENTIRE speech
+> - For each French word, translator looks back at RELEVANT English words
+> - "Comment" ← "How"
+> - "allez-vous" ← "are you"
+> - "aujourd'hui" ← "today"
+> - No bottleneck! Full information preserved!
+
+</details>
 
 ## 💻 Professional Implementation
 

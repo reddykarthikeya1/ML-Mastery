@@ -252,6 +252,44 @@ $$ \text{score}(h_i, s_j) = h_i^T W s_j $$
 
 ---
 
+#### 🧒 ELI5: The Open-Book Exam
+
+> Imagine you're translating a document with an open-book exam.
+>
+> **Seq2Seq WITHOUT Attention** (closed-book):
+> - Read the ENTIRE English document
+> - Memorize ONE summary sentence
+> - Close the book
+> - Write French translation from memory alone
+> - Hard! You forgot details!
+>
+> **Seq2Seq WITH Attention** (open-book):
+> - Read the English document
+> - Keep the document OPEN on your desk
+> - For EACH French word you write:
+>   - Look back at the RELEVANT English words
+>   - "Comment" ← look at "How"
+>   - "allez" ← look at "are"
+>   - "vous" ← look at "you"
+> - You're attending to DIFFERENT words at DIFFERENT times!
+>
+> **Bahdanau vs. Luong**:
+> - **Bahdanau** (additive): Carefully compares each English word with current French word (slower, thorough)
+>   - Like: Reading each relevant sentence carefully
+> - **Luong** (multiplicative): Quick dot-product comparison (faster, approximate)
+>   - Like: Skimming for keywords
+>
+> **Global vs. Local**:
+> - **Global**: Look at ALL English words for every French word
+> - **Local**: Only look at nearby English words (faster, but might miss distant connections)
+>
+> **Why it's revolutionary**:
+> - No more bottleneck! Full document always accessible
+> - Direct path from ANY English word to ANY French word
+> - This idea became Transformer self-attention!
+
+</details>
+
 ### 4.2 Modern Tokenization Challenges
 
 #### 4.2.1 The Multilingual Problem
