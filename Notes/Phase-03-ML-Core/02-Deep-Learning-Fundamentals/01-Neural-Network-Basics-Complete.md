@@ -360,11 +360,11 @@ class Perceptron:
         return predictions
     
     # ========== LOSS FUNCTIONS ==========
-    
+
     def _compute_loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         """
         Compute loss based on activation function
-        
+
         For sigmoid/tanh: Binary Cross-Entropy
         For others: Mean Squared Error
         """
@@ -372,7 +372,122 @@ class Perceptron:
             return self._binary_cross_entropy(y_true, y_pred)
         else:
             return self._mean_squared_error(y_true, y_pred)
-    
+
+---
+
+#### 🧒 ELI5: Loss Functions - MSE, MAE, Cross-Entropy, Hinge, Focal Loss
+
+> Imagine you're playing darts and need to measure how bad your throws are.
+>
+> **Loss Function** (How wrong are you?):
+> - Measures distance between prediction and truth
+> - Lower loss = better predictions
+> - Training goal: MINIMIZE the loss!
+>
+> **MSE** (Mean Squared Error - for regression):
+>
+> **Formula**: Average of (prediction - actual)²
+>
+> **Example**:
+> - Actual house price: $500k
+> - Your prediction: $450k
+> - Error: $50k
+> - Squared error: 2500 (million squared dollars)
+>
+> **Why square?**:
+> - Big errors hurt MORE than small errors
+> - Error of 10 → Loss of 100
+> - Error of 100 → Loss of 10,000 (100× worse, not 10×!)
+> - Like: "Being very wrong is MUCH worse than being slightly wrong"
+>
+> **Problem**: Sensitive to outliers!
+> - One error of 1000 = loss of 1,000,000
+> - Dominates all other errors
+>
+> **MAE** (Mean Absolute Error - robust to outliers):
+>
+> **Formula**: Average of |prediction - actual|
+>
+> **Example**:
+> - Error of 50 → Loss of 50
+> - Error of 100 → Loss of 100 (2× worse, linear!)
+>
+> **When to use MAE**:
+> - Data has outliers
+> - Don't want to punish big errors too much
+> - Like: "Being 100 off is bad, but not 100× worse than being 10 off"
+>
+> **Cross-Entropy** (For classification):
+>
+> **Binary Cross-Entropy** (Yes/No predictions):
+>
+> **Example**:
+> - Actual: Cat (1)
+> - Prediction: "99% sure it's a cat"
+> - Loss: VERY LOW (you're right and confident!)
+>
+> - Actual: Cat (1)
+> - Prediction: "1% sure it's a cat"
+> - Loss: VERY HIGH (you're wrong and confident!)
+>
+> **Why Cross-Entropy?**:
+> - Penalizes CONFIDENT wrong predictions
+> - "I'm 99% sure" but wrong → HUGE loss
+> - "I'm 51% sure" and right → small loss
+> - Like: "Being confidently wrong is worse than being unsure"
+>
+> **Categorical Cross-Entropy** (Multi-class):
+> - Cat vs Dog vs Bird (3 classes)
+> - Actual: Cat [1, 0, 0]
+> - Prediction: [0.9, 0.09, 0.01]
+> - Loss: Low (mostly right!)
+>
+> **Hinge Loss** (For SVMs):
+>
+> **Formula**: max(0, 1 - y × prediction)
+>
+> **For SVM classification**:
+> - Correct AND confident (margin > 1): Loss = 0
+> - Correct but not confident: Small loss
+> - Wrong: Big loss
+>
+> **Why Hinge?**:
+> - Doesn't care about being VERY correct
+> - "Win by 1 point or win by 100 points = same loss"
+> - Focuses on getting the SIGN right, not the magnitude
+>
+> **Focal Loss** (For imbalanced data):
+>
+> **Problem**: 99% negative, 1% positive
+> - Model predicts all negative → 99% accuracy!
+> - But misses ALL positives!
+>
+> **Focal Loss Solution**:
+> - Down-weights easy examples (the 99% negatives)
+> - Focuses on HARD examples (the 1% positives)
+> - "Stop worrying about what you already know!"
+>
+> **Like**:
+> - Normal loss: Studies ALL topics equally
+> - Focal loss: Studies ONLY weak topics
+> - Result: Better balanced performance!
+>
+> **When to use which**:
+> - **MSE**: Regression, normally distributed errors
+> - **MAE**: Regression with outliers
+> - **Cross-Entropy**: Classification (default choice)
+> - **Hinge**: SVMs, maximum margin
+> - **Focal**: Imbalanced datasets (rare events)
+>
+> **Huber Loss** (Best of MSE and MAE):
+> - Small errors: Use MSE (smooth, differentiable)
+> - Big errors: Use MAE (robust to outliers)
+> - Like: "Be sensitive when close, robust when far"
+
+</details>
+
+---
+
     def _binary_cross_entropy(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         """
         Binary Cross-Entropy Loss
