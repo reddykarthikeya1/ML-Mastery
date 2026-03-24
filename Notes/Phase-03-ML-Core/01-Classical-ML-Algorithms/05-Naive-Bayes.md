@@ -10,6 +10,81 @@ After completing this section, you will master:
 
 ---
 
+#### 🧒 ELI5: Bayes Theorem & Naive Bayes Classifier
+
+> Imagine you're a detective trying to solve a mystery.
+>
+> **Bayes Theorem** (Updating your beliefs with evidence):
+>
+> **The Mystery**: "Did John steal the cookie?"
+>
+> **Prior** (Before evidence):
+> - John is usually honest: 10% chance he stole it
+> - P(John stole) = 0.1
+>
+> **New Evidence**: Chocolate on John's shirt!
+>
+> **Likelihood**: "If John stole, how likely is chocolate on shirt?"
+> - Pretty likely: 80%
+> - P(Chocolate | John stole) = 0.8
+>
+> **Alternative**: "If John DIDN'T steal, how likely is chocolate?"
+> - Maybe he ate brownies: 20%
+> - P(Chocolate | John innocent) = 0.2
+>
+> **Posterior** (After evidence):
+> - "Now I think there's 33% chance John stole it!"
+> - Updated from 10% → 33% because of chocolate!
+>
+> **Bayes Formula**:
+> ```
+> P(Guilty | Evidence) = 
+>   [P(Evidence | Guilty) × P(Guilty)] / P(Evidence)
+> ```
+>
+> **Naive Bayes** (Making simplifying assumptions):
+>
+> **Detective has MULTIPLE clues**:
+> - Chocolate on shirt
+> - Was in kitchen at 3pm
+> - Has crumbs in pocket
+> - Acted suspicious
+>
+> **Problem**: These clues might be RELATED!
+> - Being in kitchen → got chocolate
+> - Got chocolate → got crumbs
+>
+> **Naive Bayes says**: "Pretend they're INDEPENDENT!"
+> - "Chocolate doesn't affect crumbs probability"
+> - This is NAIVE (simplistic) but works surprisingly well!
+>
+> **Why "Naive"?**:
+> - Assumes all features are independent
+> - "Having chocolate" doesn't affect "having crumbs"
+> - Obviously false in real life!
+> - But still works great for text classification!
+>
+> **Text Classification Example** (Spam filter):
+>
+> Email has words: "FREE", "MONEY", "CLICK", "NOW"
+>
+> **Spam probability**:
+> - P(FREE | Spam) = 0.6 (60% of spam has "FREE")
+> - P(MONEY | Spam) = 0.5
+> - P(CLICK | Spam) = 0.4
+> - P(NOW | Spam) = 0.3
+>
+> **Multiply them**: "This is probably spam!"
+>
+> **Why it works for text**:
+> - Even though words ARE related (naive assumption wrong)
+> - The probabilities still separate spam from real email!
+> - Like: Wrong assumptions, right conclusion!
+
+</details>
+
+---
+
 ## 📚 Bayes Theorem Fundamentals
 
 ### 7.5.1 Conditional Probability Review
