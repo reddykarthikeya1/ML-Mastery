@@ -139,6 +139,127 @@ print(f"Entropy Accuracy: {tree_entropy.score(X_test, y_test):.4f}")
 
 ---
 
+#### 🧒 ELI5: Ensemble Methods - Bagging, Boosting, Stacking, Voting
+
+> Imagine you need to make an important decision. Should you go alone or ask for advice?
+>
+> **Single Model** (Going alone):
+> - One person's opinion
+> - Might be wrong!
+> - "I think we should invest in stocks"
+>
+> **Ensemble** (Asking a group):
+> - Many people's opinions combined
+> - More reliable!
+> - "8 out of 10 advisors say invest in stocks"
+>
+> **Bagging** (Bootstrap Aggregating - Parallel voting):
+>
+> **How it works**:
+> - Ask 100 advisors INDEPENDENTLY
+> - Each advisor sees DIFFERENT subset of data
+> - Advisor 1: Sees data from 2010-2015
+> - Advisor 2: Sees data from 2012-2017
+> - ...
+> - Final decision: MAJORITY VOTE!
+>
+> **Random Forest** = Bagging + Decision Trees:
+> - 100 trees, each trained on random subset
+> - Each tree also sees RANDOM subset of features!
+> - Tree 1: Uses age + income
+> - Tree 2: Uses income + location
+> - Tree 3: Uses age + location
+> - More diversity = better ensemble!
+>
+> **Why Bagging works**:
+> - Reduces variance (averaging cancels out errors)
+> - Like: "Ask 100 people, average their answers"
+> - Individual might be wrong, group is usually right!
+>
+> **Boosting** (Sequential improvement):
+>
+> **How it works**:
+> - Advisor 1: "Invest in stocks" → 60% right
+> - Advisor 2: "Focus on cases Advisor 1 got WRONG"
+> - Advisor 3: "Focus on cases 1 & 2 got WRONG"
+> - Each advisor learns from previous mistakes!
+>
+> **AdaBoost** (Adaptive Boosting):
+> - Misclassified points get HIGHER weight
+> - Next model focuses MORE on hard cases
+> - Like: "Students who failed get extra tutoring"
+>
+> **Gradient Boosting** (Fitting residuals):
+> - Model 1: Predicts 100, Actual is 150 → Error is 50
+> - Model 2: Predicts the ERROR (50)
+> - Model 3: Predicts remaining error
+> - Final: Sum of all models!
+>
+> **XGBoost** (Extreme Gradient Boosting):
+> - "Gradient Boosting but optimized"
+> - Faster, more accurate
+> - Regularization (doesn't overfit)
+> - Handles missing data
+> - Like: "Boosting on steroids"
+>
+> **LightGBM** (Light Gradient Boosting):
+> - "XGBoost but faster"
+> - Uses histogram bins (less memory)
+> - Grows trees leaf-wise (not level-wise)
+> - Better for large datasets
+>
+> **CatBoost** (Categorical Boosting):
+> - "Best for categorical data"
+> - Handles categories automatically
+> - No need for one-hot encoding!
+> - "City: NY, LA, SF" → understands directly
+>
+> **Stacking** (Meta-learning):
+>
+> **Level 1** (Base models):
+> - Model 1 (Linear): "Stocks will go up"
+> - Model 2 (Tree): "Stocks will go down"
+> - Model 3 (SVM): "Stocks will stay flat"
+>
+> **Level 2** (Meta-model):
+> - Takes predictions from Level 1 as INPUT
+> - Learns: "When Linear and Tree disagree, trust Linear"
+> - "When all three agree, they're usually right"
+> - Meta-model learns which models to trust!
+>
+> **Like**: A manager who knows:
+> - "Alice is good at predicting tech stocks"
+> - "Bob is good at predicting market crashes"
+> - Combines their predictions intelligently!
+>
+> **Voting** (Simple ensemble):
+>
+> **Hard Voting** (Majority rules):
+> - Model 1: "YES"
+> - Model 2: "YES"
+> - Model 3: "NO"
+> - Final: "YES" (2 out of 3)
+>
+> **Soft Voting** (Weighted average):
+> - Model 1: "80% YES"
+> - Model 2: "60% YES"
+> - Model 3: "30% YES"
+> - Average: 56.7% YES → Final: "YES"
+>
+> **When to use which**:
+> - **Bagging**: High variance models (deep trees)
+> - **Boosting**: Need maximum accuracy, have time
+> - **Stacking**: Have diverse models, want best performance
+> - **Voting**: Quick ensemble, baseline improvement
+>
+> **Bagging vs Boosting**:
+> - **Bagging**: Parallel (all at once), reduces variance
+> - **Boosting**: Sequential (one after another), reduces bias
+
+</details>
+
+---
+
 ## 2. Ensemble Methods - Bagging
 
 ### Random Forest
