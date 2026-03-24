@@ -101,6 +101,127 @@
 
 ## 1. Feature Selection
 
+---
+
+#### 🧒 ELI5: Class Imbalance Handling - SMOTE, Class Weights, Anomaly Detection
+
+> Imagine you're a bouncer at a club trying to spot fake IDs.
+>
+> **Class Imbalance Problem** (Rare events):
+>
+> **Scenario**: 99% real IDs, 1% fake IDs
+> - Model: "Everyone is REAL!"
+> - Accuracy: 99%! 🎉
+> - Problem: Caught ZERO fake IDs! 😱
+>
+> **Why imbalance breaks ML**:
+> - Model takes the easy path
+> - "Why try hard when 99% works?"
+> - Like: "Guess 'rain' in desert - 99% right!"
+>
+> **Solution 1: SMOTE** (Synthetic Minority Oversampling):
+>
+> **Problem**: Only 100 fake IDs in dataset!
+> - Model doesn't see enough examples
+> - Can't learn the patterns!
+>
+> **SMOTE Solution** (Create fake fakes!):
+> - Take 2 fake IDs
+> - Blend their features: "Half of this one, half of that one"
+> - Create NEW synthetic fake ID!
+> - Repeat until you have 1000 fake IDs!
+>
+> **How SMOTE works**:
+> - Pick a minority sample
+> - Find its K nearest neighbors
+> - Create new sample BETWEEN them
+> - "You're 70% like sample A, 30% like sample B"
+>
+> **Why SMOTE works**:
+> - More examples for minority class
+> - Synthetic samples are realistic (between real samples)
+> - Model sees balanced data!
+>
+> **Solution 2: Class Weights** (Punish mistakes differently):
+>
+> **Normal training**:
+> - Mistake on real ID: -1 point
+> - Mistake on fake ID: -1 point
+> - Model: "Whatever, I'll just guess real"
+>
+> **Weighted training**:
+> - Mistake on real ID: -1 point
+> - Mistake on fake ID: -99 points! 😨
+> - Model: "I BETTER catch those fake IDs!"
+>
+> **How to set weights**:
+> - Inverse of class frequency
+> - Real (99%): weight = 1
+> - Fake (1%): weight = 99
+> - "Rare class = Higher penalty!"
+>
+> **Solution 3: Threshold Moving** (Change the bar):
+>
+> **Default threshold**:
+> - "If P(fake) > 0.5 → FAKE"
+> - Model rarely predicts > 0.5 for fake
+> - Catches nothing!
+>
+> **Lower threshold**:
+> - "If P(fake) > 0.1 → FAKE"
+> - Catches MORE fake IDs!
+> - More false alarms, but catches the real fakes!
+>
+> **Solution 4: Anomaly Detection** (Different approach):
+>
+> **Instead of classification**:
+> - Don't learn "fake vs real"
+> - Learn "what normal looks like"
+> - Flag anything weird as anomaly!
+>
+> **Like**:
+> - Normal: "ID has photo, name, birthdate"
+> - Anomaly: "This ID has NO photo!" → FAKE!
+> - Works even with ZERO fake examples!
+>
+> **Anomaly Detection Methods**:
+>
+> **Isolation Forest** (Isolating weirdos):
+> - Randomly split data
+> - Anomalies get isolated QUICKLY (fewer splits)
+> - Like: "Weird person stands out in crowd"
+>
+> **One-Class SVM** (Drawing boundary):
+> - Draw tight boundary around normal data
+> - Anything outside = anomaly!
+> - Like: "If you're not in the club, you're out!"
+>
+> **Autoencoders** (Reconstruction error):
+> - Train to reconstruct normal IDs
+> - Fake IDs → HIGH reconstruction error!
+> - "This doesn't look like what I learned!"
+>
+> **When to use what**:
+> - **SMOTE**: 100-1000 minority samples, need more data
+> - **Class Weights**: Simple, works with any model
+> - **Threshold Moving**: Post-processing, no retraining
+> - **Anomaly Detection**: VERY rare (< 0.1%) or zero examples
+>
+> **Real-world examples**:
+> - **Fraud detection**: Class weights + threshold moving
+> - **Medical diagnosis**: SMOTE + ensemble
+> - **Defect detection**: Anomaly detection (rare defects)
+> - **Spam filtering**: Class weights (spam is rare)
+>
+> **Combining techniques**:
+> - SMOTE + Class Weights = Best of both!
+> - Anomaly Detection + Threshold = Maximum sensitivity!
+> - Ensemble of all = State-of-the-art!
+
+</details>
+
+---
+
 ### Filter Methods
 
 ```python
