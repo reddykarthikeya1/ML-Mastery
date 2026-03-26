@@ -115,14 +115,22 @@ This curriculum synthesizes industry-standard roadmaps (Scaler AI, Stanford AI, 
 
 ## 9. System Design & MLOps 🚀 `[CORE]`
 
-*   **Architecture:** ML system design (batch vs real-time, feature stores, microservices).
-*   **High-Performance ML:** `[LEVEL-UP]` **Triton Inference Server, DeepSpeed, CUDA/Triton Kernels, Quantization (LoRA/QLoRA).**
-*   **Containerization:** Docker (images for models/services).
-*   **Orchestration:** Kubernetes (scaling), Helm.
-*   **CI/CD:** Automated testing and deployment pipelines (GitHub Actions, Jenkins).
-*   **Monitoring & Logging:** Prometheus/Grafana, ELK stack, drift detection.
-*   **Deployment Platforms:** AWS SageMaker/GCP Vertex/Azure ML.
-*   **DevOps:** `[LEVEL-UP]` Infrastructure as Code (Terraform).
+*   **Architecture:** ML system design (batch vs real-time, feature stores, microservices).  
+    🎥 **Resource:** [ML System Design Interview Guide](https://www.youtube.com/watch?v=ruA_EYARCNg&t=174s)
+*   **High-Performance ML:** `[LEVEL-UP]` **Triton Inference Server, DeepSpeed, CUDA/Triton Kernels, Quantization (LoRA/QLoRA).**  
+    🤖 **Resource:** Learn using AI Chats (ChatGPT/Claude/Gemini) for real-time debugging and implementation.
+*   **Containerization:** Docker (images for models/services).  
+    🎥 **Resource:** [Docker Tutorial for Beginners (YouTube)](https://www.youtube.com/watch?v=exmSJpJvIPs)
+*   **Orchestration:** Kubernetes (scaling), Helm.  
+    🎥 **Resource:** [Kubernetes Tutorial for Beginners (YouTube)](https://www.youtube.com/watch?v=X48VuDVv0do)
+*   **CI/CD:** Automated testing and deployment pipelines (GitHub Actions, Jenkins).  
+    🎥 **Resource:** [CI/CD Tutorial for Beginners (YouTube)](https://www.youtube.com/watch?v=ciqWMIf7Pz0)
+*   **Monitoring & Logging:** Prometheus/Grafana, ELK stack, drift detection.  
+    🎥 **Resource:** [Prometheus & Grafana Tutorial (YouTube)](https://www.youtube.com/watch?v=ddZjhv66o_o)
+*   **Deployment Platforms:** AWS SageMaker/GCP Vertex/Azure ML.  
+    🎥 **Resource:** [AWS SageMaker for Beginners (YouTube)](https://www.youtube.com/watch?v=Le-A72NjaWs)
+*   **DevOps:** `[LEVEL-UP]` Infrastructure as Code (Terraform).  
+    🎥 **Resource:** [Terraform Crash Course (2024)](https://www.youtube.com/watch?v=7xngnjfIlK4)
 
 ---
 
