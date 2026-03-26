@@ -43,16 +43,20 @@ This curriculum synthesizes industry-standard roadmaps (Scaler AI, Stanford AI, 
 
 ---
 
-## 3. Machine Learning (Core) 🤖 `[CRITICAL]`
+## 3. Machine Learning Core 🤖 `[CRITICAL]`
 
-*   **Supervised Learning:** Regression (linear, logistic), classification (k-NN, SVM, Naive Bayes).
-*   **Tree-Based Models:** Decision Trees, Random Forest, Gradient Boosting (XGBoost, LightGBM).
-*   **Unsupervised Learning:** Clustering (K-means, DBSCAN), dimensionality reduction (PCA, t-SNE).
-*   **Feature Engineering:** Encoding, scaling, feature selection techniques.
-*   **Model Evaluation:** Train/val/test splits, cross-validation, metrics: accuracy, precision, recall, F1, ROC-AUC.
-*   **Bias-Variance:** Overfitting vs underfitting, regularization (L1/L2).
-*   **Advanced ML:** Ensemble methods, hyperparameter tuning (Grid/Random/Bayesian).
-*   **Reinforcement Learning:** `[OPTIONAL]` MDPs, Q-Learning, Policy Gradients.
+> [!TIP]
+> **Primary Playlists for this Section:**  
+> 🎬 [Scikit-Learn Full Crash Course](https://www.youtube.com/watch?v=SIEaLBXr0rk)  
+> 🎬 [StatQuest: Machine Learning Fundamentals](https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF)  
+> 🎬 [Krish Naik: Feature Engineering & EDA](https://www.youtube.com/playlist?list=PLZoTAELRMXVPwYGE2PXD3x0bfKnR0cJjN)
+
+*   **Supervised Learning:** Regression (Linear/Logistic), Classification (SVM, KNN, Decision Trees).
+*   **Unsupervised Learning:** Clustering (K-Means, Hierarchical), PCA, Anomaly Detection.
+*   **Ensemble Methods:** Random Forest, XGBoost, CatBoost, LightGBM.
+*   **Evaluation Metrics:** Precision, Recall, F1, AUC-ROC, MSE, MAE.
+*   **Model Debugging:** Bias vs. Variance, Overfitting/Underfitting, Cross-Validation.
+*   **Feature Engineering:** Selection, Scaling, One-Hot Encoding, Handling Missing Data.
 
 ---
 
