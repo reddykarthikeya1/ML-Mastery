@@ -62,12 +62,17 @@ This curriculum synthesizes industry-standard roadmaps (Scaler AI, Stanford AI, 
 
 ## 4. Deep Learning (DL) 🧠 `[CRITICAL]`
 
-*   **Neural Networks:** Perceptron model, Multi-Layer Perceptrons (MLP), backpropagation.
-*   **Architectures:** CNNs (Vision), RNN/LSTM/GRU (Sequences), Transformers (Attention).
-*   **Optimization:** Stochastic gradient descent, Adam, learning rate scheduling.
-*   **Regularization:** Dropout, batch normalization.
-*   **Generative Models:** `[CORE]` Variational Autoencoders (VAEs), GANs (Generative Adversarial Networks).
-*   **Frameworks:** PyTorch (Industry Standard), TensorFlow/Keras.
+> [!TIP]
+> **Conceptual Foundation:** StatQuest's [ML Fundamentals](https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF) covers the "why" behind Neural Networks & Transformers.
+
+*   **Core Implementation (The Gold Standard):** Build Neural Networks from scratch.  
+    🎥 **Resource:** [Andrej Karpathy: Zero to Hero (PyTorch)](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ)
+*   **Computer Vision Architectures:** CNNs, ResNet, and Object Detection (YOLO).  
+    🎥 **Resource:** [What is YOLO algorithm?](https://www.youtube.com/watch?v=ag3DLKsl2vk)
+*   **Generative Models:** VAEs and GANs.  
+    🎥 **Resource:** [Variational Autoencoders Explained](https://www.youtube.com/watch?v=qJeaCHQ1k2w) | [GANs Masterclass](https://www.youtube.com/watch?v=Fe1MzID2BNg)
+*   **Frameworks:** Mastery of PyTorch & TensorFlow.  
+    🎥 **Resource:** [PyTorch Full Course](https://www.youtube.com/watch?v=c36lUUr864M) | [TensorFlow 2.0 Full Course](https://www.youtube.com/watch?v=OMIDAsNjk64)
 
 ---
 
