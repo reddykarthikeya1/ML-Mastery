@@ -103,13 +103,20 @@ This curriculum synthesizes industry-standard roadmaps (Scaler AI, Stanford AI, 
 
 ## 8. Infrastructure & Backend 🏗️ `[CORE]`
 
-*   **APIs:** FastAPI or Flask for serving models; RESTful design.
-*   **Caching & Queues:** Redis (cache results), message brokers (RabbitMQ/Kafka).
-*   **Asynchronous Tasks:** Celery, RQ, or BackgroundTasks for model inference.
-*   **Databases:** SQL (PostgreSQL/MySQL), NoSQL (MongoDB), GraphDB.
-*   **Data Engineering:** `[LEVEL-UP]` ETL pipelines (Airflow, Prefect), data ingestion, streaming (Kafka, Spark Streaming).
-*   **Versioning:** DVC or MLflow for datasets/models.
-*   **Experiment Tracking:** MLflow, Weights & Biases.
+*   **APIs:** FastAPI or Flask for serving models; RESTful design.  
+    🎥 **Resource:** [FastAPI Course (YouTube Playlist)](https://www.youtube.com/watch?v=WJKsPchji0Q&list=PLKnIA16_RmvZ41tjbKB2ZnwchfniNsMuQ)
+*   **Caching & Queues:** Redis (cache results), message brokers (RabbitMQ/Kafka).  
+    🎥 **Resource:** [Redis Crash Course (Amigoscode)](https://www.youtube.com/watch?v=Vx2zPMPvmug) | [Kafka Crash Course (Amigoscode)](https://www.youtube.com/watch?v=ZJJHm_bd9Zo)
+*   **Asynchronous Tasks:** Celery, RQ, or BackgroundTasks for model inference.  
+    🎥 **Resource:** [Professional Task Queues with Celery (YouTube)](https://www.youtube.com/watch?v=0gtdUkEzzn4)
+*   **Databases:** SQL (PostgreSQL/MySQL), NoSQL (MongoDB), GraphDB.  
+    🎥 **Resource:** [PostgreSQL for Data Science](https://www.youtube.com/watch?v=qw--VYLpxG4) | [Advanced SQL (Section 2)](https://www.youtube.com/watch?v=sTiWTx0ifaM)
+*   **Data Engineering:** `[LEVEL-UP]` ETL pipelines (Airflow, Prefect), data ingestion, streaming (Kafka, Spark Streaming).  
+    🎥 **Resource:** [Apache Airflow One Shot (YouTube)](https://www.youtube.com/watch?v=Y_vQyMljDsE)
+*   **Versioning:** DVC or MLflow for datasets/models.  
+    🎥 **Resource:** [End-to-End ML Project with MLflow & DVC (YouTube)](https://www.youtube.com/watch?v=86BKEv0X2xU)
+*   **Experiment Tracking:** MLflow, Weights & Biases.  
+    🎥 **Resource:** [Experiment Tracking with W&B (covered in same End-to-End Project)](https://www.youtube.com/watch?v=86BKEv0X2xU)
 
 ---
 
