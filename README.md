@@ -30,11 +30,16 @@ This curriculum synthesizes industry-standard roadmaps (Scaler AI, Stanford AI, 
 
 ## 2. Programming & CS Fundamentals 🐍 `[CORE]`
 
-*   **Python Mastery:** Advanced Python (OOP, functions, modules, generators, decorators, exception handling).
-*   **Data Structures & Algorithms:** Core structures (arrays, lists, trees, graphs, hash tables) and algorithms (sorting, search, dynamic programming).
-*   **Software Engineering:** Version control (Git/GitHub), unit testing, clean code principles.
-*   **System Basics:** Operating systems (processes, threads), DBMS (SQL/NoSQL fundamentals), networking (HTTP, REST APIs).
-*   **Data Tools:** NumPy, Pandas, Matplotlib/Seaborn for data manipulation and visualization.
+*   **Python Mastery:** Advanced Python (OOP, functions, modules, generators, decorators, exception handling).  
+    📝 **Resource:** [Python Tutorial (W3Schools)](https://www.w3schools.com/python/default.asp)
+*   **Data Structures & Algorithms:** Core structures (arrays, lists, trees, graphs, hash tables) and algorithms (sorting, search, dynamic programming).  
+    🎥 **Resource:** [Interactive DSA Roadmap (NeetCode)](https://neetcode.io/roadmap) | 📝 **Resource:** [DSA Tutorial (W3Schools)](https://www.w3schools.com/dsa/index.php)
+*   **Software Engineering:** Version control (Git/GitHub), unit testing, clean code principles.  
+    🎥 **Resource:** [Git & GitHub for Beginners (freeCodeCamp)](https://www.youtube.com/watch?v=RGOj5yH7evk)
+*   **System Basics:** Operating systems (processes, threads), DBMS (SQL/NoSQL fundamentals), networking (HTTP, REST APIs).  
+    🎥 **Resource:** [SQL for Data Science (YouTube)](https://www.youtube.com/watch?v=sTiWTx0ifaM) | [NoSQL Fundamentals](https://www.youtube.com/watch?v=xh4gy1lbL2k)
+*   **Data Tools:** NumPy, Pandas, Matplotlib/Seaborn for data manipulation and visualization.  
+    🎥 **Resource:** [Data Analysis with Python (freeCodeCamp)](https://www.youtube.com/watch?v=r-uOLxNrNk8)
 
 ---
 
